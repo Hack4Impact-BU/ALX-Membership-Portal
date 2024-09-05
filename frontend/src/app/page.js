@@ -1,8 +1,8 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-
 import apiRouter from '@/api/router'
+import Link from 'next/link'
 
 export default function Home() {
 
@@ -11,16 +11,9 @@ export default function Home() {
     queryFn: apiRouter.users.getUsers,
   })
 
-  console.log(data)
   return (
     <main className="flex min-h-screen flex-col gap-4 items-center p-24">
-      <ul>
-        {data?.map((user) => (
-          <li key={user.id}>
-            {user.name} - {user.email}
-          </li>
-        ))}
-      </ul>
+      <Link href="/login">Click here to login</Link>
     </main>
   );
 }
