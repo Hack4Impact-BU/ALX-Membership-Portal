@@ -2,7 +2,7 @@ import api from ".";
 
 const endpoints = {
     getUsers: async () => {
-        return await api('users')
+        return await api('users', {})
     }
 }
 

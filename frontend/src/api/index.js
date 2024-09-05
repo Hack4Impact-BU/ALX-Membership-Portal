@@ -6,14 +6,8 @@ const axiosInstance = axios.create({
     timeout: 1000,
 })
 
-apiOptions = {
-    data: object,
-    method: 'get' | 'put' | 'post' | 'delete',
-    params: object
-}
-
 export const api = async (url, options) => {
-    const { data, method = 'get', params } = options
+    const { data = {}, method = 'get', params = {} } = options
 
     const acccessToken = 'ACCESS_TOKEN'
 

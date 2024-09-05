@@ -1,7 +1,7 @@
 import userEndpoints from './user'
 
 const endpoints = {
-    user: userEndpoints,
+    users: userEndpoints,
 }
 
 export default endpoints
