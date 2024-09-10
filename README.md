@@ -10,6 +10,7 @@
 6. run "cd .. " to go back to the main direectory
 7. run "cd backend/"
 8. run "bundle" to install all of the gems (gems are like dependencies)
-9. run "rails s" to start the server
-10. If both servers are working, we should be good to go!!
+9. run "rails db:migrate"
+10. run "rails s" to start the server
+11. If both servers are working, we should be good to go!!
 
