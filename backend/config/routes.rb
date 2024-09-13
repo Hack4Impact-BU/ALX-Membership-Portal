@@ -7,4 +7,10 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  Rails.application.routes.draw do
+    # Other routes
+  
+    # API endpoint to get test_table data
+    get '/test_tables', to: 'test_tables#index'
+  end
 end
