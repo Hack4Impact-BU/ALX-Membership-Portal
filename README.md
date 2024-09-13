@@ -8,8 +8,8 @@
 4. cd into the repository
 5. run "docker-compose up --build"
 6. To Access the application:
-	•	Frontend: Open http://localhost:3000 in your browser.
-	•	Backend: Rails API is typically running on http://localhost:3001.
+- Frontend: Open http://localhost:3000 in your browser.
+- Backend: Rails API is typically running on http://localhost:3001.
 
 To stop the application:
 	•	run "docker-compose down"
