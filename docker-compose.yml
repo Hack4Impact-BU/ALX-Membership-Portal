@@ -18,8 +18,9 @@ services:
       - '3001:3000'
     volumes:
       - ./backend:/app
-    env_files:
-      - .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/membership_portal_dev
+      - RAILS_MASTER_KEY=f8b5a95cb36ef0877f0cf121f8d6a4b3
     depends_on:
       - db
 
