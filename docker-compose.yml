@@ -18,8 +18,8 @@ services:
       - '3001:3000'
     volumes:
       - ./backend:/app
-    environment:
-      - DATABASE_URL=postgresql://postgres:password@db:5432/membership_portal_dev
+    env_files:
+      - .env
     depends_on:
       - db
 
