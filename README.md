@@ -13,3 +13,14 @@
 
 To stop the application:
 	•	run "docker-compose down"
+
+
+
+## How to start making your own feature branches
+
+1. If you haven't already, install git flow onto your computer
+2. Once installed, go into the repository in the CLI and type "git flow init"
+3. All the default settings should already be there so just keep hitting enter: (make sure production is for main, and development is for develop)
+4. Make your first branch by typing out: "git flow feature start feature_branch_name"
+5. If at any time your branch is behind develop, use the comamnd "git merge develop"
+   
