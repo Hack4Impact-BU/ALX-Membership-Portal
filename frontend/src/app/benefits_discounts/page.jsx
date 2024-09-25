@@ -1,7 +1,11 @@
+
+import styles from "./style.module.css"
+import ReusableHeader from "@/components/ReusableHeader/ReusableHeader"
+
 export default function BenefitsDiscounts() {
     return (
-        <div>
-            BenefitsDiscounts
-        </div>
+        <>
+        <ReusableHeader header={"hello"} translation={"something else"}></ReusableHeader>
+        </>
     )
 }
