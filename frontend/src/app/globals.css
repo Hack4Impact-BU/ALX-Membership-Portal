@@ -2,3 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+    background-color: #214933;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Proza Libre', sans-serif; /* Optional: Apply your custom font globally */
+  }
+  
