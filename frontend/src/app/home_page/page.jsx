@@ -1,10 +1,16 @@
 import Link from 'next/link'
+import ProductOffers from './components/offers'
+import GetInvolved from './components/involved'
+import JobBoard from '../job_postings/page'
+import UpcomingEvents from './components/events'
 
 export default function Home() {
     return (
         <div>
-            login
-            <Link href="/signup">Click here to sign up</Link>
+            <UpcomingEvents />
+            <ProductOffers />
+            <JobBoard />
+            <GetInvolved />
         </div>
     )
 }
