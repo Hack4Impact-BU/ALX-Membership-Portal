@@ -1,43 +1,53 @@
 import Link from 'next/link'
 
 export default function UpcomingEvents() {
-    return (
-      <section className="flex flex-col md:flex-row justify-between items-start p-8">
-        {/* Title Section */}
-        <div className="md:w-1/3 flex flex-col items-start">
-          <h2 className="text-6xl font-bold mb-4 leading-tight">Upcoming <br /> Events</h2>
-          <p className="italic mb-8">* Próximos eventos</p>
-          <a href="#" className="text-white hover:underline mt-4">See More &gt;&gt;</a>
-        </div>
-  
-        {/* Event Cards Section */}
-        <div className="md:w-2/3 flex justify-start space-x-6">
-          {/* Event Card 1 */}
-          <div className="bg-white p-4 rounded shadow-lg w-64">
-            <div className="h-8 w-8 bg-blue-500 rounded-full mb-2"></div>
-            <h3 className="text-lg font-bold">Event Name</h3>
-            <p className="text-sm">Boston, MA</p>
-            <p className="text-sm">Wednesday, September 18</p>
-            <p className="text-sm">5:00 p.m. EST</p>
-            <hr className="my-2" />
-            <p className="text-sm font-bold">Event Organizers:</p>
-            <p className="text-sm">Amplify LatinX</p>
-            <a href="#" className="text-blue-600 hover:underline mt-4 inline-block">See More &gt;&gt;</a>
+  return (
+    <section className="flex flex-col md:flex-row justify-between items-start px-8 py-16 border-b-2 ">
+      {/* Title Section */}
+      <div className="md:w-1/3 flex flex-col items-start text-white">
+        <h2 className="text-6xl font-bold mb-4 leading-tight">Upcoming <br /> Events</h2>
+        <p className="italic mb-8">* Próximos eventos</p>
+        <a href="#" className="text-white hover:underline mt-4">See More</a>
+      </div>
+
+      {/* Event Cards Section */}
+      <div className="md:w-7/12 flex flex-wrap justify-start gap-6">
+        {/* Event Card 1 */}
+        <div className="bg-[#F6F2E9] p-4 rounded-xl shadow-lg w-64 h-full flex flex-col justify-between">
+          <div>
+            <div className="h-12 w-12 bg-blue-500 rounded-full mb-4"></div> {/* Circle */}
+            <div className="p-4 bg-white rounded-xl">
+              <p className="text-lg text-center">Event Name</p>
+            </div>
+            <div className="px-2 py-4 rounded-lg">
+              <p className="text-xs">Location: Boston, MA</p>
+              <hr className="my-2 border-gray-700" />              
+              <p className="text-xs">Event Date: 9/18</p>
+            </div>
           </div>
-  
-          {/* Event Card 2 */}
-          <div className="bg-white p-4 rounded shadow-lg w-64">
-            <div className="h-8 w-8 bg-orange-500 rounded-full mb-2"></div>
-            <h3 className="text-lg font-bold">Event Name</h3>
-            <p className="text-sm">Boston, MA</p>
-            <p className="text-sm">Wednesday, September 18</p>
-            <p className="text-sm">5:00 p.m. EST</p>
-            <hr className="my-2" />
-            <p className="text-sm font-bold">Event Organizers:</p>
-            <p className="text-sm">Amplify LatinX</p>
-            <a href="#" className="text-blue-600 hover:underline mt-4 inline-block">See More &gt;&gt;</a>
+          <div className="flex justify-end mt-4 text-xs">
+            <a href="#" className="text-blue-600 hover:underline">See More</a>
           </div>
         </div>
-      </section>
-    );
-  }
+
+        {/* Event Card 2 */}
+        <div className="bg-[#F6F2E9] p-4 rounded-xl shadow-lg w-64 h-full flex flex-col justify-between">
+          <div>
+            <div className="h-12 w-12 bg-orange-500 rounded-full mb-4"></div> {/* Circle */}
+            <div className="p-4 bg-white rounded-xl">
+              <p className="text-lg text-center">Event Name</p>
+            </div>
+            <div className="px-2 py-4 rounded-lg">
+              <p className="text-xs">Location: Boston, MA</p>
+              <hr className="my-2 border-gray-700" />              
+              <p className="text-xs">Event Date: 9/18</p>
+            </div>
+          </div>
+          <div className="flex justify-end mt-4 text-xs">
+            <a href="#" className="text-blue-600 hover:underline">See More</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

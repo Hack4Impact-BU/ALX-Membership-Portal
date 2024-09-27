@@ -6,7 +6,7 @@ import UpcomingEvents from './components/events'
 
 export default function Home() {
     return (
-        <div>
+        <div className="w-10/12">
             <UpcomingEvents />
             <ProductOffers />
             <JobBoard />
