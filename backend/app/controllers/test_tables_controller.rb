@@ -1,4 +1,4 @@
-class TestTableController < ApplicationController
+class TestTablesController < ApplicationController
     def index
         @test_tables = TestTable.all
         render json: @test_tables
