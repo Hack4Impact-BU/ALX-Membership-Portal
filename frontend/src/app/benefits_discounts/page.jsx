@@ -5,7 +5,7 @@ import ReusableHeader from "@/components/ReusableHeader/ReusableHeader"
 export default function BenefitsDiscounts() {
     return (
         <>
-        <ReusableHeader header={"hello"} translation={"something else"}></ReusableHeader>
+        <ReusableHeader header={"Product Offers"} translation={"* Ofertas de Productos"}></ReusableHeader>
         </>
     )
 }
