@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
         <Sidebar />
 
         {/* Main Content */}
-        <div className="ml-64 p-8">
+        <div className="ml-64">
           {children}
         </div>
       </body>
