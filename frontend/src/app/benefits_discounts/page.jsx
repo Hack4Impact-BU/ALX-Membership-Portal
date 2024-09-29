@@ -1,6 +1,6 @@
 
 import ReusableHeader from "@/components/ReusableHeader/ReusableHeader"
-import Card from "./components/card/card"
+import CardList from "./components/cardList/CardList"
 
 export default function BenefitsDiscounts() {
 
@@ -9,10 +9,12 @@ export default function BenefitsDiscounts() {
         <div className="w-3/4 mt-32">
             <ReusableHeader header={"Product Offers"} translation={"* Ofertas de Productos"}></ReusableHeader>
         </div>
+        <CardList />
 
-        <Card offer={"20% off whatever the heck  you want"}
+
+        {/* <Card offer={"20% off whatever the heck  you want"}
               location={"Museum of Fine Arts"}
-              date={"9/10 — 9/25"}/>
+              date={"9/10 — 9/25"}/> */}
         </>
     )
 }
