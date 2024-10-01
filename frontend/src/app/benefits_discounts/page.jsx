@@ -12,9 +12,6 @@ export default function BenefitsDiscounts() {
         <CardList />
 
 
-        {/* <Card offer={"20% off whatever the heck  you want"}
-              location={"Museum of Fine Arts"}
-              date={"9/10 — 9/25"}/> */}
         </>
     )
 }
