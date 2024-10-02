@@ -14,23 +14,32 @@ services:
   backend:
     build:
       context: ./backend
+    command: >
+      sh -c "bundle exec bin/rails db:migrate db:seed && bundle exec rails s -b 0.0.0.0"
     ports:
       - '3001:3000'
     volumes:
       - ./backend:/app
+      - ./backend/config/master.key:/app/config/master.key:ro
     environment:
+      - RAILS_ENV=development
       - DATABASE_URL=postgresql://postgres:password@db:5432/membership_portal_dev
-      - RAILS_MASTER_KEY=f8b5a95cb36ef0877f0cf121f8d6a4b3
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:14
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password # Specify the password here
+      POSTGRES_PASSWORD: password
       POSTGRES_DB: membership_portal_dev
     ports:
       - '5432:5432'
     volumes:
       - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

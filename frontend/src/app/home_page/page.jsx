@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import ProductOffers from './components/offers'
-import GetInvolved from './components/involved'
-import JobBoard from '../job_postings/page'
 import UpcomingEvents from './components/events'
+import ProductOffers from './components/offers'
+import JobBoard from './components/board'
+import GetInvolved from './components/involved'
 
 export default function Home() {
     return (
