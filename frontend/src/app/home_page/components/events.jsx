@@ -1,5 +1,9 @@
 import Link from 'next/link';
 import TitleCard from './TitleCard'; // Assuming ReusableHeader is in the same directory
+import { Inter, Proza_Libre } from 'next/font/google'; // Correctly importing Inter and Proza_Libre
+
+const inter = Inter({ subsets: ["latin"] });
+const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export default function UpcomingEvents() {
   return (
@@ -8,7 +12,7 @@ export default function UpcomingEvents() {
       <TitleCard header="Upcoming Events" translation="* Próximos eventos" />
 
       {/* Event Cards Section */}
-      <div className="md:w-6/12 flex flex-wrap justify-between">
+      <div className={`md:w-6/12 flex flex-wrap justify-between ${prozaLibre.className}`}>
         {/* Event Card 1 */}
         <div className="bg-[#F6F2E9] p-4 rounded-xl shadow-lg w-64 h-full flex flex-col justify-between">
           <div>
