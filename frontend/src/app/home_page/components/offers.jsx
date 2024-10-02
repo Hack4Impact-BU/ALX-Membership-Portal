@@ -1,17 +1,14 @@
 import Link from 'next/link'
+import TitleCard from './TitleCard';
 
 export default function ProductOffers() {
   return (
-    <section className="flex flex-col md:flex-row justify-between items-start px-8 py-16 border-b-2 ">
+    <section className="flex flex-col md:flex-row justify-between items-center px-8 py-24 border-b-2">
       {/* Title Section */}
-      <div className="md:w-1/3 flex flex-col items-start text-white">
-        <h2 className="text-6xl font-bold mb-4 leading-tight">Product <br /> Offers</h2>
-        <p className="italic mb-8">* Ofertas de Productos</p>
-        <a href="#" className="text-white hover:underline mt-4">See More</a>
-      </div>
+      <TitleCard header="Product Offers" translation="* Ofertas de Productos" />
 
       {/* Product Cards Section */}
-      <div className="md:w-7/12 flex flex-wrap justify-start gap-6">
+      <div className="md:w-6/12 flex flex-wrap justify-between">
         {/* Product Card 1 */}
         <div className="bg-[#F6F2E9] p-4 rounded-xl shadow-lg w-64 h-full flex flex-col justify-between">
           <div>

@@ -1,17 +1,14 @@
-import Link from 'next/link'
+import Link from 'next/link';
+import TitleCard from './TitleCard'; // Assuming ReusableHeader is in the same directory
 
 export default function UpcomingEvents() {
   return (
-    <section className="flex flex-col md:flex-row justify-between items-start px-8 py-16 border-b-2 ">
-      {/* Title Section */}
-      <div className="md:w-1/3 flex flex-col items-start text-white">
-        <h2 className="text-6xl font-bold mb-4 leading-tight">Upcoming <br /> Events</h2>
-        <p className="italic mb-8">* Próximos eventos</p>
-        <a href="#" className="text-white hover:underline mt-4">See More</a>
-      </div>
+    <section className="flex flex-col md:flex-row justify-between items-center px-8 py-8 pb-24 border-b-2">
+      {/* Title Section (Replaced with ReusableHeader) */}
+      <TitleCard header="Upcoming Events" translation="* Próximos eventos" />
 
       {/* Event Cards Section */}
-      <div className="md:w-7/12 flex flex-wrap justify-start gap-6">
+      <div className="md:w-6/12 flex flex-wrap justify-between">
         {/* Event Card 1 */}
         <div className="bg-[#F6F2E9] p-4 rounded-xl shadow-lg w-64 h-full flex flex-col justify-between">
           <div>
@@ -21,7 +18,7 @@ export default function UpcomingEvents() {
             </div>
             <div className="px-2 py-4 rounded-lg">
               <p className="text-xs">Location: Boston, MA</p>
-              <hr className="my-2 border-gray-700" />              
+              <hr className="my-2 border-gray-700" />
               <p className="text-xs">Event Date: 9/18</p>
             </div>
           </div>
@@ -39,7 +36,7 @@ export default function UpcomingEvents() {
             </div>
             <div className="px-2 py-4 rounded-lg">
               <p className="text-xs">Location: Boston, MA</p>
-              <hr className="my-2 border-gray-700" />              
+              <hr className="my-2 border-gray-700" />
               <p className="text-xs">Event Date: 9/18</p>
             </div>
           </div>
