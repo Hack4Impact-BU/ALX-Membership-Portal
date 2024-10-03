@@ -11,6 +11,6 @@ Rails.application.routes.draw do
     # Other routes
   
     # API endpoint to get test_table data
-    get '/test_tables', to: 'test_tables#index'
+    get '/users', to: 'users#index'
   end
 end
