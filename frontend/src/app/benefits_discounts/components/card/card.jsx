@@ -7,9 +7,9 @@ import { Inter, Proza_Libre } from 'next/font/google'; // Import the Proza Libre
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
-export default function Card({offer, location, link, pic, date, index}) {
+export default function Card({offer, location, link, pic, date, index, saved}) {
 
-    const [isSaved, setIsSaved] = useState(false)
+    const [isSaved, setIsSaved] = useState(saved)
 
     const handleClick = () => {
         setIsSaved(!isSaved);
@@ -34,7 +34,7 @@ export default function Card({offer, location, link, pic, date, index}) {
                     
                 </div>
                 <div className='flex flex-col mt-auto ml-auto'>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill={isSaved ? 'black' : 'none'} viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" onClick={handleClick}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill={isSaved ? '#214933' : 'none'} viewBox="0 0 24 24" stroke-width="2" stroke="#214933" class="size-6" onClick={handleClick}>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
                     </svg>
                 </div>
