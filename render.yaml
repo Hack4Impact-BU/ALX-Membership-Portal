@@ -1,5 +1,5 @@
 databases:
-  - name: backend_ALX
+  - name: membership_portal_dev
     databaseName: membership_portal_dev
     user: andrewliu
     plan: free
