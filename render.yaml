@@ -1,7 +1,7 @@
 databases:
   - name: backend_ALX
     databaseName: membership_portal_dev
-    user: postgres
+    user: andrewliu
     plan: free
 
 services:
