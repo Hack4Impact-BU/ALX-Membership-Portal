@@ -25,4 +25,10 @@ users.each do |user_data|
   User.find_or_create_by(email: user_data[:email]) do |user|
     user.name = user_data[:name]
   end
+
+  # Ensure user name is updated if email already exists but name is different
+  if user.persisted? && user.name != user_data[:name]
+    user.update(name: user_data[:name])
+  end
+  
 end
