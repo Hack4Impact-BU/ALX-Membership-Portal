@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
           {/* NavBar */}
           <NavBar />
         {/* Main Content */}
-        <div className="ml-64">
+        <div className="ml-64 flex justify-center">
 
           
           {children}
