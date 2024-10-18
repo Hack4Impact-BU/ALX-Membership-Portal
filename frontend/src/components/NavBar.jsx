@@ -2,6 +2,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../components/AuthProvider.jsx';
+import React, { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
+import { AuthContext } from '../components/AuthProvider.jsx';
 
 const NavBar = () => {
   const { authToken, logout } = useContext(AuthContext);
@@ -24,6 +27,7 @@ const NavBar = () => {
             setUserName('User');
           }
          
+          console.log('User profile:', response.data.user);
         } catch (error) {
       
           console.error('Error fetching user profile:', error);
@@ -47,6 +51,9 @@ const NavBar = () => {
   
       <div className="flex items-center space-x-4">     
             <span>If you are seeing this, then you dont have a token thus cant access this page</span>
+  
+      <div className="flex items-center space-x-4">     
+            <span>If you are seeing this, then you dont have a token thus cant access this page</span>
       </div>
     </nav>
     )
@@ -63,7 +70,22 @@ const NavBar = () => {
     </div>
   </nav>
 
+    )
+  }
+
+  return (
+    <nav className="flex items-center justify-between p-4 bg-green-900 text-white">
+    <div>
+      <a href="/">Amplify LatinX</a>
+    </div>
+
+    <div className="flex items-center space-x-4">     
+          <span>Welcome, {userName}</span>
+    </div>
+  </nav>
+
   );
+}
 }
 
 export default NavBar;

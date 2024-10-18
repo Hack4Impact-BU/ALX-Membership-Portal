@@ -9,10 +9,18 @@ Rails.application.routes.draw do
   post 'auth0/sign_up', to: 'auth0#sign_up'
   post 'auth0/login', to: 'auth0#login'
   
+  get '/profile', to: 'users#profile'
+
+  post 'auth0/sign_up', to: 'auth0#sign_up'
+  post 'auth0/login', to: 'auth0#login'
+  
   # Defines the root path route ("/")
   # root "posts#index"
 
+
     # Other routes
+  
+   
   
    
     # API endpoint to get test_table data
@@ -20,8 +28,5 @@ Rails.application.routes.draw do
 
 
 
-  Rails.application.routes.draw do
-    resources :jobs, only: [:index, :create, :show]
-  end
 
 end
