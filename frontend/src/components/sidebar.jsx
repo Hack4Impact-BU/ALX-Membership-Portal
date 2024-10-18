@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Link from 'next/link';
 import { Inter, Proza_Libre } from 'next/font/google'; // Import the Proza Libre font
+import { AuthContext } from '../components/AuthProvider.jsx'; 
 
 // Import simple white icons from Heroicons
 import { CalendarIcon, GiftIcon, ClipboardIcon, UserGroupIcon, BookmarkIcon, UserIcon, LockClosedIcon } from '@heroicons/react/outline';
@@ -13,7 +14,7 @@ const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600
 
 export default function Sidebar() {
   const [activeSection, setActiveSection] = useState("/"); // State to track the active section
-
+  const { authToken, logout } = useContext(AuthContext);
   // Function to handle click and set the active section
   const handleLinkClick = (path) => {
     setActiveSection(path);
@@ -87,9 +88,10 @@ export default function Sidebar() {
                 </div>
               </Link>
             </li>
-            <li onClick={() => handleLinkClick("/sign_out")}>
-              <Link href="/sign_out">
-                <div className={linkClasses("/sign_out")}>
+            <li onClick={logout}>
+            <Link href="/user/login
+            ">
+                <div className={linkClasses("/user/login")}>
                   <LockClosedIcon className="h-6 w-6 text-white" />
                   <p>Sign Out</p>
                 </div>
