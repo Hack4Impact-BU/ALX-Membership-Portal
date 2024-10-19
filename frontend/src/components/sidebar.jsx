@@ -58,7 +58,7 @@ export default function Sidebar() {
               </Link>
             </li>
             <li onClick={() => handleLinkClick("/user/account_settings")}>
-              <Link href="/user/account_settings">
+              <Link href="/user/get_involved">
                 <div className={linkClasses("/user/account_settings")}>
                   <UserGroupIcon className="h-6 w-6 text-white" />
                   <p>Get Involved</p>
