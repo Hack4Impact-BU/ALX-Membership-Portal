@@ -13,18 +13,20 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
   const noLayoutRoutes = ["/user/login", "/user/signup"];
   const hideLayout = noLayoutRoutes.includes(pathname);
+
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-      <AuthProvider>
-         {!hideLayout && <Sidebar />}
+        <AuthProvider>
+          {/* Conditionally show Sidebar and NavBar */}
+          {!hideLayout && <Sidebar />}
           {!hideLayout && <NavBar />}     
 
-        <div className={!hideLayout ? "ml-64" : ""}>        
-          {children}
-       
-        </div>
-           </AuthProvider>
+          {/* Main Content */}
+          <div className={!hideLayout ? "ml-64" : ""}>        
+            {children}
+          </div>
+        </AuthProvider>
       </body>
     </html>
   );
