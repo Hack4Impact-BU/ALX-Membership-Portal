@@ -1,4 +1,3 @@
-
 require 'http'
 
 class Auth0Controller < ApplicationController
@@ -9,17 +8,15 @@ class Auth0Controller < ApplicationController
     email = params[:email]
     password = params[:password]
 
-
+    # Log the environment variables to debug any issues with them
     Rails.logger.info("Sign up request received with email: #{email}")
     
-  
     response = HTTP.post("https://#{ENV['NEXT_PUBLIC_AUTH0_DOMAIN']}/dbconnections/signup", json: {
       client_id: ENV['AUTH0_CLIENT_ID'],
       email: email,
       password: password,
       connection: 'Username-Password-Authentication'
     })
-
 
     Rails.logger.info("Auth0 response: #{response.body}")
 
@@ -30,10 +27,11 @@ class Auth0Controller < ApplicationController
     end
   end
 
-
   def login
     email = params[:email]
     password = params[:password]
+
+    # Log the environment variables to debug any issues with them
 
     Rails.logger.info("Login request received with email: #{email}")
     
@@ -47,7 +45,7 @@ class Auth0Controller < ApplicationController
       realm: 'Username-Password-Authentication',
       audience: ENV['NEXT_PUBLIC_AUTH0_AUDIENCE']
     })
-    
+
     Rails.logger.info("Auth0 response: #{response.body}")
 
     if response.status.success?
