@@ -16,6 +16,21 @@ module Backend
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+
+
+
+    # CORS configuration
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins 'http://localhost:3000' , 'http://0.0.0.0:3000' , 'http://localhost:3001' , 'http://0.0.0.0:3001' 
+        
+        resource '*',
+          headers: :any,
+          methods: [:get, :post, :put, :patch, :delete, :options, :head],
+          max_age: 600
+      end
+    end
+    
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

@@ -1,31 +1,32 @@
 'use client';
+import React, { createContext, useState, useEffect } from 'react';
 
-import React from 'react';
-import { Auth0Provider } from '@auth0/auth0-react';
-import dotenv from 'dotenv';
-dotenv.config();
+export const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
-  const domain = process.env.NEXT_PUBLIC_AUTH0_DOMAIN; // Replace with the domain i put in Slack own domain (put into .env file)
-  const clientId = process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID; // Replace with the client id i put in Slack own client id (put into .env file)
+export function AuthProvider({ children }) {
+  const [authToken, setAuthToken] = useState(null);
 
-  const onRedirectCallback = (appState) => {
-    window.history.replaceState({}, document.title, appState?.returnTo || '/');
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      setAuthToken(token);
+    }
+  }, []);
+
+  const logout = () => {
+    localStorage.removeItem('authToken');
+    setAuthToken(null);
+  };
+  const login = (token) => {
+    localStorage.setItem('authToken', token);
+    setAuthToken(token);
   };
 
   return (
-    console.log(domain, clientId),
-    <Auth0Provider
-      domain={domain}
-      clientId={clientId}
-      authorizationParams={{
-        redirect_uri: typeof window !== 'undefined' && window.location.origin,
-      }}
-      onRedirectCallback={onRedirectCallback}
-    >
+    <AuthContext.Provider value={{ authToken, setAuthToken, logout, login }}>
       {children}
-    </Auth0Provider>
+    </AuthContext.Provider>
   );
-};
-
+}
 export default AuthProvider;
+

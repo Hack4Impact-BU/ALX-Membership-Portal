@@ -1,33 +1,60 @@
+'use client'
 import React from 'react';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 
 export default function JobBoard() {
   return (
-    <div className="bg-[#324A3A] min-h-screen p-8 text-white">
+    <div className="flex flex-col bg-[#324A3A] min-h-screen w-10/12 p-8 text-white border-2">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-5xl font-bold mb-2">Job Board</h1>
         <h2 className="text-xl italic">* Bolsa de Trabajo</h2>
       </div>
 
-      {/* Filters */}
-      <div className="flex items-center gap-4 mb-8">
-        <button className="bg-[#f0f4e8] text-black py-2 px-4 rounded-lg flex items-center gap-2 shadow-lg">
-          <span className="material-icons">bookmark_border</span>
-          Saved
-        </button>
-        <select className="py-2 px-4 bg-[#f0f4e8] text-black rounded-lg shadow-lg">
-          <option>Select Type</option>
-        </select>
-        <select className="py-2 px-4 bg-[#f0f4e8] text-black rounded-lg shadow-lg">
-          <option>Select Distance</option>
-        </select>
-        <input
-          type="text"
-          placeholder="Zip Code"
-          className="py-2 px-4 bg-[#f0f4e8] text-black rounded-lg shadow-lg"
-        />
-      </div>
+      <div className="flex justify-center gap-4 mb-8">
+        {/* Saved Button */}
+        <div className="flex flex-col w-1/5">
+          {/* Invisible label to align with the rest */}
+          <label className="mb-2 invisible">Placeholder</label>
+          <button className="bg-[#335843] text-[#F6F2E9] py-3 px-6 rounded-lg flex items-center gap-2 shadow-lg">
+            <BookmarksIcon />
+            Saved
+          </button>
+        </div>
 
+        {/* Business Type Selection */}
+        <div className="flex flex-col w-1/5">
+          <label htmlFor="businessType" className="mb-2 text-[#F6F2E9]">Business Type</label>
+          <select
+            id="businessType"
+            className="py-3 px-3 bg-[#335843] text-[#A9A9A9] rounded-m shadow-lg"
+          >
+            <option>Select Type</option>
+          </select>
+        </div>
+
+        {/* Distance Selection */}
+        <div className="flex flex-col w-1/5">
+          <label htmlFor="distance" className="mb-2 text-[#F6F2E9]">Distance</label>
+          <select
+            id="distance"
+            className="py-3 px-3 bg-[#335843] text-[#A9A9A9] rounded-m shadow-lg"
+          >
+            <option>Select Distance</option>
+          </select>
+        </div>
+
+        {/* Zip Code Input */}
+        <div className="flex flex-col w-1/5">
+          <label htmlFor="zipCode" className="mb-2 text-[#F6F2E9]">Zip Code</label>
+          <input
+            type="text"
+            id="zipCode"
+            placeholder="Zip Code"
+            className="py-3 px-3 bg-[#335843] text-[#F6F2E9] rounded-m shadow-lg"
+          />
+        </div>
+      </div>
       {/* Job Listing & Details Section */}
       <div className="flex gap-8">
         {/* Job List */}
