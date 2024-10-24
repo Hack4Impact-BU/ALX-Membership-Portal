@@ -12,6 +12,7 @@ export default function JobBoard() {
   // State to track the list of jobs fetched from the API and the selected job
   const [jobs, setJobs] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [isBookmarked, setIsBookmarked] = useState(false); // To track bookmark toggle
 
   // Fetch jobs from the API when the component mounts
   useEffect(() => {
@@ -28,6 +29,10 @@ export default function JobBoard() {
       .catch((error) => {
         console.error("Error fetching jobs:", error);
       });
+  }
+
+  const toggleBookmark = () => {
+    setIsBookmarked(!isBookmarked);
   }
 
   if (!selectedJob) return <div>Loading jobs...</div>;
@@ -79,14 +84,15 @@ export default function JobBoard() {
       </div>
 
       {/* Job Listing & Details Section */}
-      <div className={`flex gap-8 ${prozaLibre.className}`}>
+      <div className={`flex justify-center gap-8 ${prozaLibre.className}`}>
         {/* Job List */}
-        <div className="w-1/3">
+        <div className="w-1/4">
           {jobs.map((job) => (
             <div
               key={job.id}
               onClick={() => setSelectedJob(job)}  // Set the selected job on click
-              className={`bg-[#F6F2E9] text-black p-4 mb-4 rounded-xl shadow-lg flex items-center gap-4 cursor-pointer ${selectedJob.id === job.id ? 'ring-4 ring-[#214933]' : ''}`}
+              className={`bg-[#F6F2E9] text-black p-4 mb-4 rounded-xl shadow-lg flex items-center gap-4 cursor-pointer 
+              ${selectedJob.id === job.id ? 'ring-4 ring-[#214933] scale-110 transition-transform' : ''}`}  // Enlarge selected card
             >
               {/* Display job logo from the S3 URL */}
               {job.logo_url ? (
@@ -102,8 +108,11 @@ export default function JobBoard() {
           ))}
         </div>
 
+        {/* Vertical bar (thin white line) */}
+        <div className="h-auto w-1 bg-white"></div>  {/* This creates the vertical bar */}
+
         {/* Job Details */}
-        <div className="flex-grow bg-[#F6F2E9] text-black p-8 rounded-xl shadow-lg">
+        <div className="relative flex-grow bg-[#F6F2E9] text-black p-8 rounded-xl shadow-lg max-w-[600px] w-full">
           <div className="flex items-center gap-4 mb-8">
             {/* Display selected job logo */}
             {selectedJob.logo_url ? (
@@ -117,24 +126,33 @@ export default function JobBoard() {
             </div>
           </div>
           <div>
-            <h4 className="text-xl font-semibold mb-2">Job Description:</h4>
-            <p className="mb-4">{selectedJob.description} Compensation: {selectedJob.salary}</p>
+            <h4 className="text-xl font-semibold mb-4">Job Description:</h4>
+            <p className="mb-8">{selectedJob.description} Compensation: {selectedJob.salary}</p>
 
-            <h4 className="text-xl font-semibold mb-2">Responsibilities:</h4>
-            <ul className="list-disc ml-8 mb-4">
+            <h4 className="text-xl font-semibold mb-4">Responsibilities:</h4>
+            <ul className="list-disc ml-8 mb-8">
               {selectedJob.responsibilities.split('. ').map((responsibility, index) => (
                 <li key={index}>{responsibility}</li>
               ))}
             </ul>
 
-            <h4 className="text-xl font-semibold mb-2">Requirements:</h4>
-            <ul className="list-disc ml-8 mb-4">
+            <h4 className="text-xl font-semibold mb-4">Requirements:</h4>
+            <ul className="list-disc ml-8 mb-8">
               {selectedJob.requirements.split('. ').map((requirement, index) => (
                 <li key={index}>{requirement}</li>
               ))}
             </ul>
 
-            <p>Contact: <a href={selectedJob.contact} className="text-blue-600 hover:underline">{selectedJob.contact}</a></p>
+            <p className="mb-8">Contact: <a href={selectedJob.contact} className="text-blue-600 hover:underline">{selectedJob.contact}</a></p>
+          </div>
+
+          {/* Bookmarks Icon at the bottom right */}
+          <div
+            className={`absolute bottom-4 right-4 p-2 rounded-full border-2 cursor-pointer transition-all
+              ${isBookmarked ? 'bg-green-700 text-white' : 'bg-transparent border-green-700 text-green-700'}`}
+            onClick={toggleBookmark}
+          >
+            <BookmarksIcon />
           </div>
         </div>
       </div>
