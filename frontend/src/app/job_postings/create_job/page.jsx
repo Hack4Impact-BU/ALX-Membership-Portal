@@ -1,112 +1,177 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import BookmarksIcon from '@mui/icons-material/Bookmarks';
-import { Inter, Proza_Libre } from 'next/font/google';
-import Link from 'next/link';
-import axios from 'axios'; // Import Axios for API requests
+import React, { useState } from 'react';
+import axios from 'axios';
 
-const inter = Inter({ subsets: ["latin"] });
-const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
+export default function JobCreate() {
+  const [job, setJob] = useState({
+    title: '',
+    company: '',
+    description: '',
+    logo: null,
+  });
 
-export default function JobBoard() {
-  const [jobs, setJobs] = useState([]);
-  const [selectedJob, setSelectedJob] = useState(null);
+  const authToken = "hi"
 
-  // Fetch jobs from the API when the component mounts
-  useEffect(() => {
-    console.log("Fetching jobs...");  // Check if useEffect is triggered
-    async function fetchJobs() {
-      try {
-        const response = await axios.get('http://localhost:3001/jobs');
-        console.log("HELLO I AM LOOKING FOR:", response.data);  // Corrected log
-        setJobs(response.data);  // Store jobs in state
-        setSelectedJob(response.data[0]); // Set the first job as default selected job
-      } catch (error) {
-        console.error("Error fetching jobs:", error);
-      }
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
+
+  // Handle form input changes
+  const handleChange = (e) => {
+    setJob({
+      ...job,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Handle file upload
+  const handleFileChange = (e) => {
+    setJob({
+      ...job,
+      logo: e.target.files[0],
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData();
+    formData.append('job[title]', job.title);
+    formData.append('job[company]', job.company);
+    formData.append('job[description]', job.description);
+    formData.append('job[responsibilities]', job.responsibilities);
+    formData.append('job[requirements]', job.requirements);
+    formData.append('job[salary]', job.salary);
+    formData.append('job[contact]', job.contact);
+    formData.append('job[logo]', job.logo);
+  
+    try {
+      const response = await axios.post('http://localhost:3001/jobs', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${authToken}`
+        },
+      });
+  
+      setMessage('Job created successfully!');
+      setError(null);
+    } catch (error) {
+      setError('Error creating job.');
+      setMessage(null);
     }
-    fetchJobs();
-  }, []);
-  if (!selectedJob) return <div>Loading jobs...</div>;
+  };
 
   return (
-    <div className="flex flex-col bg-[#214933] min-h-screen w-10/12 p-8 text-white">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className={`text-[70px] font-bold mb-2 font-custom`}>Job Board</h1>
-        <h2 className="text-[30px] italic font-custom">* Bolsa de Trabajo</h2>
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
+      <h1 className="text-4xl font-bold mb-4">Create a Job</h1>
 
-      <div className={`flex justify-center gap-4 mb-8 ${prozaLibre.className}`}>
-        {/* Saved Button */}
-        <div className="flex flex-col w-1/5">
-          <label className="mb-2 invisible">Placeholder</label>
-          <button className="bg-[#F6F2E9] text-[#214933] py-3 px-6 rounded-lg flex items-center gap-2 shadow-lg">
-            <BookmarksIcon />
-            Saved
-          </button>
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+        <div className="mb-4">
+          <label htmlFor="title" className="block text-gray-700 font-bold mb-2">Job Title</label>
+          <input
+            type="text"
+            name="title"
+            id="title"
+            value={job.title}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            required
+          />
         </div>
 
-        {/* Job List */}
-        <div className="w-1/3">
-          {jobs.map((job) => {
-            // Log the s3_logo_url to the console
-            return (
-              <div
-                key={job.id}
-                onClick={() => setSelectedJob(job)}
-                className={`bg-[#F6F2E9] text-black p-4 mb-4 rounded-xl shadow-lg flex items-center gap-4 cursor-pointer ${selectedJob.id === job.id ? 'ring-4 ring-[#214933]' : ''}`}
-              >
-                {/* Display job logo from the S3 URL */}
-                {job.s3_logo_url ? (
-                  <img src={job.s3_logo_url} alt={`${job.title} logo`} className="h-12 w-12 rounded-full" />
-                ) : (
-                  <div className="h-12 w-12 rounded-full" style={{ backgroundColor: '#FFA500' }}></div>
-                )}
-                <div>
-                  <p className="text-lg font-bold">{job.title}</p>
-                  <p className="text-sm">{job.company}</p>
-                </div>
-              </div>
-            );
-          })}
+        <div className="mb-4">
+          <label htmlFor="company" className="block text-gray-700 font-bold mb-2">Company Name</label>
+          <input
+            type="text"
+            name="company"
+            id="company"
+            value={job.company}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            required
+          />
         </div>
 
-        {/* Job Details */}
-        <div className="flex-grow bg-[#F6F2E9] text-black p-8 rounded-xl shadow-lg">
-          <div className="flex items-center gap-4 mb-8">
-            {selectedJob.s3_logo_url ? (
-              <img src={selectedJob.s3_logo_url} alt={`${selectedJob.title} logo`} className="h-16 w-16 rounded-full" />
-            ) : (
-              <div className="h-16 w-16 rounded-full" style={{ backgroundColor: '#FFA500' }}></div>
-            )}
-            <div>
-              <h3 className="text-3xl font-bold">{selectedJob.title}</h3>
-              <p>{selectedJob.company}</p>
-            </div>
-          </div>
-          <div>
-            <h4 className="text-xl font-semibold mb-2">Job Description:</h4>
-            <p className="mb-4">{selectedJob.description} Compensation: {selectedJob.salary}</p>
-
-            <h4 className="text-xl font-semibold mb-2">Responsibilities:</h4>
-            <p>{selectedJob.responsibilities}</p>
-
-            <h4 className="text-xl font-semibold mb-2">Requirements:</h4>
-            <p>{selectedJob.requirements}</p>
-
-            <p>Contact: <a href={selectedJob.contact} className="text-blue-600 hover:underline">{selectedJob.contact}</a></p>
-          </div>
+        <div className="mb-4">
+          <label htmlFor="description" className="block text-gray-700 font-bold mb-2">Job Description</label>
+          <textarea
+            name="description"
+            id="description"
+            value={job.description}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            required
+          />
         </div>
-      </div>
 
-      <div className="flex justify-center mt-8">
-        <Link href="job_postings/create_job" passHref>
-          <p className="bg-blue-500 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700">
-            Create New Job
-          </p>
-        </Link>
-      </div>
+        <div className="mb-4">
+          <label htmlFor="responsibilities" className="block text-gray-700 font-bold mb-2">Job Responsibilities</label>
+          <textarea
+            name="responsibilities"
+            id="responsibilities"
+            value={job.responsibilities}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="requirements" className="block text-gray-700 font-bold mb-2">Job Requirements</label>
+          <textarea
+            name="requirements"
+            id="requirements"
+            value={job.requirements}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="salary" className="block text-gray-700 font-bold mb-2">Salary</label>
+          <input
+            type="text"
+            name="salary"
+            id="salary"
+            value={job.salary}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="contact" className="block text-gray-700 font-bold mb-2">Contact Information</label>
+          <input
+            type="text"
+            name="contact"
+            id="contact"
+            value={job.contact}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="logo" className="block text-gray-700 font-bold mb-2">Company Logo</label>
+          <input
+            type="file"
+            name="logo"
+            id="logo"
+            onChange={handleFileChange}
+            className="w-full"
+            accept="image/*"
+            required
+          />
+        </div>
+
+        <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg">Submit</button>
+      </form>
+
+      {message && <p className="mt-4 text-green-600">{message}</p>}
+      {error && <p className="mt-4 text-red-600">{error}</p>}
     </div>
   );
 }
