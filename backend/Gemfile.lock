@@ -337,6 +337,7 @@ DEPENDENCIES
   debug
   dotenv-rails
   http
+  image_processing
   json
   jwt
   openssl
