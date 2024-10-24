@@ -24,7 +24,6 @@ const NavBar = () => {
             setUserName('User');
           }
          
-          console.log('User profile:', response.data.user);
         } catch (error) {
       
           console.error('Error fetching user profile:', error);

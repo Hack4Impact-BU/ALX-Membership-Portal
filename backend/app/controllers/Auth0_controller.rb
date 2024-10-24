@@ -1,4 +1,6 @@
 require 'http'
+require 'dotenv'
+Dotenv.load
 
 class Auth0Controller < ApplicationController
 
@@ -7,7 +9,8 @@ class Auth0Controller < ApplicationController
   def sign_up
     email = params[:email]
     password = params[:password]
-
+    Rails.logger.info("NEXT_PUBLIC_AUTH0_DOMAIN: #{ENV['NEXT_PUBLIC_AUTH0_DOMAIN']}")
+    Rails.logger.info("AUTH0_CLIENT_ID: #{ENV['AUTH0_CLIENT_ID']}")
     # Log the environment variables to debug any issues with them
     Rails.logger.info("Sign up request received with email: #{email}")
     
@@ -32,7 +35,8 @@ class Auth0Controller < ApplicationController
     password = params[:password]
 
     # Log the environment variables to debug any issues with them
-
+    Rails.logger.info("NEXT_PUBLIC_AUTH0_DOMAIN: #{ENV['NEXT_PUBLIC_AUTH0_DOMAIN']}")
+    Rails.logger.info("AUTH0_CLIENT_ID: #{ENV['AUTH0_CLIENT_ID']}")
     Rails.logger.info("Login request received with email: #{email}")
     
     response = HTTP.post("https://#{ENV['NEXT_PUBLIC_AUTH0_DOMAIN']}/oauth/token", json: {
