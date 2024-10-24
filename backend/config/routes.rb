@@ -17,5 +17,8 @@ Rails.application.routes.draw do
     # API endpoint to get test_table data
   get '/users', to: 'users#index'
 
+  Rails.application.routes.draw do
+    resources :jobs, only: [:index, :create, :show]
+  end
 
 end
