@@ -8,7 +8,7 @@ import Link from 'next/link';
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
-export default function Card({offer, location, link, pic, date, index, saved, type, distance, toggleCardSaved}) {
+export default function Card({offer, location, link, pic, date, index, description, saved, type, distance, toggleCardSaved}) {
 
 
     const handleClick = () => {
@@ -17,18 +17,19 @@ export default function Card({offer, location, link, pic, date, index, saved, ty
 
 
     return (
-        <Link href={{
-                pathname: `/benefits_discounts/${location}`,
-                query: { offer, location, link, pic, date, index, saved, type, distance, toggleCardSaved }
-                }}>
-            <div className="border flex flex-col justify-evenly rounded-3xl bg-[#F6F2E9] w-80 h-56 hover:cursor-pointer">
-                <div className="flex flex-row justify-center items-center gap-2">
+            <div className="border flex flex-col justify-evenly rounded-3xl bg-[#F6F2E9] w-80 h-56">
+                <Link href={{
+                    pathname: `/benefits_discounts/${location}`,
+                    query: { offer, location, link, pic, date, description, index, saved, type, distance, toggleCardSaved }
+                    }}>
+                <div className="flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
                     {/* gonna be image circle */}
                     <div className="w-20 h-20 bg-orange-400 rounded-full"/>
                     <div className="flex items-center w-48 h-14 bg-white rounded-full">
                         <p className={`p-4 text-2xl text-[#214933] ${prozaLibre.className} overflow-hidden text-ellipsis whitespace-nowrap`}>{offer}</p>
                     </div>
                 </div>
+                </Link>
                 <div className='flex flex-row w-full pl-5 pr-5'>
                     <div className='flex flex-col justify-center'>
                         <p className={`text-sm ${prozaLibre.className} text-[#214933]`}>{location}</p>
@@ -44,6 +45,5 @@ export default function Card({offer, location, link, pic, date, index, saved, ty
                     </div>
                 </div>
             </div>
-        </Link>
     )
 }

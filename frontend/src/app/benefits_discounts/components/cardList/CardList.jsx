@@ -52,7 +52,7 @@ export default function CardList() {
             <div className="flex flew-row w-full">
                 
     
-                <div className="grid grid-cols-2 gap-6 w-[62%] p-20">
+                <div className="grid grid-cols-2 gap-6 w-[57%] p-20">
                     {
                         (renderSaved ? filteredCards.filter(offer => offer.saved) : filteredCards).map( (offer, index)  => {
                             return <Card key={index} {...offer} index={index} toggleCardSaved={toggleCardSaved}></Card>

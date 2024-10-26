@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import BookmarksIcon from '@mui/icons-material/Bookmarks';
+// import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import { Inter, Proza_Libre } from 'next/font/google';
 import Link from 'next/link';
 import axios from 'axios'; // Import Axios for API requests
@@ -50,7 +50,7 @@ export default function JobBoard() {
         <div className="flex flex-col w-1/5">
           <label className="mb-2 invisible">Placeholder</label>
           <button className="bg-[#F6F2E9] text-[#214933] py-3 px-6 rounded-lg flex items-center gap-2 shadow-lg">
-            <BookmarksIcon />
+            {/* <BookmarksIcon /> */}
             Saved
           </button>
         </div>
@@ -152,7 +152,7 @@ export default function JobBoard() {
               ${isBookmarked ? 'bg-green-700 text-white' : 'bg-transparent border-green-700 text-green-700'}`}
             onClick={toggleBookmark}
           >
-            <BookmarksIcon />
+            {/* <BookmarksIcon /> */}
           </div>
         </div>
       </div>
@@ -166,49 +166,49 @@ export default function JobBoard() {
     </div>
   );
 
-        {/* Job Details */}
-        <div className="flex-grow bg-[#F6F2E9] text-black p-8 rounded-xl shadow-lg">
-          <div className="flex items-center gap-4 mb-8">
-            {/* Display selected job logo */}
-            {selectedJob.logo_url ? (
-              <img src={selectedJob.logo_url} alt={`${selectedJob.title} logo`} className="h-16 w-16 rounded-full" />
-            ) : (
-              <div className="h-16 w-16 rounded-full" style={{ backgroundColor: '#FFA500' }}></div>
-            )}
-            <div>
-              <h3 className="text-3xl font-bold">{selectedJob.title}</h3>
-              <p>{selectedJob.company}</p>
-            </div>
-          </div>
-          <div>
-            <h4 className="text-xl font-semibold mb-2">Job Description:</h4>
-            <p className="mb-4">{selectedJob.description} Compensation: {selectedJob.salary}</p>
+  //       {/* Job Details */}
+  //       <div className="flex-grow bg-[#F6F2E9] text-black p-8 rounded-xl shadow-lg">
+  //         <div className="flex items-center gap-4 mb-8">
+  //           {/* Display selected job logo */}
+  //           {selectedJob.logo_url ? (
+  //             <img src={selectedJob.logo_url} alt={`${selectedJob.title} logo`} className="h-16 w-16 rounded-full" />
+  //           ) : (
+  //             <div className="h-16 w-16 rounded-full" style={{ backgroundColor: '#FFA500' }}></div>
+  //           )}
+  //           <div>
+  //             <h3 className="text-3xl font-bold">{selectedJob.title}</h3>
+  //             <p>{selectedJob.company}</p>
+  //           </div>
+  //         </div>
+  //         <div>
+  //           <h4 className="text-xl font-semibold mb-2">Job Description:</h4>
+  //           <p className="mb-4">{selectedJob.description} Compensation: {selectedJob.salary}</p>
 
-            <h4 className="text-xl font-semibold mb-2">Responsibilities:</h4>
-            <ul className="list-disc ml-8 mb-4">
-              {selectedJob.responsibilities.split('. ').map((responsibility, index) => (
-                <li key={index}>{responsibility}</li>
-              ))}
-            </ul>
+  //           <h4 className="text-xl font-semibold mb-2">Responsibilities:</h4>
+  //           <ul className="list-disc ml-8 mb-4">
+  //             {selectedJob.responsibilities.split('. ').map((responsibility, index) => (
+  //               <li key={index}>{responsibility}</li>
+  //             ))}
+  //           </ul>
 
-            <h4 className="text-xl font-semibold mb-2">Requirements:</h4>
-            <ul className="list-disc ml-8 mb-4">
-              {selectedJob.requirements.split('. ').map((requirement, index) => (
-                <li key={index}>{requirement}</li>
-              ))}
-            </ul>
+  //           <h4 className="text-xl font-semibold mb-2">Requirements:</h4>
+  //           <ul className="list-disc ml-8 mb-4">
+  //             {selectedJob.requirements.split('. ').map((requirement, index) => (
+  //               <li key={index}>{requirement}</li>
+  //             ))}
+  //           </ul>
 
-            <p>Contact: <a href={selectedJob.contact} className="text-blue-600 hover:underline">{selectedJob.contact}</a></p>
-          </div>
-        </div>
-      </div>
-      <div className="flex justify-center mt-8">
-        <Link href="job_postings/create_job" passHref>
-          <p className="bg-blue-500 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700">
-            Create New Job
-          </p>
-        </Link>
-      </div>
-    </div>
-  );
+  //           <p>Contact: <a href={selectedJob.contact} className="text-blue-600 hover:underline">{selectedJob.contact}</a></p>
+  //         </div>
+  //       </div>
+  //     </div>
+  //     <div className="flex justify-center mt-8">
+  //       <Link href="job_postings/create_job" passHref>
+  //         <p className="bg-blue-500 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700">
+  //           Create New Job
+  //         </p>
+  //       </Link>
+  //     </div>
+  //   </div>
+  // );
 }

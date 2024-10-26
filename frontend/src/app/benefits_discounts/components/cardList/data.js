@@ -10,6 +10,7 @@ export const benefits = [
         date: "9/10 — 9/25",
         saved: true,
         distance: 25,
+        description: "Experience the world-renowned collections of the Museum of Fine Arts, Boston (MFA), at an exclusive discounted rate! For a limited time, we're thrilled to offer 20% off on all general admission tickets.",
         type: "Museums"
     },
     {
@@ -18,6 +19,7 @@ export const benefits = [
         date: "10/10 - 10/11",
         saved: false,
         distance: 50,
+        description: "Experience the world-renowned collections of the Museum of Fine Arts, Boston (MFA), at an exclusive discounted rate! For a limited time, we're thrilled to offer 20% off on all general admission tickets.",
         type: "Fashion"
     },
     {
@@ -26,6 +28,7 @@ export const benefits = [
         date: "12/12 - 12/20",
         saved: false,
         distance: 75,
+        description: "Experience the world-renowned collections of the Museum of Fine Arts, Boston (MFA), at an exclusive discounted rate! For a limited time, we're thrilled to offer 20% off on all general admission tickets.",
         type: "Museums"
     },
     {
@@ -34,6 +37,7 @@ export const benefits = [
         date: "9/20-9/20",
         saved: true,
         distance: 12,
+        description: "Experience the world-renowned collections of the Museum of Fine Arts, Boston (MFA), at an exclusive discounted rate! For a limited time, we're thrilled to offer 20% off on all general admission tickets.",
         type: "Fashion"
     },
     {
@@ -42,6 +46,7 @@ export const benefits = [
         date: "9/10 — 9/25",
         saved: false,
         distance: 42,
+        description: "Experience the world-renowned collections of the Museum of Fine Arts, Boston (MFA), at an exclusive discounted rate! For a limited time, we're thrilled to offer 20% off on all general admission tickets.",
         type: "Gym"
     },
     {
@@ -50,6 +55,7 @@ export const benefits = [
         date: "9/10 — 9/25",
         saved: true,
         distance: 64,
+        description: "Experience the world-renowned collections of the Museum of Fine Arts, Boston (MFA), at an exclusive discounted rate! For a limited time, we're thrilled to offer 20% off on all general admission tickets.",
         type: "Cafes"
     },
     {
@@ -58,6 +64,7 @@ export const benefits = [
         date: "9/10 — 9/25",
         saved: false,
         distance: 90,
+        description: "Experience the world-renowned collections of the Museum of Fine Arts, Boston (MFA), at an exclusive discounted rate! For a limited time, we're thrilled to offer 20% off on all general admission tickets.",
         type: "Cafes"
     },
     {
@@ -66,14 +73,16 @@ export const benefits = [
         date: "9/10 — 9/25",
         saved: false,
         distance: 100,
+        description: "Experience the world-renowned collections of the Museum of Fine Arts, Boston (MFA), at an exclusive discounted rate! For a limited time, we're thrilled to offer 20% off on all general admission tickets.",
         type: "Museums"
     },
     {
-        offer: "TESTING 1 2 3 ALL EYES ON ME",
+        offer: "TESTING 1 2 3 ",
         location: "Le Labo",
         date: "9/10 — 9/25",
         saved: true,
         distance: 125,
+        description: "Experience the world-renowned collections of the Museum of Fine Arts, Boston (MFA), at an exclusive discounted rate! For a limited time, we're thrilled to offer 20% off on all general admission tickets.",
         type: "Fashion"
     },
 
