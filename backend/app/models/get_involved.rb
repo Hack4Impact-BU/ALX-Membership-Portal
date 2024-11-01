@@ -1,0 +1,2 @@
+class GetInvolved < ApplicationRecord
+end
