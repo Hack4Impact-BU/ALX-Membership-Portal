@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :get_involveds
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -16,8 +17,10 @@ Rails.application.routes.draw do
    
     # API endpoint to get test_table data
   get '/users', to: 'users#index'
+  get '/get_involved', to: 'get_involveds#index'
 
   Rails.application.routes.draw do
+  resources :get_involveds
     resources :jobs, only: [:index, :create, :show]
   end
 
