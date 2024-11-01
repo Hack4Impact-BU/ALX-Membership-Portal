@@ -41,7 +41,7 @@ export default function JobBoard() {
     <div className="flex flex-col bg-[#214933] min-h-screen w-10/12 p-8 text-white">
       {/* Header */}
       <div className="mb-8">
-        <h1 className={`text-[70px] font-bold mb-2 font-custom`}>Job Board</h1>
+        <h1 className="text-[70px] font-bold mb-2 font-custom">Job Board</h1>
         <h2 className="text-[30px] italic font-custom">* Bolsa de Trabajo</h2>
       </div>
 
@@ -157,7 +157,7 @@ export default function JobBoard() {
         </div>
       </div>
       <div className="flex justify-center mt-8">
-        <Link href="job_postings/create_job" passHref>
+        <Link href="job_postings/create" passHref>
           <p className="bg-blue-500 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700">
             Create New Job
           </p>
