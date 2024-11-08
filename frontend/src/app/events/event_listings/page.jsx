@@ -108,7 +108,7 @@ export default function EventListings() {
         {/* Event Cards */}
         
 
-        <Eventing eventType={eventType}/>
+        <Eventing eventType={eventType} searchField={search}/>
             
       </div>
     </div>

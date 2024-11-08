@@ -1,7 +1,7 @@
 import { useState } from "react";
 import EventCard from "../EventCards/EventCards";
 
-export default function Eventing({ eventType}) {
+export default function Eventing({ eventType, searchField }) {
   // Example data for your cards, updated to reflect the Event Table
   const events = [
     {
@@ -113,9 +113,14 @@ export default function Eventing({ eventType}) {
   
 
 // Filter events based on the eventType prop
-const filteredEvents = eventType
-? events.filter((event) => event.EventType.toLowerCase().includes(eventType.toLowerCase()))
-: events;
+const filteredEvents = events
+  .filter((event) => 
+    eventType ? event.EventType.toLowerCase().includes(eventType.toLowerCase()) : true
+  )
+  .filter((event) => 
+    searchField ? event.EventName.toLowerCase().includes(searchField.toLowerCase()) : true
+  );
+
 
 return (
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
