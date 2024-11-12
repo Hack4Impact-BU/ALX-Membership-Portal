@@ -41,7 +41,7 @@
 # ])
 
 
-GetInvolveds.create([
+GetInvolved.create([
   {
     title: "Guest Speaker at Boston University",
     summary: "Boston University invites passionate professionals and academics to join us.",
