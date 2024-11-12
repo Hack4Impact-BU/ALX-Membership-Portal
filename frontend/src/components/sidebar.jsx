@@ -6,7 +6,7 @@ import { Inter, Proza_Libre } from 'next/font/google'; // Import the Proza Libre
 import { AuthContext } from '../components/AuthProvider.jsx'; 
 
 // Import simple white icons from Heroicons
-import { CalendarIcon, GiftIcon, ClipboardIcon, UserGroupIcon, BookmarkIcon, UserIcon, LockClosedIcon } from '@heroicons/react/outline';
+import { CalendarIcon, GiftIcon, ClipboardIcon, UserGroupIcon, BookmarkIcon, UserIcon, LockClosedIcon, FolderIcon, QuestionMarkCircleIcon } from '@heroicons/react/outline';
 
 // Initialize Proza Libre font
 const inter = Inter({ subsets: ["latin"] });
@@ -63,6 +63,22 @@ export default function Sidebar() {
                 <div className={linkClasses("/get_involved")}>
                   <UserGroupIcon className="h-6 w-6 text-white" />
                   <p>Get Involved</p>
+                </div>
+              </Link>
+            </li>
+            <li onClick={() => handleLinkClick("/get_involved")}>
+              <Link href="/get_involved">
+                <div className={linkClasses("/questions")}>
+                  <QuestionMarkCircleIcon className="h-6 w-6 text-white" />
+                  <p>FAQ</p>
+                </div>
+              </Link>
+            </li>
+            <li onClick={() => handleLinkClick("/user/archived")}>
+              <Link href="/get_involved">
+                <div className={linkClasses("/get_involved")}>
+                  <FolderIcon className="h-6 w-6 text-white" />
+                  <p>Archive</p>
                 </div>
               </Link>
             </li>
