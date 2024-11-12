@@ -66,8 +66,8 @@ export default function Sidebar() {
                 </div>
               </Link>
             </li>
-            <li onClick={() => handleLinkClick("/get_involved")}>
-              <Link href="/get_involved">
+            <li onClick={() => handleLinkClick("/questions")}>
+              <Link href="/questions">
                 <div className={linkClasses("/questions")}>
                   <QuestionMarkCircleIcon className="h-6 w-6 text-white" />
                   <p>FAQ</p>
