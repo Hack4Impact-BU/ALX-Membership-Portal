@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import { BookmarkIcon } from '@heroicons/react/outline';
 import { Inter, Proza_Libre } from 'next/font/google';
 
 const inter = Inter({ subsets: ["latin"] });
@@ -9,7 +9,6 @@ const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600
 export default function SavedPage() {
   const [activeTab, setActiveTab] = useState('Offers');
 
-  // Initial saved items categorized by type
   const initialSavedItems = {
     Events: [
       { id: 1, title: 'Live Concert', description: 'Downtown Stage', details: 'Event on 10/25 at 8 PM', color: '#FF6F61' },
@@ -28,10 +27,8 @@ export default function SavedPage() {
     ]
   };
 
-  // State to track saved items
   const [savedItems, setSavedItems] = useState(initialSavedItems);
 
-  // Function to handle unsaving an item
   const handleUnsave = (itemId, category) => {
     setSavedItems((prevItems) => ({
       ...prevItems,
@@ -42,24 +39,25 @@ export default function SavedPage() {
   return (
     <div className="flex flex-col items-center bg-[#214933] min-h-screen w-10/12 p-8 text-white">
       {/* Header */}
-
       <div className="flex items-center mb-6 w-full">
-        <BookmarkIcon className="text-[#F6F2E9] text-[150px] mr-4" />
+        <BookmarkIcon className="h-32 w-32 mr-4" />
         <h1 className="pt-6 text-[80px] font-bold font-custom items-center">Saved</h1>
       </div>
 
       <div className={`flex flex-col items-start pl-8 my-12 w-full ${prozaLibre.className}`}>
         <h2 className="text-xl mb-2">Sort Saved:</h2>
         <div className="flex space-x-4">
-            {['Events', 'Offers', 'Jobs'].map((tab) => (
+          {['Events', 'Offers', 'Jobs'].map((tab) => (
             <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-8 py-4 rounded-lg font text-lg ${activeTab === tab ? 'bg-[#F6F2E9]' : 'bg-[#335843]'}`}
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-8 py-4 rounded-lg text-lg ${
+                activeTab === tab ? 'bg-[#F6F2E9] text-black' : 'bg-[#335843] text-white'
+              }`}
             >
-                {tab}
+              {tab}
             </button>
-            ))}
+          ))}
         </div>
       </div>
 
@@ -77,10 +75,7 @@ export default function SavedPage() {
                   <p className="text-lg text-center">{item.title}</p>
                 </div>
                 <div className="px-2 py-4 rounded-lg">
-                  <p className="text-s">Company: {item.company}</p>
-                  <hr className="my-2 border-gray-700" />
-                  <p className="text-s mt-4">{item.details}</p>
-                  <p className="text-s mt-4">Posted: {item.posted}</p>
+                  <p className="text-s">Details: {item.details}</p>
                 </div>
               </div>
               <div className="flex justify-between items-center mt-4">

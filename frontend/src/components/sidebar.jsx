@@ -74,9 +74,9 @@ export default function Sidebar() {
                 </div>
               </Link>
             </li>
-            <li onClick={() => handleLinkClick("/user/archived")}>
-              <Link href="/get_involved">
-                <div className={linkClasses("/get_involved")}>
+            <li onClick={() => handleLinkClick("/archive")}>
+              <Link href="/archive">
+                <div className={linkClasses("/archive")}>
                   <FolderIcon className="h-6 w-6 text-white" />
                   <p>Archive</p>
                 </div>
