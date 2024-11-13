@@ -10,8 +10,10 @@ const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600
 
 export default function EventCard({EventDescription, Location, WebsiteLink, pic, Date, index, description, saved, Time, distance, toggleCardSaved, EventName, EventOrganizer}) {
 
+    const [isSaved, setIsSaved] = useState(saved);
 
     const handleClick = () => {
+        setIsSaved(!isSaved);
         toggleCardSaved(index);
     }
 

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import EventCard from "../EventCards/EventCards";
 
-export default function Eventing({ eventType, searchField }) {
+export default function Eventing({ eventType, searchField, showSavedOnly }) {
   // Example data for your cards, updated to reflect the Event Table
-  const events = [
+  const [events, setEvents] = useState([
     {
       EventID: 1,
       EventName: "Community Fair",
@@ -18,6 +18,7 @@ export default function Eventing({ eventType, searchField }) {
       ZipCode: "02445",
       EventImage: "pic1.jpg",
       EventType: "Community Event",
+      saved: false,
     },
     {
       EventID: 2,
@@ -33,6 +34,7 @@ export default function Eventing({ eventType, searchField }) {
       ZipCode: "02139",
       EventImage: "pic2.jpg",
       EventType: "Workshop/Seminar",
+      saved: false,
     },
     {
       EventID: 3,
@@ -48,6 +50,7 @@ export default function Eventing({ eventType, searchField }) {
       ZipCode: "02210",
       EventImage: "pic3.jpg",
       EventType: "Expo/Conference",
+      saved: true,
     },
     {
       EventID: 4,
@@ -63,6 +66,7 @@ export default function Eventing({ eventType, searchField }) {
       ZipCode: "02138",
       EventImage: "pic4.jpg",
       EventType: "Health & Wellness",
+      saved: true,
     },
     {
       EventID: 5,
@@ -78,6 +82,7 @@ export default function Eventing({ eventType, searchField }) {
       ZipCode: "02139",
       EventImage: "pic5.jpg",
       EventType: "Workshop/Seminar",
+      saved: false,
     },
     {
       EventID: 6,
@@ -93,6 +98,7 @@ export default function Eventing({ eventType, searchField }) {
       ZipCode: "02210",
       EventImage: "pic6.jpg",
       EventType: "Networking Event",
+      saved: false,
     },
     {
       EventID: 7,
@@ -108,8 +114,15 @@ export default function Eventing({ eventType, searchField }) {
       ZipCode: "02116",
       EventImage: "pic7.jpg",
       EventType: "Expo/Conference",
+      saved: true,
     },
-  ];
+  ]);
+
+  const toggleCardSaved = (id) => {
+    setEvents((prevEvents) => 
+      prevEvents.map((event) =>
+      event.EventID === id ? { ...event, saved: !event.saved} : event))
+  };
   
 
 // Filter events based on the eventType prop
@@ -119,6 +132,9 @@ const filteredEvents = events
   )
   .filter((event) => 
     searchField ? event.EventName.toLowerCase().includes(searchField.toLowerCase()) : true
+  )
+  .filter((event) =>
+    (showSavedOnly ? event.saved : true)
   );
 
 
@@ -137,6 +153,7 @@ return (
       WebsiteLink={event.WebsiteLink}
       ZipCode={event.ZipCode}
       EventImage={event.EventImage}
+      toggleCardSaved={event.toggleCardSaved}
     />
   ))}
 </div>

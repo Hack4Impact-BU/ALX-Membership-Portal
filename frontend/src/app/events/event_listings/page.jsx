@@ -10,6 +10,7 @@ export default function EventListings() {
   const [date, setDate] = useState("");
   const [distance, setDistance] = useState("");
   const [zipCode, setZipCode] = useState("");
+  const [showSavedOnly, setShowSavedOnly] = useState(false);
 
   const handleSearch = (e) => setSearch(e.target.value);
   const handleEventType = (e) => setEventType(e.target.value);
@@ -22,6 +23,8 @@ export default function EventListings() {
       setZipCode(value);
     }
   };
+
+  const toggleShowSavedOnly = () => setShowSavedOnly(!showSavedOnly)
   
 
   
@@ -100,7 +103,10 @@ export default function EventListings() {
               </div>
           </div>
 
-          <button className="p-3 bg-white text-green-900 h-1/2 w-1/12 rounded-md">Saved</button>
+          <button className={`p-3 bg-white text-green-900 h-1/2 w-1/12 rounded-md ${showSavedOnly ? "bg-green-500" : ""}`}
+                  onClick={toggleShowSavedOnly}>
+            {showSavedOnly ? "Show All" : "Show Saved"}
+          </button>
           
 
         </div>
@@ -108,7 +114,7 @@ export default function EventListings() {
         {/* Event Cards */}
         
 
-        <Eventing eventType={eventType} searchField={search}/>
+        <Eventing eventType={eventType} searchField={search} showSavedOnly={showSavedOnly}/>
             
       </div>
     </div>
