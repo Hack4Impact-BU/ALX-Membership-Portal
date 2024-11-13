@@ -19,7 +19,7 @@ export default function EventCard({EventDescription, Location, WebsiteLink, pic,
     return (
             <div className="border flex flex-col justify-evenly rounded-3xl bg-[#F6F2E9] w-96 h-64">
                 <Link href={{
-                    pathname: `/benefits_discounts/${Location}`,
+                    pathname: `/events/event_listings/${Location}`,
                     query: { EventDescription, Location, WebsiteLink, pic, Date, description, index, saved, Time, distance, toggleCardSaved, EventName, EventOrganizer }
                     }}>
                 <div className="flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
