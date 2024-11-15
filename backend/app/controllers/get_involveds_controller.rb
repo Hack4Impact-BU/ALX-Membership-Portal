@@ -1,12 +1,12 @@
 class GetInvolvedsController < ApplicationController
-  skip_before_action :authenticate_request, only: [:create, :index, :show]
+  skip_before_action :authenticate_request, only: [:create, :index, :show, :destroy] 
   before_action :set_get_involved, only: %i[ show update destroy ]
 
   # GET /get_involveds
   def index
-    @get_involveds = GetInvolved.all
+    @get_involved = GetInvolved.all
 
-    render json: @get_involveds
+    render json: @get_involved
   end
 
   # GET /get_involveds/1

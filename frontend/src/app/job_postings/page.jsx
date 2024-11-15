@@ -3,16 +3,18 @@ import React, { useState, useEffect } from 'react';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import { Inter, Proza_Libre } from 'next/font/google';
 import Link from 'next/link';
-import axios from 'axios'; // Import Axios for API requests
+import axios from 'axios';
 
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export default function JobBoard() {
-  // State to track the list of jobs fetched from the API and the selected job
   const [jobs, setJobs] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
-  const [isBookmarked, setIsBookmarked] = useState(false); // To track bookmark toggle
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  // Define the API base URL from environment variables
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Fetch jobs from the API when the component mounts
   useEffect(() => {
@@ -20,20 +22,20 @@ export default function JobBoard() {
   }, []);
 
   const fetchJobs = () => {
-    axios.get('http://localhost:3001/jobs')
-      .then((response => {
-        console.log(response.data)
-        setJobs(response.data);  // Store jobs in state
-        setSelectedJob(response.data[0]); // Set the first job as default selected job
-      }))
+    axios.get(`${apiBaseUrl}/jobs`)
+      .then((response) => {
+        console.log(response.data);
+        setJobs(response.data); 
+        setSelectedJob(response.data[0]); 
+      })
       .catch((error) => {
         console.error("Error fetching jobs:", error);
       });
-  }
+  };
 
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked);
-  }
+  };
 
   return (
     <div className="flex flex-col bg-[#214933] min-h-screen w-10/12 p-8 text-white">
