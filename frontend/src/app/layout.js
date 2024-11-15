@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           {/* Conditionally show Sidebar and NavBar */}
           {!hideLayout && <Sidebar />}
-          {/* {!hideLayout && <NavBar />}      */}
+          {!hideLayout && <NavBar />}     
 
           {/* Main Content */}
           <div className={`flex justify-center items-center ${!hideLayout ? "ml-64" : ""}`} style={{ minHeight: '100vh' }}>
