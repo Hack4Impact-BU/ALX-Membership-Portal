@@ -38,7 +38,7 @@ export default function JobBoard() {
   };
 
   return (
-    <div className="flex flex-col bg-[#214933] min-h-screen w-10/12 p-8 text-white">
+    <div className="flex flex-col bg-[#214933] min-h-screen w-10/12 p-8 mt-12 text-white">
       {/* Render content only if jobs are available */}
       {jobs.length > 0 && (
         <>

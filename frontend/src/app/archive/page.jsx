@@ -47,7 +47,7 @@ export default function Archive() {
   };
 
   return (
-    <div className="flex flex-col items-center bg-[#214933] min-h-screen w-10/12 p-8 text-white">
+    <div className="flex flex-col items-center bg-[#214933] min-h-screen w-10/12 p-8 mt-6 text-white">
       {/* Header */}
       <div className="flex items-center mb-6 w-full">
         <FolderIcon className="h-32 w-32 mr-4" />

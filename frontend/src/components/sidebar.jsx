@@ -15,6 +15,7 @@ const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600
 export default function Sidebar() {
   const [activeSection, setActiveSection] = useState("/"); // State to track the active section
   const { authToken, logout } = useContext(AuthContext);
+
   // Function to handle click and set the active section
   const handleLinkClick = (path) => {
     setActiveSection(path);
@@ -30,9 +31,11 @@ export default function Sidebar() {
       <div className="flex flex-col justify-between h-full p-4">
         {/* Top Section */}
         <div>
-          <div className="h-16 mb-4">
-            <div className="bg-gray-800 h-full w-full"></div>
-          </div>
+          <Link href="/" passHref>
+            <div className="h-20 mt-4 mb-8 cursor-pointer">
+              <img src="/assets/ALX_Logo.png" alt="ALX Logo" className="h-full w-full object-contain" />
+            </div>
+          </Link>
           <ul className="space-y-4">
             <li onClick={() => handleLinkClick("/events/event_listings")}>
               <Link href="/events/event_listings">
@@ -105,8 +108,7 @@ export default function Sidebar() {
               </Link>
             </li>
             <li onClick={logout}>
-            <Link href="/user/login
-            ">
+              <Link href="/user/login">
                 <div className={linkClasses("/user/login")}>
                   <LockClosedIcon className="h-6 w-6 text-white" />
                   <p>Sign Out</p>

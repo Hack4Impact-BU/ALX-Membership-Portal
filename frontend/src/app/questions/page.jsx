@@ -9,11 +9,11 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/outline';
 
 export default function Questions() {
   return (
-    <div className="flex flex-col w-10/12 text-white items-center min-h-screen p-8">
+    <div className="flex flex-col w-10/12 text-white items-center min-h-screen p-8 mt-6">
         {/* Top Left Icon and FAQ Title */}
         <div className="flex text-left gap-4 w-full">
-            <QuestionMarkCircleIcon className="h-32 w-32 text-white mx-4" />
-            <h1 className="text-8xl font-bold font-custom pt-8">FAQ's / Help</h1>
+            <QuestionMarkCircleIcon className="h-32 w-32 text-white mx-2" />
+            <h1 className="text-7xl font-bold font-custom pt-10">FAQ's</h1>
         </div>
         
       <div className="max-w-5xl rounded-lg p-8">

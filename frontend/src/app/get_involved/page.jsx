@@ -93,7 +93,7 @@ export default function GetInvolved() {
   }, [expandedCard]);
 
   return (
-    <div className="flex flex-col items-center bg-[#214933] min-h-screen w-10/12 p-8 text-white">
+    <div className="flex flex-col items-center bg-[#214933] min-h-screen w-10/12 p-8 mt-12 text-white">
       <div className="mb-8 w-full">
         <h1 className="text-[70px] font-bold mb-2 font-custom">Get Involved</h1>
         <h2 className="text-[30px] italic font-custom">* Involucrate</h2>
