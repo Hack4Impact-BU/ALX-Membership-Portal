@@ -1,0 +1,2 @@
+class BenefitsDiscount < ApplicationRecord
+end
