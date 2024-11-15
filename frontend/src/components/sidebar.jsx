@@ -34,9 +34,9 @@ export default function Sidebar() {
             <div className="bg-gray-800 h-full w-full"></div>
           </div>
           <ul className="space-y-4">
-            <li onClick={() => handleLinkClick("/")}>
-              <Link href="/">
-                <div className={linkClasses("/")}>
+            <li onClick={() => handleLinkClick("/events/event_listings")}>
+              <Link href="/events/event_listings">
+                <div className={linkClasses("/events/event_listings")}>
                   <CalendarIcon className="h-6 w-6 text-white" />
                   <p>Events & Lessons</p>
                 </div>
