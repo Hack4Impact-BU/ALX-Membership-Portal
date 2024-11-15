@@ -46,7 +46,7 @@ export default function JobCreate() {
     formData.append('job[logo]', job.logo);
   
     try {
-      const response = await axios.post('http://localhost:3001/jobs', formData, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${authToken}`

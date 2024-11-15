@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import axios from 'axios';
 
 export default function NewInvolvement() {
   const [formData, setFormData] = useState({
@@ -24,7 +25,7 @@ export default function NewInvolvement() {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Basic form validation
@@ -41,38 +42,34 @@ export default function NewInvolvement() {
       return;
     }
 
-    // Submit form data to the API
-    fetch('http://localhost:3001/get_involveds', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => {
-        if (response.ok) {
-          setSuccessMessage('Involvement created successfully!');
-          setErrorMessage('');
-          // Reset form
-          setFormData({
-            title: '',
-            summary: '',
-            description: '',
-            date: '',
-            time: '',
-            location: '',
-            phone: ''
-          });
-        } else {
-          return response.json().then((data) => {
-            setErrorMessage(data.error || 'Failed to create involvement.');
-          });
-        }
-      })
-      .catch((error) => {
-        console.error('Error submitting form:', error);
-        setErrorMessage('Error submitting form. Please try again later.');
+    // Submit form data to the API using axios
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/get_involveds`, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+      
+      if (response.status === 201) { // 201 Created
+        setSuccessMessage('Involvement created successfully!');
+        setErrorMessage('');
+        // Reset form
+        setFormData({
+          title: '',
+          summary: '',
+          description: '',
+          date: '',
+          time: '',
+          location: '',
+          phone: ''
+        });
+      } else {
+        setErrorMessage('Failed to create involvement.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setErrorMessage(error.response?.data?.error || 'Error submitting form. Please try again later.');
+    }
   };
 
   return (
@@ -153,7 +150,6 @@ export default function NewInvolvement() {
             value={formData.time}
             onChange={handleChange}
             className="w-full p-2 rounded-md text-black"
-            placeholder="Enter time"
           />
         </div>
 
