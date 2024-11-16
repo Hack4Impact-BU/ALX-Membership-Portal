@@ -1,5 +1,6 @@
 class BenefitsDiscountsController < ApplicationController
-    skip_before_action :authenticate_request, only: [:create, :index, :show]
+    # skip_before_action :authenticate_request, only: [:create, :index, :show]
+    skip_before_action :authenticate_request ###TESTING TESTING TESTING UCOMMENT THE LINE ABOVE AND COMMENT OUT THIS ONE
     before_action :set_benefits_discount, only: %i[show update destroy]
   
     # GET /benefits_discounts
