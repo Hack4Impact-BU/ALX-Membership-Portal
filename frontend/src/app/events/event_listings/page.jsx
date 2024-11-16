@@ -29,10 +29,10 @@ export default function EventListings() {
 
   
   return (
-    <div className="w-full text-white ">
+    <div className="w-full text-white mt-32">
         <ReusableHeader header={"Upcoming Events"} translation={"*    Próximos eventos"}/>
 
-      <div className="max-w-7xl mx-auto my-8">
+      <div className="max-w-7xl p-12 mx-auto my-8">
 
         {/* Filters */}
         <div className="flex flex-wrap flex-col gap-4 mb-8">

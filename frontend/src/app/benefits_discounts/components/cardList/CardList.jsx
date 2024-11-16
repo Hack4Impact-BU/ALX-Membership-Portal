@@ -40,7 +40,7 @@ export default function CardList() {
 
 
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full justify-center ">
 
             <div className="flex flex-row w-[130px] h-[60px] ml-20 mt-4 rounded-md gap-4 bg-[#F6F2E9] hover:cursor-pointer justify-center items-center" onClick={handleSaved}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill={renderSaved ? '#214933' : 'none'} viewBox="0 0 24 24" stroke-width="2" stroke="#214933" className="size-8">
@@ -52,34 +52,39 @@ export default function CardList() {
             <div className="flex flew-row w-full">
                 
     
-                <div className="grid grid-cols-2 gap-6 w-[57%] p-20">
+                <div className="grid grid-cols-2 gap-8 w-[64%] pl-40 pt-20">
                     {
                         (renderSaved ? filteredCards.filter(offer => offer.saved) : filteredCards).map( (offer, index)  => {
                             return <Card key={index} {...offer} index={index} toggleCardSaved={toggleCardSaved}></Card>
                         })
                     }
                 </div>
-                <div className="flex gap-2 flex-col flex-grow h-72 pt-20">
-                    <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>Business Type</p>
+                <div className="flex gap-2 flex-col flex-grow items-center h-72 pt-20">
+                    <div>
+                        <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>Business Type</p>
+        
+                        <div className="w-72"><DropDown font={montserrat}
+                                                        dropTitle={"Select Type"} 
+                                                        dropDown={businessType} 
+                                                        id={"dropdown1"}
+                                                        selectedValue={selectedBusinessType}
+                                                        setSelectedValue={setSelectedBusinessType}
+                                                        />
+                        </div>
+                    </div>
     
-                    <div className="w-72"><DropDown font={montserrat}
-                                                    dropTitle={"Select Type"} 
-                                                    dropDown={businessType} 
-                                                    id={"dropdown1"}
-                                                    selectedValue={selectedBusinessType}
-                                                    setSelectedValue={setSelectedBusinessType}
-                                                    /></div>
     
-    
-                    <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>Distance</p>
-    
-                    <div className="w-72"><DropDown font={montserrat} 
-                                                    dropTitle={"Select Distance"} 
-                                                    dropDown={distance} 
-                                                    id={"dropdown2"}
-                                                    selectedValue={selectedDistance}
-                                                    setSelectedValue={setSelectedDistance}
-                                                    /></div>
+                    <div>
+                        <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>Distance</p>
+        
+                        <div className="w-72"><DropDown font={montserrat} 
+                                                        dropTitle={"Select Distance"} 
+                                                        dropDown={distance} 
+                                                        id={"dropdown2"}
+                                                        selectedValue={selectedDistance}
+                                                        setSelectedValue={setSelectedDistance}
+                                                        /></div>
+                    </div>
                 </div>
             </div>
         </div>
