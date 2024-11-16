@@ -52,14 +52,14 @@ export default function CardList() {
             <div className="flex flew-row w-full">
                 
     
-                <div className="grid grid-cols-2 gap-8 w-[64%] pl-40 pt-20">
+                <div className="grid grid-cols-2 gap-6 w-[52rem] p-20">
                     {
                         (renderSaved ? filteredCards.filter(offer => offer.saved) : filteredCards).map( (offer, index)  => {
                             return <Card key={index} {...offer} index={index} toggleCardSaved={toggleCardSaved}></Card>
                         })
                     }
                 </div>
-                <div className="flex gap-2 flex-col flex-grow items-center h-72 pt-20">
+                <div className="flex gap-2 flex-col flex-grow h-72 pt-20">
                     <div>
                         <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>Business Type</p>
         
