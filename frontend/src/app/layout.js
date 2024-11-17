@@ -5,7 +5,7 @@ import "./globals.css";
 import { usePathname } from "next/navigation";
 import Sidebar from "@/components/sidebar"; // Ensure the path to Sidebar is correct
 import AuthProvider from '@/components/AuthProvider';
-import { useEffect } from "react";
+import NavBar from '/src/components/NavBar.jsx';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,8 +17,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-      <AuthProvider>
-         {!hideLayout && <Sidebar />}  
+        <AuthProvider>
+          {/* Conditionally show Sidebar and NavBar */}
+          {!hideLayout && <Sidebar />}
+          {!hideLayout && <NavBar />}     
 
           {/* Main Content */}
           <div className={!hideLayout ? "ml-64" : ""}>        
