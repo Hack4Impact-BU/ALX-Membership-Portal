@@ -20,11 +20,11 @@ export default function RootLayout({ children }) {
       <AuthProvider>
          {!hideLayout && <Sidebar />}  
 
-        <div className={!hideLayout ? "ml-64" : ""}>        
-          {children}
-       
-        </div>
-           </AuthProvider>
+          {/* Main Content */}
+          <div className={!hideLayout ? "ml-64" : ""}>        
+            {children}
+          </div>
+        </AuthProvider>
       </body>
     </html>
   );
