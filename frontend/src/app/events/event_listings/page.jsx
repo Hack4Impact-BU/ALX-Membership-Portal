@@ -3,6 +3,10 @@
 import { useState } from "react";
 import ReusableHeader from "@/components/ReusableHeader/ReusableHeader";
 import Eventing from "./components/EventListings/EventListings";
+import { Inter, Proza_Libre } from 'next/font/google';
+
+const inter = Inter({ subsets: ["latin"] });
+const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export default function EventListings() {
   const [search, setSearch] = useState("");
@@ -29,10 +33,10 @@ export default function EventListings() {
 
   
   return (
-    <div className="w-full text-white mt-32">
+    <div className="w-11/12 text-white mt-16">
         <ReusableHeader header={"Upcoming Events"} translation={"*    Próximos eventos"}/>
 
-      <div className="max-w-7xl p-12 mx-auto my-8">
+      <div className={`max-w-7xl p-8 mx-auto my-8 ${prozaLibre.className}`}>
 
         {/* Filters */}
         <div className="flex flex-wrap flex-col gap-4 mb-8">

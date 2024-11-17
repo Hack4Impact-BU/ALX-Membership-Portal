@@ -16,7 +16,7 @@ export default function Questions() {
             <h1 className="text-7xl font-bold font-custom pt-10">FAQ's</h1>
         </div>
         
-      <div className="max-w-5xl rounded-lg p-8">
+      <div className="w-11/12 rounded-lg p-8">
         {/* Contact Section */}
         <div className={`bg-[#F5F3EB] text-[#214933] rounded-lg p-6 my-6 ${prozaLibre.className}`}>
           <h2 className="text-2xl font-bold underline">Contact us:</h2>

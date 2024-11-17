@@ -76,7 +76,7 @@ export default function Archive() {
           placeholder="Search"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-1/5 p-3 rounded-lg bg-[#F6F2E9] text-black placeholder-gray-500 mb-6"
+          className="w-1/5 p-3 pl-8 rounded-lg bg-[#335843] text-white placeholder-grey-300 mb-6"
         />
 
         {/* Dropdown Selection Inputs */}
@@ -84,7 +84,7 @@ export default function Archive() {
           {["Event Type", "Date", "City", "Category"].map((label, index) => (
             <div key={index} className="flex flex-col">
               <label className="text-white mb-2">{label}</label>
-              <select className="px-6 py-4 bg-[#335843] text-white rounded-lg w-full">
+              <select className="px-6 py-4 bg-[#335843] text-gray-400 rounded-lg w-full">
                 <option value="">{`Select ${label}`}</option>
                 {/* Add options for each dropdown as needed */}
                 <option value="option1">Option 1</option>
