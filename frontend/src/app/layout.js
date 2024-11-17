@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
      
 
           {/* Main Content */}
-          <div className={!hideLayout ? "ml-64" : ""}>        
+          <div className={`flex justify-center items-center ${!hideLayout ? "ml-64" : ""}`} style={{ minHeight: '100vh' }}>
             {children}
           </div>
         </AuthProvider>

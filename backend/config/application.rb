@@ -2,6 +2,9 @@ require_relative "boot"
 
 require "rails/all"
 
+require 'dotenv'
+Dotenv.load
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -16,18 +19,14 @@ module Backend
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
-
+    config.api_base_url = 'http://localhost:3001'
 
 
     # CORS configuration
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins 'http://localhost:3000' , 'http://0.0.0.0:3000'  # Your frontend's URL
-
-        resource '*',
-          headers: :any,
-          methods: [:get, :post, :put, :patch, :delete, :options, :head],
-          max_age: 600
+        origins '*' # Change this to your frontend URL for production
+        resource '*', headers: :any, methods: [:get, :post, :patch, :put, :delete, :options, :head]
       end
     end
     

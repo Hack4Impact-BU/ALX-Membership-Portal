@@ -51,3 +51,7 @@ group :development, :test do
 end
 
 
+gem "image_processing"
+
+gem "aws-sdk-s3", require: false
+

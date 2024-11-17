@@ -6,7 +6,7 @@ import { Inter, Proza_Libre } from 'next/font/google'; // Import the Proza Libre
 import { AuthContext } from '../components/AuthProvider.jsx'; 
 
 // Import simple white icons from Heroicons
-import { CalendarIcon, GiftIcon, ClipboardIcon, UserGroupIcon, BookmarkIcon, UserIcon, LockClosedIcon } from '@heroicons/react/outline';
+import { CalendarIcon, GiftIcon, ClipboardIcon, UserGroupIcon, BookmarkIcon, UserIcon, LockClosedIcon, FolderIcon, QuestionMarkCircleIcon } from '@heroicons/react/outline';
 
 // Initialize Proza Libre font
 const inter = Inter({ subsets: ["latin"] });
@@ -15,6 +15,7 @@ const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600
 export default function Sidebar() {
   const [activeSection, setActiveSection] = useState("/"); // State to track the active section
   const { authToken, logout } = useContext(AuthContext);
+
   // Function to handle click and set the active section
   const handleLinkClick = (path) => {
     setActiveSection(path);
@@ -30,13 +31,15 @@ export default function Sidebar() {
       <div className="flex flex-col justify-between h-full p-4">
         {/* Top Section */}
         <div>
-          <div className="h-16 mb-4">
-            <div className="bg-gray-800 h-full w-full"></div>
-          </div>
+          <Link href="/" passHref>
+            <div className="h-20 mt-4 mb-8 cursor-pointer">
+              <img src="/assets/ALX_Logo.png" alt="ALX Logo" className="h-full w-full object-contain" />
+            </div>
+          </Link>
           <ul className="space-y-4">
-            <li onClick={() => handleLinkClick("/")}>
-              <Link href="/">
-                <div className={linkClasses("/")}>
+            <li onClick={() => handleLinkClick("/events/event_listings")}>
+              <Link href="/events/event_listings">
+                <div className={linkClasses("/events/event_listings")}>
                   <CalendarIcon className="h-6 w-6 text-white" />
                   <p>Events & Lessons</p>
                 </div>
@@ -58,11 +61,27 @@ export default function Sidebar() {
                 </div>
               </Link>
             </li>
-            <li onClick={() => handleLinkClick("/user/account_settings")}>
-              <Link href="/user/account_settings">
-                <div className={linkClasses("/user/account_settings")}>
+            <li onClick={() => handleLinkClick("/get_involved")}>
+              <Link href="/get_involved">
+                <div className={linkClasses("/get_involved")}>
                   <UserGroupIcon className="h-6 w-6 text-white" />
                   <p>Get Involved</p>
+                </div>
+              </Link>
+            </li>
+            <li onClick={() => handleLinkClick("/questions")}>
+              <Link href="/questions">
+                <div className={linkClasses("/questions")}>
+                  <QuestionMarkCircleIcon className="h-6 w-6 text-white" />
+                  <p>FAQ</p>
+                </div>
+              </Link>
+            </li>
+            <li onClick={() => handleLinkClick("/archive")}>
+              <Link href="/archive">
+                <div className={linkClasses("/archive")}>
+                  <FolderIcon className="h-6 w-6 text-white" />
+                  <p>Archive</p>
                 </div>
               </Link>
             </li>
@@ -89,7 +108,7 @@ export default function Sidebar() {
               </Link>
             </li>
             <li onClick={logout}>
-            <Link href="/user/signup">
+              <Link href="/user/signup">
                 <div className={linkClasses("/user/signup")}>
                   <LockClosedIcon className="h-6 w-6 text-white" />
                   <p>Sign Out</p>
