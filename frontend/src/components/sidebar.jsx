@@ -80,18 +80,17 @@ export default function Sidebar() {
                 </div>
               </Link>
             </li>
-            <li onClick={() => handleLinkClick("/user/profile")}>
-              <Link href="/user/profile">
-                <div className={linkClasses("/user/profile")}>
+            <li onClick={() => handleLinkClick("/user/Profile")}>
+              <Link href="/user/Profile">
+                <div className={linkClasses("/user/Profile")}>
                   <UserIcon className="h-6 w-6 text-white" />
                   <p>Profile</p>
                 </div>
               </Link>
             </li>
             <li onClick={logout}>
-            <Link href="/user/login
-            ">
-                <div className={linkClasses("/user/login")}>
+            <Link href="/user/signup">
+                <div className={linkClasses("/user/signup")}>
                   <LockClosedIcon className="h-6 w-6 text-white" />
                   <p>Sign Out</p>
                 </div>

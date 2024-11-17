@@ -22,7 +22,7 @@ module Backend
     # CORS configuration
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins 'http://localhost:3000'  # Your frontend's URL
+        origins 'http://localhost:3000' , 'http://0.0.0.0:3000'  # Your frontend's URL
 
         resource '*',
           headers: :any,
