@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  location: MyString
+  is_saved: false
+  offer_description: MyString
+  redeem_desc: MyString
+  date: 2024-12-05
+
+two:
+  title: MyString
+  location: MyString
+  is_saved: false
+  offer_description: MyString
+  redeem_desc: MyString
+  date: 2024-12-05

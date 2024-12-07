@@ -14,9 +14,26 @@ const montserrat = Montserrat({
 
 export default function CardList() {
     const [renderSaved, setRenderSaved] = useState(false);
-    const [cards, setCards] = useState(benefits);
+    const [cards, setCards] = useState([]);
     const [selectedBusinessType, setSelectedBusinessType] = useState(null);
     const [selectedDistance, setSelectedDistance] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch("http://localhost:3001/discounts"); // Replace with your endpoint
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+                const data = await response.json();
+                setCards(data); // Update state with fetched data
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const filteredCards = cards.filter(card => {
         return (!selectedBusinessType || card.type === selectedBusinessType) &&
@@ -27,11 +44,30 @@ export default function CardList() {
         setRenderSaved(!renderSaved);
     };
 
-    const toggleCardSaved = (index) => {
-        const updatedCards = [...cards];
-        updatedCards[index].saved = !updatedCards[index].saved;
-        setCards(updatedCards);
+    const toggleCardSaved = async (index, id, currentSaved) => {
+        try {
+            // Send PUT or PATCH request to update `is_saved` on the backend
+            const response = await fetch(`http://localhost:3001/discounts/${id}`, {
+                method: "PUT", // or PATCH
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ is_saved: !currentSaved }),
+            });
+    
+            if (!response.ok) {
+                throw new Error("Failed to update saved status");
+            }
+    
+            // Update the local state if the backend update was successful
+            const updatedCards = [...cards];
+            updatedCards[index].is_saved = !updatedCards[index].is_saved;
+            setCards(updatedCards);
+        } catch (error) {
+            console.error("Error updating saved status:", error);
+        }
     };
+
 
     const businessType = ["Museums", "Cafes", "Gym", "Fashion"];
     const distance = [5, 10, 15, 20, 25, 30];
@@ -42,7 +78,7 @@ export default function CardList() {
             <div className="flex flex-row gap-10">
                 {/* Cards Grid */}
                 <div className="grid grid-cols-2 gap-6 p-10 w-[52rem]">
-                    {(renderSaved ? filteredCards.filter(offer => offer.saved) : filteredCards).map((offer, index) => (
+                    {(renderSaved ? filteredCards.filter(offer => offer.is_saved) : filteredCards).map((offer, index) => (
                         <Card key={index} {...offer} index={index} toggleCardSaved={toggleCardSaved}></Card>
                     ))}
                 </div>
