@@ -7,7 +7,7 @@ default: &default
   host: <%= ENV['DATABASE_HOST'] || 'localhost' %>
 
 development:
-  <<: *default
+  <<: *default  
   database: membership_portal_dev
 
 test:
