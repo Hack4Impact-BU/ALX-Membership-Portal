@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import Hyperlinks from '@/components/Hyperlinks';
 import { Inter, Proza_Libre } from 'next/font/google';
 
 const inter = Inter({ subsets: ["latin"] });
@@ -61,6 +62,7 @@ export default function Questions() {
           </div>
         </div>
       </div>
+      <Hyperlinks />
     </div>
   );
 }
