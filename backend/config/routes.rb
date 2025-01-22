@@ -25,5 +25,4 @@ Rails.application.routes.draw do
     resources :jobs, only: [:index, :create, :show]
     resources :q_and_as, only: [:index, :show, :new, :create, :destroy]
   end
-
 end

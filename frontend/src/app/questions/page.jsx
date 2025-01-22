@@ -1,6 +1,6 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
+import Hyperlinks from '@/components/Hyperlinks';
 import { Inter, Proza_Libre } from 'next/font/google';
 import axios from 'axios';
 
@@ -104,6 +104,7 @@ export default function Questions() {
           </div>
         </div>
       </div>
+      <Hyperlinks />
     </div>
   );
 }
