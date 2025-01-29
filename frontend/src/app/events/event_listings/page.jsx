@@ -34,7 +34,7 @@ export default function EventListings() {
   
   return (
     <div className="w-11/12 text-white mt-20">
-        <ReusableHeader header={"Upcoming Events"} translation={"*    Próximos eventos"}/>
+        <ReusableHeader header={"Upcoming Events"} translation={"*    Próximos eventos"} isAdmin={true}/>
 
       <div className={`max-w-7xl p-8 mx-auto my-8 ${prozaLibre.className}`}>
 

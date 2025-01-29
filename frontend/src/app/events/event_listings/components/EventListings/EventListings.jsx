@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import EventCard from "../EventCards/EventCards";
+import EventCardAdmin from "../EventCardsAdmin/EventCardsAdmin";
 
 export default function Eventing({ eventType, searchField, showSavedOnly }) {
   // Example data for your cards, updated to reflect the Event Table
@@ -161,15 +162,31 @@ const filteredEvents = events
   if (loading) return <p>Loading events...</p>;
   if (error) return <p>Error loading events: {error}</p>;
 
+  function formatTime(timeString) {
+    // Extract the hour from the string
+    let [hour, minute] = timeString.split("T")[1].split(":");
+    hour = parseInt(hour); // Convert to number
+
+    // Determine AM/PM
+    let period = hour >= 12 ? "PM" : "AM";
+    
+    // Convert to 12-hour format
+    hour = hour % 12 || 12; // Convert 0 to 12 for midnight case
+
+    return `${hour}:${minute} ${period}`; // Append "UTC" or desired timezone
+}
+
+//////////////////change the eventcard admin 
+
 return (
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
   {filteredEvents.map((event) => (
-    <EventCard
+    <EventCardAdmin
       key={event.id}
       EventName={event.eventName}
       Location={event.location}
       Date={event.startDate}
-      Time={event.startTime}
+      Time={formatTime(event.timeStart)}
       EventOrganizer={event.org}
       PhoneNumber={event.phone}
       EventDescription={event.eventDesc}
