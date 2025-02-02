@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import axios from 'axios';
 
 export default function CreateEvent() {
   const [event, setEvent] = useState({
@@ -44,32 +43,39 @@ export default function CreateEvent() {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('event[eventName]', event.eventName);
-    formData.append('event[eventType]', event.eventType);
-    formData.append('event[startDate]', event.startDate);
-    formData.append('event[endDate]', event.endDate);
-    formData.append('event[location]', event.location);
-    formData.append('event[org]', event.org);
-    formData.append('event[timeStart]', event.timeStart);
-    formData.append('event[timeEnd]', event.timeEnd);
-    formData.append('event[eventDesc]', event.eventDesc);
-    formData.append('event[instruct]', event.instruct);
-    formData.append('event[pic]', event.pic);
-    formData.append('event[phone]', event.phone);
+    formData.append('eventlist[eventName]', event.eventName);
+    formData.append('eventlist[eventType]', event.eventType);
+    formData.append('eventlist[startDate]', event.startDate);
+    formData.append('eventlist[endDate]', event.endDate);
+    formData.append('eventlist[location]', event.location);
+    formData.append('eventlist[org]', event.org);
+    formData.append('eventlist[timeStart]', event.timeStart);
+    formData.append('eventlist[timeEnd]', event.timeEnd);
+    formData.append('eventlist[eventDesc]', event.eventDesc);
+    formData.append('eventlist[instruct]', event.instruct);
+    formData.append('eventlist[pic]', event.pic);
+    formData.append('eventlist[phone]', event.phone);
 
     try {
-      const response = await axios.post(`http://localhost:3001/eventlists`, formData, {
+      const response = await fetch('http://localhost:3001/eventlists', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${authToken}`,
         },
+        body: formData,
       });
 
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
       setMessage('Event created successfully!');
       setError(null);
     } catch (error) {
       setError('Error creating event.');
       setMessage(null);
+      console.error('Error:', error);
     }
   };
 
@@ -134,6 +140,34 @@ export default function CreateEvent() {
           />
         </div>
 
+        {/* Start Time */}
+        <div className="mb-4">
+          <label htmlFor="timeStart" className="block text-gray-700 font-bold mb-2">Start Time</label>
+          <input
+            type="time"
+            name="timeStart"
+            id="timeStart"
+            value={event.timeStart}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            required
+          />
+        </div>
+
+        {/* End Time */}
+        <div className="mb-4">
+          <label htmlFor="timeEnd" className="block text-gray-700 font-bold mb-2">End Time</label>
+          <input
+            type="time"
+            name="timeEnd"
+            id="timeEnd"
+            value={event.timeEnd}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            required
+          />
+        </div>
+
         {/* Location */}
         <div className="mb-4">
           <label htmlFor="location" className="block text-gray-700 font-bold mb-2">Location</label>
@@ -159,31 +193,6 @@ export default function CreateEvent() {
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg"
             required
-          />
-        </div>
-
-        {/* Event Description */}
-        <div className="mb-4">
-          <label htmlFor="eventDesc" className="block text-gray-700 font-bold mb-2">Event Description</label>
-          <textarea
-            name="eventDesc"
-            id="eventDesc"
-            value={event.eventDesc}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            required
-          />
-        </div>
-
-        {/* Instructions */}
-        <div className="mb-4">
-          <label htmlFor="instruct" className="block text-gray-700 font-bold mb-2">Instructions</label>
-          <textarea
-            name="instruct"
-            id="instruct"
-            value={event.instruct}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
           />
         </div>
 
