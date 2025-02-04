@@ -183,6 +183,7 @@ return (
   {filteredEvents.map((event) => (
     <EventCardAdmin
       key={event.id}
+      id={event.id}
       EventName={event.eventName}
       Location={event.location}
       Date={event.startDate}
