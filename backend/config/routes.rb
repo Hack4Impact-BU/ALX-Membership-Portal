@@ -1,35 +1,24 @@
 Rails.application.routes.draw do
+  # Resourceful routes
   resources :get_involveds
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  resources :eventlists
+  resources :jobs, only: [:index, :create, :show]
+  resources :q_and_as, only: [:index, :show, :new, :create, :destroy]
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # Custom routes
   get "up" => "rails/health#show", as: :rails_health_check
   get '/profile', to: 'users#profile'
   post 'auth0/sign_up', to: 'auth0#sign_up'
   post 'auth0/login', to: 'auth0#login'
-  
-  # Defines the root path route ("/")
-  # root "posts#index"
 
-    # Other routes
-  
-   
-    # API endpoint to get test_table data
+  # Additional API endpoints (if you really need them in addition to the resourceful ones)
   get '/users', to: 'users#index'
-  get '/get_involved', to: 'get_involveds#index'
-
-  get '/eventlists', to: 'eventlists#index'
+  # The following line may be redundant with `resources :get_involveds`
+  # get '/get_involved', to: 'get_involveds#index'
   
-  Rails.application.routes.draw do
-  resources :get_involveds
-  resources :eventlists
-
+  # This custom route may be redundant with `resources :q_and_as`
   get '/q_and_a', to: 'q_and_as#index'
-  
-  Rails.application.routes.draw do
-    resources :get_involveds
-    resources :jobs, only: [:index, :create, :show]
-    resources :q_and_as, only: [:index, :show, :new, :create, :destroy]
-  end
+
+  # Uncomment and set your root route if needed
+  # root "posts#index"
 end
