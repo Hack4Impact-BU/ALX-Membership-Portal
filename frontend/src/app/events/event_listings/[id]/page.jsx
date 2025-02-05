@@ -19,6 +19,10 @@ export default async function Page({ searchParams }) {
         EventName = null,
         EventOrganizer = null
       } = searchParams;
+
+    
+
+
     return (
       <div className="flex flex-col w-full h-[1280px]">
         <div className="flex flex-row gap-8 w-full h-2/5 p-12">
