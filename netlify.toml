@@ -1,0 +1,12 @@
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Optional: Define environment variables
+# [context.production.environment]
+  # NEXT_PUBLIC_API_URL = "https://your-rails-backend.herokuapp.com"
+  # Add other environment variables as needed

@@ -2,3 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+    background-color: #214933;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100%;
+    font-family: 'Proza Libre', sans-serif;
+  }
+  
+  @font-face {
+    font-family: 'TanMeringue';
+    src: url('/fonts/TanMeringue.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
