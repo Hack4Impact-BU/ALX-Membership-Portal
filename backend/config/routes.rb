@@ -24,7 +24,12 @@ Rails.application.routes.draw do
   Rails.application.routes.draw do
   resources :get_involveds
   resources :eventlists
-    resources :jobs, only: [:index, :create, :show]
-  end
 
+  get '/q_and_a', to: 'q_and_as#index'
+  
+  Rails.application.routes.draw do
+    resources :get_involveds
+    resources :jobs, only: [:index, :create, :show]
+    resources :q_and_as, only: [:index, :show, :new, :create, :destroy]
+  end
 end
