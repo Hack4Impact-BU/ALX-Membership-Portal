@@ -1,0 +1,31 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  eventType: MyString
+  startDate: 2024-12-07
+  endDate: 2024-12-07
+  location: MyString
+  org: MyString
+  timeStart: 2024-12-07 15:52:58
+  timeEnd: 2024-12-07 15:52:58
+  eventName: MyString
+  isSaved: false
+  eventDesc: MyText
+  instruct: MyText
+  pic: MyString
+  phone: MyString
+
+two:
+  eventType: MyString
+  startDate: 2024-12-07
+  endDate: 2024-12-07
+  location: MyString
+  org: MyString
+  timeStart: 2024-12-07 15:52:58
+  timeEnd: 2024-12-07 15:52:58
+  eventName: MyString
+  isSaved: false
+  eventDesc: MyText
+  instruct: MyText
+  pic: MyString
+  phone: MyString

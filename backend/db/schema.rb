@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema[7.2].define(version: 2025_01_02_054422) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +43,48 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_02_054422) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "benefits_discounts", force: :cascade do |t|
+    t.string "title"
+    t.string "location"
+    t.date "start_date"
+    t.date "end_date"
+    t.text "offer_description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "link"
+    t.boolean "is_saved", default: false, null: false
+    t.string "business_type"
+  end
+
+  create_table "discounts", force: :cascade do |t|
+    t.string "title"
+    t.string "location"
+    t.boolean "is_saved"
+    t.string "offer_description"
+    t.string "redeem_desc"
+    t.date "date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "eventlists", force: :cascade do |t|
+    t.string "eventType"
+    t.date "startDate"
+    t.date "endDate"
+    t.string "location"
+    t.string "org"
+    t.time "timeStart"
+    t.time "timeEnd"
+    t.string "eventName"
+    t.boolean "isSaved"
+    t.text "eventDesc"
+    t.text "instruct"
+    t.string "pic"
+    t.string "phone"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "get_involveds", force: :cascade do |t|
     t.string "title"
     t.text "summary"
@@ -65,6 +108,13 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_02_054422) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "members", id: :serial, force: :cascade do |t|
+    t.string "name", limit: 100, null: false
+    t.string "email", limit: 100, null: false
+    t.date "join_date", default: -> { "CURRENT_DATE" }
+
+    t.unique_constraint ["email"], name: "members_email_key"
 
   create_table "q_and_as", force: :cascade do |t|
     t.string "question"

@@ -33,8 +33,9 @@ export default function EventListings() {
 
   
   return (
-    <div className="w-11/12 text-white mt-20">
-        <ReusableHeader header={"Upcoming Events"} translation={"*    Próximos eventos"}/>
+    <div className="w-11/12 text-white mt-20 h-screen">
+        <ReusableHeader header={"Upcoming Events"} translation={"*    Próximos eventos"} isAdmin={true} directTo={"/events/event_listings/create"}/>
+
 
       <div className={`max-w-7xl p-8 mx-auto my-8 ${prozaLibre.className}`}>
 
@@ -107,10 +108,13 @@ export default function EventListings() {
               </div>
           </div>
 
-          <button className={`p-3 bg-white text-green-900 h-1/2 w-1/12 rounded-md ${showSavedOnly ? "bg-green-500" : ""}`}
+          <button
+                  className={`p-3 text-green-900 h-1/2 w-3/12 rounded-md ${
+                    showSavedOnly ? "bg-green-500" : "bg-white"
+                  }`}
                   onClick={toggleShowSavedOnly}>
-            {showSavedOnly ? "Show All" : "Show Saved"}
-          </button>
+  {showSavedOnly ? "Show All" : "Show Saved"}
+</button>
           
 
         </div>
