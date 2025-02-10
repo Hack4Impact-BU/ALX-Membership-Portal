@@ -8,7 +8,7 @@ import Link from 'next/link';
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
-export default function Card({offerTitle, place, link, pic, startDate, index, offerDesc, isSaved, BusinessType, distance, toggleCardSaved}) {
+export default function Card({offerTitle, place, link, pic, startDate, index, offerDesc, isSaved, BusinessType, distance, toggleCardSaved, instruct}) {
 
 
     const handleClick = () => {
@@ -20,7 +20,7 @@ export default function Card({offerTitle, place, link, pic, startDate, index, of
             <div className="border flex flex-col justify-evenly rounded-3xl bg-[#F6F2E9] w-80 h-56">
                 <Link href={{
                     pathname: `/benefits_discounts/${place}`,
-                    query: { offerTitle, place, link, pic, startDate, offerDesc, index, isSaved, BusinessType, distance, toggleCardSaved }
+                    query: { offerTitle, place, link, instruct, startDate, offerDesc, index, isSaved, BusinessType, distance, toggleCardSaved, pic }
                     }}>
                 <div className="flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
                     {/* gonna be image circle */}
