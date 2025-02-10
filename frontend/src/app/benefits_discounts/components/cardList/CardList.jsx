@@ -13,8 +13,33 @@ const montserrat = Montserrat({
 
 
 export default function CardList() {
+
+    const [card, setCard] = useState([]); // Start with an empty list
+    const [loading, setLoading] = useState(true); // Track loading state
+    const [error, setError] = useState(null); // Track errors during fetch
+  
+    useEffect(() => {
+      const fetchCards = async () => {
+        try {
+          const response = await fetch("http://localhost:3001/product_offers"); // Adjust endpoint URL as needed
+          if (!response.ok) throw new Error("Failed to fetch events");
+  
+          const data = await response.json(); // Parse JSON response
+          console.log("Fetched data:", data)
+          setCard(data);
+          setLoading(false);
+        } catch (err) {
+          setError(err.message);
+          setLoading(false);
+        }
+      };
+  
+      fetchCards();
+    }, []);
+
     const [renderSaved, setRenderSaved] = useState(false);
     const [cards, setCards] = useState(benefits);
+    console.log(cards)
     const [selectedBusinessType, setSelectedBusinessType] = useState(null);
     const [selectedDistance, setSelectedDistance] = useState(null);
 
@@ -42,7 +67,7 @@ export default function CardList() {
             <div className="flex h-[34rem] flex-row gap-10">
                 {/* Cards Grid */}
                 <div className="grid grid-cols-2 gap-6 p-10 w-[47rem]">
-                    {(renderSaved ? filteredCards.filter(offer => offer.saved) : filteredCards).map((offer, index) => (
+                    {card.map((offer, index) => (
                         <Card key={index} {...offer} index={index} toggleCardSaved={toggleCardSaved}></Card>
                     ))}
                 </div>
