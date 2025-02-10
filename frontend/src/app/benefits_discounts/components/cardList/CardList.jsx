@@ -37,11 +37,11 @@ export default function CardList() {
     const distance = [5, 10, 15, 20, 25, 30];
 
     return (
-        <div className="flex flex-col justify-center min-h-screen bg-[#214933] text-white">
+        <div className="flex flex-col pt-24 min-h-screen bg-[#214933] text-white">
             {/* Main Content */}
-            <div className="flex flex-row gap-10">
+            <div className="flex h-[34rem] flex-row gap-10">
                 {/* Cards Grid */}
-                <div className="grid grid-cols-2 gap-6 p-10 w-[52rem]">
+                <div className="grid grid-cols-2 gap-6 p-10 w-[47rem]">
                     {(renderSaved ? filteredCards.filter(offer => offer.saved) : filteredCards).map((offer, index) => (
                         <Card key={index} {...offer} index={index} toggleCardSaved={toggleCardSaved}></Card>
                     ))}
