@@ -46,10 +46,6 @@ class Auth0Controller < ApplicationController
     email = params[:email]
     password = params[:password]
 
-    # Log the environment variables to debug any issues with them
-    Rails.logger.info("NEXT_PUBLIC_AUTH0_DOMAIN: #{ENV['NEXT_PUBLIC_AUTH0_DOMAIN']}")
-    Rails.logger.info("AUTH0_CLIENT_ID: #{ENV['AUTH0_CLIENT_ID']}")
-    Rails.logger.info("Login request received with email: #{email}")
     
     response = HTTP.post("https://#{ENV['NEXT_PUBLIC_AUTH0_DOMAIN']}/oauth/token", json: {
       grant_type: 'http://auth0.com/oauth/grant-type/password-realm',
@@ -84,7 +80,7 @@ class Auth0Controller < ApplicationController
       {
         client_id: ENV['AUTH0_CLIENT_ID'],
         client_secret: ENV['AUTH0_SECRET_ID'],
-        audience: "https://dev-nw3peompna7wbosj.us.auth0.com/api/v2/",
+        audience: ENV['AUTH0_AUDIENCE'],
         grant_type: "client_credentials"
       }.to_json,
       "Content-Type" => "application/json"
