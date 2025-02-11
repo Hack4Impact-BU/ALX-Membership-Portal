@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Card from "../card/card"
+import AdminCard from "../adminCard/adminCard"
 import DropDown from "@/components/DropDown/DropDown"
 
 import { Montserrat } from "next/font/google"
@@ -61,10 +62,10 @@ export default function CardList() {
         <div className="flex flex-col pt-24 min-h-screen bg-[#214933] text-white">
             {/* Main Content */}
             <div className="flex h-[34rem] flex-row gap-10">
-                {/* Cards Grid */}
+                {/* Cards Grid  ---------------------------------CHANGED TO RENDER REGULAR CARD RATHER THAN ADMINCARD*/}
                 <div className="grid grid-cols-2 gap-6 p-10 w-[47rem]">
                     {(renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).map((offer, index) => (
-                        <Card key={index} {...offer} index={index} toggleCardSaved={toggleCardSaved}></Card>
+                        <AdminCard key={index} {...offer} index={index} toggleCardSaved={toggleCardSaved}></AdminCard>
                     ))}
                 </div>
 
