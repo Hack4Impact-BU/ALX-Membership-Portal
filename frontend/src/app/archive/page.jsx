@@ -126,6 +126,11 @@ export default function Archive() {
           ))}
         </div>
       </div>
+      <div className={`flex ${prozaLibre.className} flex-col w-full border h-[15rem]`}>
+        <p className='text-[34px]'>Past Research 1</p>
+        <p className='text-[20px]'>Description</p>
+        
+      </div>
     </div>
   );
 }
