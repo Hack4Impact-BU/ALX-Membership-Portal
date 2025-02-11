@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import Card from "../card/card"
-import { benefits } from "./data"
 import DropDown from "@/components/DropDown/DropDown"
 
 import { Montserrat } from "next/font/google"
@@ -38,14 +37,11 @@ export default function CardList() {
     }, []);
 
     const [renderSaved, setRenderSaved] = useState(false);
-    const [cards, setCards] = useState(benefits);
-    console.log(cards)
     const [selectedBusinessType, setSelectedBusinessType] = useState(null);
     const [selectedDistance, setSelectedDistance] = useState(null);
 
-    const filteredCards = cards.filter(card => {
-        return (!selectedBusinessType || card.type === selectedBusinessType) &&
-               (!selectedDistance || card.distance <= selectedDistance);
+    const filteredCards = card.filter(card => {
+        return (!selectedBusinessType || card.businessType === selectedBusinessType)
     });
 
     const handleSaved = () => {
@@ -53,12 +49,12 @@ export default function CardList() {
     };
 
     const toggleCardSaved = (index) => {
-        const updatedCards = [...cards];
-        updatedCards[index].saved = !updatedCards[index].saved;
+        const updatedCards = [...card];
+        updatedCards[index].isSaved = !updatedCards[index].isSaved;
         setCards(updatedCards);
     };
 
-    const businessType = ["Museums", "Cafes", "Gym", "Fashion"];
+    const businessType = ["Museum", "Cafes", "Gym", "Fashion"];
     const distance = [5, 10, 15, 20, 25, 30];
 
     return (
@@ -67,7 +63,7 @@ export default function CardList() {
             <div className="flex h-[34rem] flex-row gap-10">
                 {/* Cards Grid */}
                 <div className="grid grid-cols-2 gap-6 p-10 w-[47rem]">
-                    {card.map((offer, index) => (
+                    {(renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).map((offer, index) => (
                         <Card key={index} {...offer} index={index} toggleCardSaved={toggleCardSaved}></Card>
                     ))}
                 </div>
