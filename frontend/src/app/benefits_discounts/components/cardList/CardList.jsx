@@ -51,7 +51,7 @@ export default function CardList() {
     const toggleCardSaved = (index) => {
         const updatedCards = [...card];
         updatedCards[index].isSaved = !updatedCards[index].isSaved;
-        setCards(updatedCards);
+        setCard(updatedCards);
     };
 
     const businessType = ["Museum", "Cafes", "Gym", "Fashion"];
