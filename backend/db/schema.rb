@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema[7.2].define(version: 2025_01_02_054422) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_08_232839) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -115,6 +114,21 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_02_054422) do
     t.date "join_date", default: -> { "CURRENT_DATE" }
 
     t.unique_constraint ["email"], name: "members_email_key"
+  end
+
+  create_table "product_offers", force: :cascade do |t|
+    t.string "place"
+    t.string "offerTitle"
+    t.text "offerDesc"
+    t.text "instruct"
+    t.boolean "isSaved"
+    t.date "startDate"
+    t.date "endDate"
+    t.string "businessType"
+    t.string "pic"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "q_and_as", force: :cascade do |t|
     t.string "question"

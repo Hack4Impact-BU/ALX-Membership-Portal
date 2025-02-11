@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   # Resourceful routes
+  resources :product_offers
   resources :get_involveds
   resources :eventlists
   resources :jobs, only: [:index, :create, :show]
