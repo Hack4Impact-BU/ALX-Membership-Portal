@@ -50,19 +50,19 @@ export default function Archive() {
     <div className="flex flex-col items-center bg-[#214933] min-h-screen w-10/12 p-8 mt-6 text-white">
       {/* Header */}
       <div className="flex items-center mb-6 w-full">
-        <FolderIcon className="h-32 w-32 mr-4" />
-        <h1 className="pt-6 text-[80px] font-bold font-custom items-center">Archive</h1>
+        <FolderIcon className="h-32 w-32 mr-4 stroke-[#F6F2E9]" />
+        <h1 className="pt-6 text-[70px] text-[#F6F2E9] font-custom items-center">Archive</h1>
       </div>
 
       <div className={`flex flex-col items-start pl-8 my-12 w-full ${prozaLibre.className}`}>
-        <h2 className="text-xl mb-2">Archived Section:</h2>
+        <h2 className="text-xl mb-2 text-[#F6F2E9]">Archived Section:</h2>
         <div className="flex space-x-4 mb-6">
           {['Previous Events', 'Research Work', 'Recorded Trainings'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-8 py-4 rounded-lg text-lg ${
-                activeTab === tab ? 'bg-[#F6F2E9] text-[#214933]' : 'bg-[#335843] text-white'
+                activeTab === tab ? 'bg-[#F6F2E9] text-[#214933]' : 'bg-[#335843] text-[#F6F2E9]'
               }`}
             >
               {tab}
