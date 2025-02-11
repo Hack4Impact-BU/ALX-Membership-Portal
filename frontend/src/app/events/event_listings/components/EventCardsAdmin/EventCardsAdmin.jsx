@@ -16,10 +16,12 @@ export default function EventCardAdmin({EventDescription, Location, WebsiteLink,
         setIsSaved(!isSaved);
         toggleCardSaved(index);
     }
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 
     const handleDelete = async (eventId) => {
         try {
-          const response = await fetch(`http://localhost:3001/eventlists/${id}`, {
+          const response = await fetch(`${apiBaseUrl}/eventlists/${id}`, {
             method: 'DELETE',
           });
       

@@ -13,10 +13,12 @@ export default function AdminCard({id, offerTitle, place, link, pic, startDate, 
     const handleClick = () => {
         toggleCardSaved(index);
     }
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 
     const handleDelete = async (eventId) => {
         try {
-          const response = await fetch(`http://localhost:3001/product_offers/${id}`, {
+          const response = await fetch(`${apiBaseUrl}/product_offers/${id}`, {
             method: 'DELETE',
           });
       

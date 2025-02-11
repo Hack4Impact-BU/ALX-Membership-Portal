@@ -1,7 +1,6 @@
 
 'use client'
 
-import { useState } from 'react';
 import { Inter, Proza_Libre } from 'next/font/google'; // Import the Proza Libre font
 import Link from 'next/link';
 

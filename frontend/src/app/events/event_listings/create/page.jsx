@@ -37,6 +37,8 @@ export default function CreateEvent() {
       pic: e.target.files[0],
     });
   };
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -57,7 +59,7 @@ export default function CreateEvent() {
     formData.append('eventlist[phone]', event.phone);
 
     try {
-      const response = await fetch('http://localhost:3001/eventlists', {
+      const response = await fetch(`${apiBaseUrl}/eventlists`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${authToken}`,

@@ -8,10 +8,13 @@ export default function Eventing({ eventType, searchField, showSavedOnly }) {
   const [loading, setLoading] = useState(true); // Track loading state
   const [error, setError] = useState(null); // Track errors during fetch
 
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch("http://localhost:3001/eventlists"); // Adjust endpoint URL as needed
+        const response = await fetch(`${apiBaseUrl}/eventlists`); // Adjust endpoint URL as needed
         if (!response.ok) throw new Error("Failed to fetch events");
 
         const data = await response.json(); // Parse JSON response
