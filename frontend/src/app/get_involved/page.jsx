@@ -19,17 +19,33 @@ export default function GetInvolved() {
   const [isDeleteMode, setIsDeleteMode] = useState(false); // Toggle delete mode
   const [showConfirmModal, setShowConfirmModal] = useState(false); // Show confirmation modal
   const [deleteId, setDeleteId] = useState(null); // ID of involvement to delete
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   // Define the API base URL from environment variables
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  // Fetch data from the API
+  // Fetch data from the API with a minimum delay of 300 ms
   const fetchData = async () => {
+    setIsLoading(true);
+    const startTime = Date.now();
     try {
       const response = await axios.get(`${apiBaseUrl}/get_involveds`);
-      setData(response.data);
+      const result = response.data;
+      const elapsed = Date.now() - startTime;
+      const minDelay = 300; // 300 ms minimum delay
+      const remainingDelay = minDelay - elapsed;
+      if (remainingDelay > 0) {
+        setTimeout(() => {
+          setData(result);
+          setIsLoading(false);
+        }, remainingDelay);
+      } else {
+        setData(result);
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
+      setIsLoading(false);
     }
   };
 
@@ -101,66 +117,73 @@ export default function GetInvolved() {
 
       {/* Card Section */}
       <div className={`flex flex-col w-full justify-center gap-4 mb-8 ${prozaLibre.className}`}>
-        {data.map((item, index) => (
-          <div
-            key={item.id}
-            className="bg-[#335843] text-white p-8 rounded-xl shadow-lg flex flex-col flex-grow relative"
-            ref={(el) => (contentRefs.current[index] = el)}
-            style={{
-              overflow: 'hidden',
-              minHeight: '200px',
-              maxHeight: '150px',
-            }}
-          >
-            <h3 className="text-[28px] font-semibold mb-6">{item.title}</h3>
-            
-            {/* Display summary if collapsed, or full description if expanded */}
-            <p className="mb-10">
-              {expandedCard === index ? item.description : item.summary}
-            </p>
+        {isLoading ? (
+          // Display loading message inside the container
+          <div className="flex items-center justify-center" style={{ height: '300px' }}>
+            <p className="text-2xl font-bold">Loading, please wait...</p>
+          </div>
+        ) : (
+          data.map((item, index) => (
+            <div
+              key={item.id}
+              className="bg-[#335843] text-white p-8 rounded-xl shadow-lg flex flex-col flex-grow relative"
+              ref={(el) => (contentRefs.current[index] = el)}
+              style={{
+                overflow: 'hidden',
+                minHeight: '200px',
+                maxHeight: '150px',
+              }}
+            >
+              <h3 className="text-[28px] font-semibold mb-6">{item.title}</h3>
+              
+              {/* Display summary if collapsed, or full description if expanded */}
+              <p className="mb-10">
+                {expandedCard === index ? item.description : item.summary}
+              </p>
 
-            {expandedCard === index && (
-              <div className="flex flex-col justify-end flex-grow mt-4">
-                <div className="grid grid-cols-2 gap-8">
-                  <div className="flex items-center gap-4">
-                    <CalendarTodayIcon style={{ fontSize: 32 }} />
-                    <p className="text-lg">{item.date}</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <AccessTimeIcon style={{ fontSize: 32 }} />
-                    <p className="text-lg">{item.time}</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <LocationOnIcon style={{ fontSize: 32 }} />
-                    <p className="text-lg">{item.location}</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <PhoneIcon style={{ fontSize: 32 }} />
-                    <p className="text-lg">{item.phone}</p>
+              {expandedCard === index && (
+                <div className="flex flex-col justify-end flex-grow mt-4">
+                  <div className="grid grid-cols-2 gap-8">
+                    <div className="flex items-center gap-4">
+                      <CalendarTodayIcon style={{ fontSize: 32 }} />
+                      <p className="text-lg">{item.date}</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <AccessTimeIcon style={{ fontSize: 32 }} />
+                      <p className="text-lg">{item.time}</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <LocationOnIcon style={{ fontSize: 32 }} />
+                      <p className="text-lg">{item.location}</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <PhoneIcon style={{ fontSize: 32 }} />
+                      <p className="text-lg">{item.phone}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Delete Icon */}
-            {isDeleteMode && (
+              {/* Delete Icon */}
+              {isDeleteMode && (
+                <button
+                  className="absolute top-4 right-4 bg-white rounded-full p-1 text-red-600"
+                  onClick={() => handleDeleteClick(item.id)}
+                >
+                  <CloseIcon />
+                </button>
+              )}
+
+              {/* Expand/Collapse Button */}
               <button
-                className="absolute top-4 right-4 bg-white rounded-full p-1 text-red-600" // White circle around the delete icon
-                onClick={() => handleDeleteClick(item.id)}
+                onClick={() => toggleExpandCard(index)}
+                className="absolute bottom-4 right-4 text-[#A9A9A9] bg-transparent hover:underline text-sm"
               >
-                <CloseIcon />
+                {expandedCard === index ? 'See Less <<' : 'See More >>'}
               </button>
-            )}
-
-            {/* Expand/Collapse Button */}
-            <button
-              onClick={() => toggleExpandCard(index)}
-              className="absolute bottom-4 right-4 text-[#A9A9A9] bg-transparent hover:underline text-sm"
-            >
-              {expandedCard === index ? 'See Less <<' : 'See More >>'}
-            </button>
-          </div>
-        ))}
+            </div>
+          ))
+        )}
       </div>
 
       {/* Confirmation Modal */}

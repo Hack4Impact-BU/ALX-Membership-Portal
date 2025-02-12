@@ -4,44 +4,56 @@ import Link from 'next/link';
 import Hyperlinks from '@/components/Hyperlinks';
 import { Inter, Proza_Libre } from 'next/font/google';
 import axios from 'axios';
+import { QuestionMarkCircleIcon } from '@heroicons/react/outline';
 
 const inter = Inter({ subsets: ['latin'] });
 const prozaLibre = Proza_Libre({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'] });
-
-import { QuestionMarkCircleIcon } from '@heroicons/react/outline';
 
 export default function Questions() {
   const [qAndAs, setQAndAs] = useState([]);
   const [showDelete, setShowDelete] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch Q&As from the API
+  // Fetch Q&As from the API with a minimum delay of 300 ms
   useEffect(() => {
     const fetchQAndAs = async () => {
+      setIsLoading(true);
+      const startTime = Date.now();
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/q_and_as`);
-        setQAndAs(response.data); // Assuming the API returns an array of Q&A objects
+        const data = response.data;
+        const elapsed = Date.now() - startTime;
+        const minDelay = 300; // 300 ms minimum delay
+        const remainingDelay = minDelay - elapsed;
+        if (remainingDelay > 0) {
+          setTimeout(() => {
+            setQAndAs(data);
+            setIsLoading(false);
+          }, remainingDelay);
+        } else {
+          setQAndAs(data);
+          setIsLoading(false);
+        }
       } catch (error) {
         console.error('Error fetching Q&A data:', error);
         setErrorMessage('Failed to fetch Q&A data. Please try again later.');
+        setIsLoading(false);
       }
     };
 
     fetchQAndAs();
   }, []);
 
-  // Handle Delete Button
+  // Toggle Delete Mode
   const toggleDeleteMode = () => {
     setShowDelete(!showDelete);
   };
 
-  // Handle Deletion of a Q&A
+  // Handle deletion of a Q&A entry
   const handleDelete = async (id) => {
     try {
-      // Send a DELETE request to your API
       await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/q_and_as/${id}`);
-
-      // Remove the deleted item from the local state
       setQAndAs(qAndAs.filter((qanda) => qanda.id !== id));
     } catch (error) {
       console.error('Error deleting Q&A:', error);
@@ -51,19 +63,18 @@ export default function Questions() {
 
   return (
     <div className="flex flex-col w-10/12 text-white items-center min-h-screen p-8 mt-6">
-      {/* Top Left Icon and FAQ Title */}
+      {/* Header and FAQ Title */}
       <div className="flex text-left gap-4 w-full">
         <QuestionMarkCircleIcon className="h-32 w-32 text-white mx-2" />
         <h1 className="text-7xl font-bold font-custom pt-10">FAQ's</h1>
       </div>
 
       <div className="w-11/12 rounded-lg p-8">
-        {/* Display Error Message */}
+        {/* Error Message */}
         {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
 
         {/* Buttons for Create and Delete */}
         <div className="flex gap-4 mb-6">
-          {/* Replace router.push with Link for routing */}
           <Link href="questions/create" passHref>
             <p className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
               Create Q&A
@@ -80,28 +91,35 @@ export default function Questions() {
         {/* FAQ Section */}
         <div className={`bg-[#F5F3EB] text-green-900 rounded-lg p-6 ${prozaLibre.className}`}>
           <h2 className="text-2xl font-bold mb-4">Frequently Asked Questions:</h2>
-          <div className="space-y-4">
-            {qAndAs.length === 0 ? (
-              <p>No Q&A entries found.</p>
-            ) : (
-              qAndAs.map((qanda) => (
-                <div key={qanda.id} className="flex justify-between items-center">
-                  <div>
-                    <p className="font-semibold">Q: {qanda.question}</p>
-                    <p className="ml-4">A: {qanda.answer}</p>
+          {isLoading ? (
+            // Loading message inside the FAQ container
+            <div className="flex items-center justify-center" style={{ height: '300px' }}>
+              <p className="text-2xl font-bold">Loading, please wait...</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {qAndAs.length === 0 ? (
+                <p>No Q&A entries found.</p>
+              ) : (
+                qAndAs.map((qanda) => (
+                  <div key={qanda.id} className="flex justify-between items-center">
+                    <div>
+                      <p className="font-semibold">Q: {qanda.question}</p>
+                      <p className="ml-4">A: {qanda.answer}</p>
+                    </div>
+                    {showDelete && (
+                      <button
+                        onClick={() => handleDelete(qanda.id)}
+                        className="text-red-500 font-bold text-xl hover:text-red-700"
+                      >
+                        X
+                      </button>
+                    )}
                   </div>
-                  {showDelete && (
-                    <button
-                      onClick={() => handleDelete(qanda.id)}
-                      className="text-red-500 font-bold text-xl hover:text-red-700"
-                    >
-                      X
-                    </button>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
+                ))
+              )}
+            </div>
+          )}
         </div>
       </div>
       <Hyperlinks />
