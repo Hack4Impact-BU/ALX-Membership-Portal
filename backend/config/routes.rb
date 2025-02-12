@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   resources :product_offers
   resources :get_involveds
   resources :eventlists
-  resources :jobs, only: [:index, :create, :show]
+  resources :jobs, only: [:index, :create, :show, :destroy]
   resources :q_and_as, only: [:index, :show, :new, :create, :destroy]
 
   # Custom routes
