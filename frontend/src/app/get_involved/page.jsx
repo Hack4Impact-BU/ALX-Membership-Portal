@@ -8,6 +8,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import Link from 'next/link';
 import axios from 'axios';
 import CloseIcon from '@mui/icons-material/Close';
+import LoadingScreen from '@/components/LoadingScreen';
 import Hyperlinks from '@/components/Hyperlinks';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -119,10 +120,7 @@ export default function GetInvolved() {
       {/* Card Section */}
       <div className={`flex flex-col w-full justify-center gap-4 mb-8 ${prozaLibre.className}`}>
         {isLoading ? (
-          // Display loading message inside the container
-          <div className="flex items-center justify-center" style={{ height: '300px' }}>
-            <p className="text-2xl font-bold">Loading, please wait...</p>
-          </div>
+          <LoadingScreen />
         ) : (
           data.map((item, index) => (
             <div
