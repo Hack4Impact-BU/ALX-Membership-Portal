@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FolderIcon, BookmarkIcon } from '@heroicons/react/outline';
 import { Inter, Proza_Libre } from 'next/font/google';
 import DropdownCard from '@/components/DropdownCards/DropwdownCards';
@@ -13,20 +13,26 @@ export default function Archive() {
 
   const [expandedCard, setExpandedCard] = useState(null);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
-  const [data, setData] = useState([
-    // Example data
-    {
-      id: 1,
-      title: 'Past Research 1',
-      summary: 'This is a summary of Event 1.',
-      description: 'This is the full description of Event 1.',
-      date: '2023-10-01',
-      time: '10:00 AM',
-      location: '123 Main St',
-      phone: '555-1234',
-    },
-    // Add more items as needed
-  ]);
+  const [data, setData] = useState([])
+
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    useEffect(() => {
+      const fetchEvents = async () => {
+        try {
+          const response = await fetch(`${apiBaseUrl}/research`); // Adjust endpoint URL as needed
+          if (!response.ok) throw new Error("Failed to fetch events");
+  
+          const data = await response.json(); // Parse JSON response
+          console.log(data)
+          setData(data);
+          setLoading(false);
+        } catch (err) {
+        }
+      };
+  
+      fetchEvents();
+    }, []);
 
   const toggleExpandCard = (index) => {
     setExpandedCard(expandedCard === index ? null : index);
@@ -123,37 +129,9 @@ export default function Archive() {
       </div>
 
       {/* Saved Items Grid with Horizontal Scroll */}
-      <div className="w-full overflow-x-auto flex space-x-6 snap-x snap-mandatory scrollbar-hide border-y-2 py-16">
-        <div className={`flex ${prozaLibre.className} space-x-8 px-4`}>
-          {savedItems[activeTab].map((item) => (
-            <div
-              key={item.id}
-              className="bg-[#F6F2E9] p-4 rounded-xl shadow-lg w-80 flex flex-col justify-between snap-center transition-transform duration-300 hover:scale-105"
-            >
-              <div className="text-black">
-                <div className="h-12 w-12 rounded-full mb-4" style={{ backgroundColor: item.color }}></div>
-                <div className="p-4 bg-white rounded-xl">
-                  <p className="text-lg text-center">{item.title}</p>
-                </div>
-                <div className="px-2 py-4 rounded-lg">
-                  <p className="text-s">Details: {item.details}</p>
-                </div>
-              </div>
-              <div className="flex justify-between items-center mt-4">
-                <div
-                  className="cursor-pointer text-[#214933]"
-                  onClick={() => handleUnsave(item.id, activeTab)}
-                >
-                  <BookmarkIcon />
-                </div>
-                <a href="#" className="text-blue-600 hover:underline text-xs">See More</a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {data.map((item, index) => (
+      {activeTab === 'Research Work' ? (
+        // Render DropdownCard components for Research Work
+        data.map((item, index) => (
           <DropdownCard
             key={item.id}
             item={item}
@@ -164,8 +142,39 @@ export default function Archive() {
             handleDeleteClick={handleDeleteClick}
             fontName={prozaLibre.className}
           />
-      ))}
-
+        ))
+      ) : (
+        // Render Horizontal Scroll Item Grid for other tabs
+        <div className="w-full overflow-x-auto flex space-x-6 snap-x snap-mandatory scrollbar-hide border-y-2 py-16">
+          <div className={`flex ${prozaLibre.className} space-x-8 px-4`}>
+            {savedItems[activeTab].map((item) => (
+              <div
+                key={item.id}
+                className="bg-[#F6F2E9] p-4 rounded-xl shadow-lg w-80 flex flex-col justify-between snap-center transition-transform duration-300 hover:scale-105"
+              >
+                <div className="text-black">
+                  <div className="h-12 w-12 rounded-full mb-4" style={{ backgroundColor: item.color }}></div>
+                  <div className="p-4 bg-white rounded-xl">
+                    <p className="text-lg text-center">{item.title}</p>
+                  </div>
+                  <div className="px-2 py-4 rounded-lg">
+                    <p className="text-s">Details: {item.details}</p>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center mt-4">
+                  <div
+                    className="cursor-pointer text-[#214933]"
+                    onClick={() => handleUnsave(item.id, activeTab)}
+                  >
+                    <BookmarkIcon />
+                  </div>
+                  <a href="#" className="text-blue-600 hover:underline text-xs">See More</a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
