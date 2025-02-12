@@ -9,6 +9,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import CloseIcon from '@mui/icons-material/Close';
 import LoadingScreen from '@/components/LoadingScreen';
+import Hyperlinks from '@/components/Hyperlinks';
 
 const inter = Inter({ subsets: ['latin'] });
 const prozaLibre = Proza_Libre({ subsets: ['latin'], weight: ['400', '600', '700'] });
@@ -215,6 +216,7 @@ export default function GetInvolved() {
           {isDeleteMode ? 'Cancel Delete Mode' : 'Delete Involvements'}
         </button>
       </div>
+      <Hyperlinks />
     </div>
   );
 }

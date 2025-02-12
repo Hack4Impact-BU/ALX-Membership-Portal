@@ -5,6 +5,7 @@ import { Inter, Proza_Libre } from 'next/font/google';
 import Link from 'next/link';
 import axios from 'axios';
 import LoadingScreen from '@/components/LoadingScreen';
+import Hyperlinks from '@/components/Hyperlinks';
 
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
@@ -235,6 +236,7 @@ export default function JobBoard() {
           {deleteMode ? "Cancel Delete" : "Delete Jobs"}
         </button>
       </div>
+      <Hyperlinks />
     </div>
   );
 }
