@@ -5,6 +5,7 @@ import Hyperlinks from '@/components/Hyperlinks';
 import { Inter, Proza_Libre } from 'next/font/google';
 import axios from 'axios';
 import { QuestionMarkCircleIcon } from '@heroicons/react/outline';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const inter = Inter({ subsets: ['latin'] });
 const prozaLibre = Proza_Libre({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'] });
@@ -88,15 +89,11 @@ export default function Questions() {
           </button>
         </div>
 
-        {/* FAQ Section */}
+        {isLoading ? (
+          <LoadingScreen /> 
+        ): (
         <div className={`bg-[#F5F3EB] text-green-900 rounded-lg p-6 ${prozaLibre.className}`}>
           <h2 className="text-2xl font-bold mb-4">Frequently Asked Questions:</h2>
-          {isLoading ? (
-            // Loading message inside the FAQ container
-            <div className="flex items-center justify-center" style={{ height: '300px' }}>
-              <p className="text-2xl font-bold">Loading, please wait...</p>
-            </div>
-          ) : (
             <div className="space-y-4">
               {qAndAs.length === 0 ? (
                 <p>No Q&A entries found.</p>
@@ -119,8 +116,9 @@ export default function Questions() {
                 ))
               )}
             </div>
-          )}
+
         </div>
+        )}
       </div>
       <Hyperlinks />
     </div>
