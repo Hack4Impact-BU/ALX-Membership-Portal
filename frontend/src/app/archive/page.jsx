@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { FolderIcon, BookmarkIcon } from '@heroicons/react/outline';
 import { Inter, Proza_Libre } from 'next/font/google';
+import DropdownCard from '@/components/DropdownCards/DropwdownCards';
 
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
@@ -9,6 +10,31 @@ const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600
 export default function Archive() {
   const [activeTab, setActiveTab] = useState('Previous Events');
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [expandedCard, setExpandedCard] = useState(null);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [data, setData] = useState([
+    // Example data
+    {
+      id: 1,
+      title: 'Past Research 1',
+      summary: 'This is a summary of Event 1.',
+      description: 'This is the full description of Event 1.',
+      date: '2023-10-01',
+      time: '10:00 AM',
+      location: '123 Main St',
+      phone: '555-1234',
+    },
+    // Add more items as needed
+  ]);
+
+  const toggleExpandCard = (index) => {
+    setExpandedCard(expandedCard === index ? null : index);
+  };
+
+  const handleDeleteClick = (id) => {
+    setData(data.filter(item => item.id !== id));
+  };
 
   const initialSavedItems = {
     "Previous Events": [
@@ -126,11 +152,20 @@ export default function Archive() {
           ))}
         </div>
       </div>
-      <div className={`flex ${prozaLibre.className} flex-col w-full border h-[15rem]`}>
-        <p className='text-[34px]'>Past Research 1</p>
-        <p className='text-[20px]'>Description</p>
-        
-      </div>
+
+      {data.map((item, index) => (
+          <DropdownCard
+            key={item.id}
+            item={item}
+            index={index}
+            expandedCard={expandedCard}
+            toggleExpandCard={toggleExpandCard}
+            isDeleteMode={isDeleteMode}
+            handleDeleteClick={handleDeleteClick}
+            fontName={prozaLibre.className}
+          />
+      ))}
+
     </div>
   );
 }
