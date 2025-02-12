@@ -12,6 +12,7 @@ export default function JobBoard() {
   const [jobs, setJobs] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [deleteMode, setDeleteMode] = useState(false); // Toggle delete mode
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -28,6 +29,20 @@ export default function JobBoard() {
       })
       .catch((error) => {
         console.error("Error fetching jobs:", error);
+      });
+  };
+
+  // Delete a job by its id
+  const deleteJob = (jobId) => {
+    axios.delete(`${apiBaseUrl}/jobs/${jobId}`)
+      .then(() => {
+        setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+        if (selectedJob && selectedJob.id === jobId) {
+          setSelectedJob(null);
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting job:", error);
       });
   };
 
@@ -101,9 +116,20 @@ export default function JobBoard() {
               <div
                 key={job.id}
                 onClick={() => setSelectedJob(job)}
-                className={`bg-[#F6F2E9] text-black p-4 mb-4 rounded-xl shadow-lg flex items-center gap-4 cursor-pointer 
-                ${selectedJob?.id === job.id ? 'ring-4 ring-[#214933] scale-110 transition-transform' : ''}`}
+                className={`relative bg-[#F6F2E9] text-black p-4 mb-4 rounded-xl shadow-lg flex items-center gap-4 cursor-pointer 
+                  ${selectedJob?.id === job.id ? 'ring-4 ring-[#214933] scale-110 transition-transform' : ''}`}
               >
+                {deleteMode && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteJob(job.id);
+                    }}
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                  >
+                    x
+                  </button>
+                )}
                 {job.logo_url ? (
                   <img src={job.logo_url} alt={`${job.title} logo`} className="h-12 w-12 rounded-full" />
                 ) : (
@@ -151,7 +177,12 @@ export default function JobBoard() {
                 ))}
               </ul>
 
-              <p className="mb-8">Contact: <a href={selectedJob?.contact} className="text-blue-600 hover:underline">{selectedJob?.contact}</a></p>
+              <p className="mb-8">
+                Contact:{" "}
+                <a href={selectedJob?.contact} className="text-blue-600 hover:underline">
+                  {selectedJob?.contact}
+                </a>
+              </p>
             </div>
 
             {/* Bookmarks Icon */}
@@ -166,13 +197,21 @@ export default function JobBoard() {
         </div>
       )}
 
-      {/* Create Job Button */}
-      <div className="flex justify-center mt-8">
+      {/* Bottom Buttons */}
+      <div className="flex justify-center mt-8 gap-4">
         <Link href="job_postings/create" passHref>
-          <p className="bg-blue-500 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700">
+          <p className="bg-blue-500 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 cursor-pointer">
             Create New Job
           </p>
         </Link>
+        <button 
+          onClick={() => setDeleteMode(!deleteMode)}
+          className={`py-3 px-6 rounded-lg flex items-center gap-2 shadow-lg ${
+            deleteMode ? 'bg-gray-500 text-white' : 'bg-red-500 text-white'
+          }`}
+        >
+          {deleteMode ? "Cancel Delete" : "Delete Jobs"}
+        </button>
       </div>
     </div>
   );
