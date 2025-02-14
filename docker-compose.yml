@@ -3,7 +3,7 @@ services:
     build:
       context: ./frontend
     env_file:
-      - .env.local
+      - .env
     ports:
       - '3000:3000'
     volumes:
@@ -18,7 +18,7 @@ services:
     build:
       context: ./backend
     env_file:
-      - .env.local
+      - .env
     command: >
       sh -c "bundle exec bin/rails db:migrate db:seed && bundle exec rails s -b 0.0.0.0"
     ports:
@@ -30,8 +30,10 @@ services:
     environment:
       - PORT=3001
       - RAILS_ENV=development
-      - DATABASE_URL=postgresql://postgres:password@db:5432/membership_portal_dev
-      - AWS_DEFAULT_REGION=us-east-2     
+      - DATABASE_URL=postgresql://postgres:my_secure_password@db:5432/membership_portal_dev
+      - AWS_DEFAULT_REGION=us-east-2
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}        
     depends_on:
       db:
         condition: service_healthy
