@@ -5,11 +5,12 @@ import axios from "axios";
 const UsersTable = () => {
   const [users, setUsers] = useState([]);
   const [authToken, setAuthToken] = useState("");
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   useEffect(() => {
     const getToken = async () => {
       try {
-        const response = await axios.post("http://localhost:3001/auth0/token");
+        const response = await axios.post(`${apiBaseUrl}/auth0/token`);
         setAuthToken(response.data.access_token);
       } catch (error) {
         console.error("Error fetching Auth0 token:", error);
@@ -24,7 +25,7 @@ const UsersTable = () => {
 
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/users?all=true", {
+        const response = await axios.get(`${apiBaseUrl}/users?all=true`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
