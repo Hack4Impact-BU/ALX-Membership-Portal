@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Card from "../card/card"
-import { benefits } from "./data"
+import AdminCard from "../adminCard/adminCard"
 import DropDown from "@/components/DropDown/DropDown"
 
 import { Montserrat } from "next/font/google"
@@ -13,14 +13,36 @@ const montserrat = Montserrat({
 
 
 export default function CardList() {
+
+    const [card, setCard] = useState([]); // Start with an empty list
+    const [loading, setLoading] = useState(true); // Track loading state
+    const [error, setError] = useState(null); // Track errors during fetch
+  
+    useEffect(() => {
+      const fetchCards = async () => {
+        try {
+          const response = await fetch("http://localhost:3001/product_offers"); // Adjust endpoint URL as needed
+          if (!response.ok) throw new Error("Failed to fetch events");
+  
+          const data = await response.json(); // Parse JSON response
+          console.log("Fetched data:", data)
+          setCard(data);
+          setLoading(false);
+        } catch (err) {
+          setError(err.message);
+          setLoading(false);
+        }
+      };
+  
+      fetchCards();
+    }, []);
+
     const [renderSaved, setRenderSaved] = useState(false);
-    const [cards, setCards] = useState(benefits);
     const [selectedBusinessType, setSelectedBusinessType] = useState(null);
     const [selectedDistance, setSelectedDistance] = useState(null);
 
-    const filteredCards = cards.filter(card => {
-        return (!selectedBusinessType || card.type === selectedBusinessType) &&
-               (!selectedDistance || card.distance <= selectedDistance);
+    const filteredCards = card.filter(card => {
+        return (!selectedBusinessType || card.businessType === selectedBusinessType)
     });
 
     const handleSaved = () => {
@@ -28,22 +50,22 @@ export default function CardList() {
     };
 
     const toggleCardSaved = (index) => {
-        const updatedCards = [...cards];
-        updatedCards[index].saved = !updatedCards[index].saved;
-        setCards(updatedCards);
+        const updatedCards = [...card];
+        updatedCards[index].isSaved = !updatedCards[index].isSaved;
+        setCard(updatedCards);
     };
 
-    const businessType = ["Museums", "Cafes", "Gym", "Fashion"];
+    const businessType = ["Museum", "Cafes", "Gym", "Fashion"];
     const distance = [5, 10, 15, 20, 25, 30];
 
     return (
-        <div className="flex flex-col justify-center min-h-screen bg-[#214933] text-white">
+        <div className="flex flex-col pt-24 min-h-screen bg-[#214933] text-white">
             {/* Main Content */}
-            <div className="flex flex-row gap-10">
-                {/* Cards Grid */}
-                <div className="grid grid-cols-2 gap-6 p-10 w-[52rem]">
-                    {(renderSaved ? filteredCards.filter(offer => offer.saved) : filteredCards).map((offer, index) => (
-                        <Card key={index} {...offer} index={index} toggleCardSaved={toggleCardSaved}></Card>
+            <div className="flex h-[34rem] flex-row gap-10">
+                {/* Cards Grid  ---------------------------------CHANGED TO RENDER REGULAR CARD RATHER THAN ADMINCARD*/}
+                <div className="grid grid-cols-2 gap-6 p-10 w-[47rem]">
+                    {(renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).map((offer, index) => (
+                        <AdminCard key={index} {...offer} index={index} toggleCardSaved={toggleCardSaved}></AdminCard>
                     ))}
                 </div>
 

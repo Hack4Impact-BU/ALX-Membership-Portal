@@ -30,10 +30,10 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  config.active_storage.service = :amazon
 
   
-  config.api_base_url = 'https://alx-membership-portal.onrender.com/'
+  config.api_base_url = 'https://backend-alx-t5po.onrender.com'
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
   # config.action_cable.url = "wss://example.com/cable"
@@ -86,8 +86,6 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
-
-  api_base_url = 'https://your-deployed-server-url.com'
 
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
