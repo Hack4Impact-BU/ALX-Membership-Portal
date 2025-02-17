@@ -4,6 +4,7 @@ import { FolderIcon, BookmarkIcon } from '@heroicons/react/outline';
 import { Inter, Proza_Libre } from 'next/font/google';
 import DropdownCard from '@/components/DropdownCards/DropwdownCards';
 import EventCard from './component/card';
+import Training from './component/training';
 
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
@@ -16,6 +17,7 @@ export default function Archive() {
   const [isDeleteMode, setIsDeleteMode] = useState(false);
 
   const [events, setEvent] = useState([])
+  const [trainings, setTrainings] = useState([])
   const [data, setData] = useState([])
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -35,6 +37,21 @@ export default function Archive() {
       };
   
       fetchResearch();
+    }, []);
+
+    useEffect(() => {
+      const fetchTraining = async () => {
+        try {
+          const response = await fetch(`${apiBaseUrl}/training`);
+          if (!response.ok) throw new Error("failed to fetch trainigns");
+
+          const data = await response.json();
+          setTrainings(data);
+          setLoading(false);
+        } catch (err) {
+        }
+      };
+      fetchTraining();
     }, []);
 
     useEffect(() => {
@@ -133,7 +150,8 @@ export default function Archive() {
       </div>
 
       {/* Saved Items Grid with Horizontal Scroll */}
-      {activeTab === 'Research Work' ? (
+      {
+      activeTab === 'Research Work' ? (
         // Render DropdownCard components for Research Work
         data.map((item, index) => (
           <DropdownCard
@@ -147,7 +165,23 @@ export default function Archive() {
             fontName={prozaLibre.className}
           />
         ))
-      ) : (
+      ) : activeTab === 'Recorded Trainings' ? (
+
+        trainings.map((item,index) => (
+          <Training
+          key={item.id}
+          item={item}
+          index={index}
+          expandedCard={expandedCard}
+          toggleExpandCard={toggleExpandCard}
+          isDeleteMode={isDeleteMode}
+          handleDeleteClick={handleDeleteClick}
+          fontName={prozaLibre.className}
+          ></Training>
+        ))
+
+
+      ):(
         // Render Horizontal Scroll Item Grid for other tabs
         <div className="w-full overflow-x-auto flex space-x-6 snap-x snap-mandatory scrollbar-hide border-y-2 py-16">
           <div className={`flex ${prozaLibre.className} space-x-8 px-4`}>
