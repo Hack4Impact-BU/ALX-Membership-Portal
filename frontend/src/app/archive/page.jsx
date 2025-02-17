@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { FolderIcon, BookmarkIcon } from '@heroicons/react/outline';
 import { Inter, Proza_Libre } from 'next/font/google';
 import DropdownCard from '@/components/DropdownCards/DropwdownCards';
+import EventCard from './component/card';
 
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
@@ -13,12 +14,14 @@ export default function Archive() {
 
   const [expandedCard, setExpandedCard] = useState(null);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
+
+  const [events, setEvent] = useState([])
   const [data, setData] = useState([])
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     useEffect(() => {
-      const fetchEvents = async () => {
+      const fetchResearch = async () => {
         try {
           const response = await fetch(`${apiBaseUrl}/research`); // Adjust endpoint URL as needed
           if (!response.ok) throw new Error("Failed to fetch events");
@@ -31,6 +34,31 @@ export default function Archive() {
         }
       };
   
+      fetchResearch();
+    }, []);
+
+    useEffect(() => {
+      const fetchEvents = async () => {
+        try {
+          const response = await fetch(`${apiBaseUrl}/eventlists`);
+          if (!response.ok) throw new Error("Failed to fetch events");
+
+          const data = await response.json();
+
+          const currentDate = new Date();
+
+          const pastEvents = data.filter((event) => {
+            const eventDate = new Date(event.startDate);
+            return eventDate < currentDate;
+          });
+
+          setEvent(pastEvents);
+          setLoading(false);
+
+        } catch (err){
+        }
+      };
+
       fetchEvents();
     }, []);
 
@@ -41,27 +69,6 @@ export default function Archive() {
   const handleDeleteClick = (id) => {
     setData(data.filter(item => item.id !== id));
   };
-
-  const initialSavedItems = {
-    "Previous Events": [
-      { id: 1, title: 'Community Festival', description: 'Central Park', details: 'Held on 05/12/2023', color: '#FF6F61' },
-      { id: 2, title: 'Tech Meetup', description: 'Innovation Hub', details: 'Held on 06/15/2023', color: '#FFB74D' },
-      { id: 3, title: 'Charity Run', description: 'Downtown', details: 'Held on 04/10/2023', color: '#7986CB' },
-      { id: 4, title: 'Outdoor Concert', description: 'City Amphitheater', details: 'Held on 08/20/2023', color: '#A5D6A7' },
-      { id: 5, title: 'Art Exhibition', description: 'Gallery Lane', details: 'Held on 09/15/2023', color: '#FFD54F' },
-      { id: 6, title: 'Business Seminar', description: 'Conference Center', details: 'Held on 10/22/2023', color: '#64B5F6' },
-    ],
-    "Recorded Trainings": [
-      { id: 13, title: 'Project Management Basics', description: 'Video Tutorial', details: 'Recorded on 02/15/2023', color: '#FF6F61' },
-      { id: 14, title: 'Advanced Python Programming', description: 'Webinar', details: 'Recorded on 04/20/2023', color: '#FF8A65' },
-      { id: 15, title: 'Data Science Workshop', description: 'Workshop Recording', details: 'Recorded on 06/18/2023', color: '#7986CB' },
-      { id: 16, title: 'Leadership Skills', description: 'Seminar Recording', details: 'Recorded on 05/22/2023', color: '#A5D6A7' },
-      { id: 17, title: 'Effective Communication', description: 'Training Video', details: 'Recorded on 07/12/2023', color: '#FFB74D' },
-      { id: 18, title: 'Intro to Cybersecurity', description: 'Workshop Video', details: 'Recorded on 09/08/2023', color: '#FFD54F' },
-    ]
-  };
-
-  const [savedItems, setSavedItems] = useState(initialSavedItems);
 
   const handleUnsave = (itemId, category) => {
     setSavedItems((prevItems) => ({
@@ -95,8 +102,6 @@ export default function Archive() {
         </div>
 
         {activeTab === 'Previous Events' ? (
-
-
 // search bar
           <>
             <input
@@ -121,7 +126,7 @@ export default function Archive() {
             ))}
           </div>
           </>
-        ) : (<></>)}
+        ) : null}
 
         {/* Dropdown Selection Inputs */}
 
@@ -146,30 +151,12 @@ export default function Archive() {
         // Render Horizontal Scroll Item Grid for other tabs
         <div className="w-full overflow-x-auto flex space-x-6 snap-x snap-mandatory scrollbar-hide border-y-2 py-16">
           <div className={`flex ${prozaLibre.className} space-x-8 px-4`}>
-            {savedItems[activeTab].map((item) => (
-              <div
-                key={item.id}
-                className="bg-[#F6F2E9] p-4 rounded-xl shadow-lg w-80 flex flex-col justify-between snap-center transition-transform duration-300 hover:scale-105"
-              >
-                <div className="text-black">
-                  <div className="h-12 w-12 rounded-full mb-4" style={{ backgroundColor: item.color }}></div>
-                  <div className="p-4 bg-white rounded-xl">
-                    <p className="text-lg text-center">{item.title}</p>
-                  </div>
-                  <div className="px-2 py-4 rounded-lg">
-                    <p className="text-s">Details: {item.details}</p>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center mt-4">
-                  <div
-                    className="cursor-pointer text-[#214933]"
-                    onClick={() => handleUnsave(item.id, activeTab)}
-                  >
-                    <BookmarkIcon />
-                  </div>
-                  <a href="#" className="text-blue-600 hover:underline text-xs">See More</a>
-                </div>
-              </div>
+            {events.map((event) => (
+              <EventCard
+                key={event.id}
+                saved={event.saved}
+                {...event}
+              ></EventCard>
             ))}
           </div>
         </div>
