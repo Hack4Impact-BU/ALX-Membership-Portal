@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :jobs, only: [:index, :create, :show]
   resources :q_and_as, only: [:index, :show, :new, :create, :destroy]
   resources :research
+  resources :training
 
   # Custom routes
   get "up" => "rails/health#show", as: :rails_health_check
