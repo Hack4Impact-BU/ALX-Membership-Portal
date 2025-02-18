@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   get '/profile', to: 'users#profile'
   post 'auth0/sign_up', to: 'auth0#sign_up'
   post 'auth0/login', to: 'auth0#login'
+  post 'auth0/token', to: 'auth0#token'
+
 
   # Additional API endpoints (if you really need them in addition to the resourceful ones)
   get '/users', to: 'users#index'

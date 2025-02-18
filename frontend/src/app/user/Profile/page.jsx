@@ -43,23 +43,18 @@ const Profile = () => {
   }, []);
 
   const logout = () => {
-    localStorage.removeItem('idToken'); // Clear the token from localStorage
-    window.location.reload(); // Reload the page to log the user out
+    localStorage.removeItem('idToken'); 
+    window.location.reload(); 
   };
 
   return (
     <div className=" text-white p-8 rounded-lg w-10/12 min-h-screen">
-      {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <UserIcon className="h-32 w-32 text-white" />
         <h1 className="text-white text-[80px] font-custom mb-6 pt-12">Profile</h1>
       </div>
 
-      
-
-      {/* Form Section */}
-      <div className="bg-[#F6F2E9] p-6 rounded-lg mb-8 w-3/5">
-        {/* Name Input */}
+      <div className="bg-[#F6F2E9] p-6 rounded-lg mb-8 w-full">
         <div className="mb-4 ">
           <label className="block text-sm text-[15px] text-black font-semibold  mb-2">Name</label>
           <div className="flex gap-4">
