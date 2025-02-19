@@ -5,6 +5,7 @@ import { Inter, Proza_Libre } from 'next/font/google';
 import DropdownCard from '@/components/DropdownCards/DropwdownCards';
 import EventCard from './component/card';
 import Training from './component/training';
+import ReusableHeader from '@/components/ReusableHeader/ReusableHeader';
 
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
@@ -97,9 +98,9 @@ export default function Archive() {
   return (
     <div className="flex flex-col items-center bg-[#214933] min-h-screen w-10/12 p-8 mt-6 text-white">
       {/* Header */}
-      <div className="flex items-center mb-6 w-full">
-        <FolderIcon className="h-32 w-32 mr-4 stroke-[#F6F2E9]" />
-        <h1 className="pt-6 text-[70px] text-[#F6F2E9] font-custom items-center">Archive</h1>
+      <div className="flex w-full">
+        <FolderIcon className="h-32 w-32 stroke-[#F6F2E9]" />
+        <ReusableHeader header={"Archive"} isAdmin={true} directTo={"/archive/create"}/>
       </div>
 
       <div className={`flex flex-col items-start pl-8 my-12 w-full ${prozaLibre.className}`}>
