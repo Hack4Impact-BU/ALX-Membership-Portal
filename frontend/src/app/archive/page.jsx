@@ -6,6 +6,7 @@ import DropdownCard from '@/components/DropdownCards/DropwdownCards';
 import EventCard from './component/card';
 import Training from './component/training';
 import ReusableHeader from '@/components/ReusableHeader/ReusableHeader';
+import DropdownCardAdmin from '@/components/DropDrownAdmin/DropDownCardsAdmin';
 
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
@@ -155,7 +156,7 @@ export default function Archive() {
       activeTab === 'Research Work' ? (
         // Render DropdownCard components for Research Work
         data.map((item, index) => (
-          <DropdownCard
+          <DropdownCardAdmin
             key={item.id}
             item={item}
             index={index}
