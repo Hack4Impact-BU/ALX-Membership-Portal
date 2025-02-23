@@ -1,5 +1,5 @@
 class JobsController < ApplicationController
-  skip_before_action :authenticate_request, only: [:create, :index, :show]
+  skip_before_action :authenticate_request, only: [:create, :index, :show, :destroy]
   before_action :set_job, only: [:show, :edit, :update, :destroy]
 
   # GET /jobs

@@ -108,14 +108,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_17_230538) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "members", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 100, null: false
-    t.string "email", limit: 100, null: false
-    t.date "join_date", default: -> { "CURRENT_DATE" }
-
-    t.unique_constraint ["email"], name: "members_email_key"
-  end
-
   create_table "product_offers", force: :cascade do |t|
     t.string "place"
     t.string "offerTitle"

@@ -17,7 +17,7 @@ class ApplicationController < ActionController::API
             algorithms: ['RS256'],
             verify_iss: true,
             verify_aud: true,
-            aud: ENV['NEXT_PUBLIC_AUTH0_AUDIENCE'],
+            aud:  [ENV['NEXT_PUBLIC_AUTH0_AUDIENCE'], ENV['AUTH0_AUDIENCE']],
           }) do |header|
             jwks_hash[header['kid']]
           end

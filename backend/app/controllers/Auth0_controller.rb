@@ -1,10 +1,12 @@
 require 'http'
 require 'dotenv'
+require 'json'
+require 'net/http'
 Dotenv.load
 
 class Auth0Controller < ApplicationController
 
-  skip_before_action :authenticate_request, only: [:login, :sign_up]
+  skip_before_action :authenticate_request, only: [:login, :sign_up, :token]
   
   def sign_up
     email = params[:email]
@@ -44,10 +46,6 @@ class Auth0Controller < ApplicationController
     email = params[:email]
     password = params[:password]
 
-    # Log the environment variables to debug any issues with them
-    Rails.logger.info("NEXT_PUBLIC_AUTH0_DOMAIN: #{ENV['NEXT_PUBLIC_AUTH0_DOMAIN']}")
-    Rails.logger.info("AUTH0_CLIENT_ID: #{ENV['AUTH0_CLIENT_ID']}")
-    Rails.logger.info("Login request received with email: #{email}")
     
     response = HTTP.post("https://#{ENV['NEXT_PUBLIC_AUTH0_DOMAIN']}/oauth/token", json: {
       grant_type: 'http://auth0.com/oauth/grant-type/password-realm',
@@ -72,5 +70,28 @@ class Auth0Controller < ApplicationController
   rescue StandardError => e
     Rails.logger.error("Login error: #{e.message}")
     render json: { error: 'Internal Server Error' }, status: :internal_server_error
+  end
+
+  def token
+    uri = URI("https://#{ENV['NEXT_PUBLIC_AUTH0_DOMAIN']}/oauth/token")
+
+    response = Net::HTTP.post(
+      uri,
+      {
+        client_id: ENV['AUTH0_CLIENT_ID'],
+        client_secret: ENV['AUTH0_SECRET_ID'],
+        audience: ENV['AUTH0_AUDIENCE'],
+        grant_type: "client_credentials"
+      }.to_json,
+      "Content-Type" => "application/json"
+    )
+
+    Rails.logger.info("Auth0 Token Response: #{response.body}")
+
+    if response.code.to_i == 200
+      render json: JSON.parse(response.body), status: :ok
+    else
+      render json: { error: "Failed to fetch token" }, status: :unprocessable_entity
+    end
   end
 end

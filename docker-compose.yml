@@ -8,6 +8,7 @@ services:
       - '3000:3000'
     volumes:
       - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - backend
     environment:
@@ -32,7 +33,7 @@ services:
       - DATABASE_URL=postgresql://postgres:my_secure_password@db:5432/membership_portal_dev
       - AWS_DEFAULT_REGION=us-east-2
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}      
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}        
     depends_on:
       db:
         condition: service_healthy
