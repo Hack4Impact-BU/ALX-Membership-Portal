@@ -96,12 +96,18 @@ export default function Archive() {
     }));
   };
 
+  const tabUrls = {
+    'Previous Events': '/events/event_listings/create',
+    "Research Work": '/archive/createResearch',
+    'Recorded Trainings': '/archive/createTraining',
+  }
+
   return (
     <div className="flex flex-col items-center bg-[#214933] min-h-screen w-10/12 p-8 mt-6 text-white">
       {/* Header */}
       <div className="flex w-full">
         <FolderIcon className="h-32 w-32 stroke-[#F6F2E9]" />
-        <ReusableHeader header={"Archive"} isAdmin={true} directTo={"/archive/create"}/>
+        <ReusableHeader header={"Archive"} isAdmin={true} directTo={tabUrls[activeTab]}/>
       </div>
 
       <div className={`flex flex-col items-start pl-8 my-12 w-full ${prozaLibre.className}`}>
