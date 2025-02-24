@@ -9,6 +9,12 @@ import CloseIcon from '@mui/icons-material/Close';
 const Training = ({ item, index, expandedCard, toggleExpandCard, isDeleteMode, handleDeleteClick, fontName }) => {
   const contentRef = useRef(null);
 
+  function extractYouTubeID(url) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+}
+
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.style.maxHeight = expandedCard === index ? `${contentRef.current.scrollHeight}px` : '150px';
@@ -46,7 +52,17 @@ const Training = ({ item, index, expandedCard, toggleExpandCard, isDeleteMode, h
               <p className="text-lg">{item.link}</p>
             </div>
           </div>
-          <div className='w-full border h-16 mt-4'>video</div>
+          <div className="mt-4 p-8 bg-white rounded-3xl" style={{ overflow: 'hidden' }}>
+        <div className="relative" style={{ paddingBottom: '56.25%', height: 0 }}>
+            <iframe
+                className="absolute top-0 left-0 w-full h-full rounded-3xl"
+                src={`https://www.youtube.com/embed/${extractYouTubeID("https://www.youtube.com/watch?v=dANdTnL7GxE")}`}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+            ></iframe>
+        </div>
+    </div>
         </div>
       )}
 
