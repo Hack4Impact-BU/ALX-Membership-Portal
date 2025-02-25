@@ -14,6 +14,7 @@ const EditPage = () => {
   const [itemData, setItemData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isEditing, setIsEditing] = useState({
     trainingTitle: false,
     trainingDesc: false,
@@ -38,7 +39,6 @@ const EditPage = () => {
     setIsEditing((prev) => ({ ...prev, [field]: true }));
   };
 
-  console.log(itemData);
 
   const handleSaveClick = async (field) => {
     try {
@@ -54,9 +54,12 @@ const EditPage = () => {
         throw new Error(`Failed to update item: ${response.statusText}`);
       }
   
-      // Optionally, you can refetch the data or update the state to reflect changes
       const updatedData = await response.json();
       setItemData(updatedData);
+      setShowSuccessModal(true);
+      setTimeout(() => {
+        setShowSuccessModal(false);
+      }, 1500);
     } catch (err) {
       setError(err.message);
       console.error('Error updating item:', err);
@@ -103,6 +106,11 @@ const EditPage = () => {
 
   return (
     <div className="flex flex-col items-center bg-[#214933] min-h-screen w-10/12 p-8 mt-6 text-white">
+      {showSuccessModal && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white p-4 rounded-full shadow-lg">
+          Edit successful!
+        </div>
+      )}
         <div className="flex w-full">
         <FolderIcon className="h-32 w-32 stroke-[#F6F2E9]" />
         <ReusableHeader header={"Archive"}/>
