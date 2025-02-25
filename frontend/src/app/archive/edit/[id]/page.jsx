@@ -15,8 +15,8 @@ const EditPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState({
-    title: false,
-    description: false,
+    trainingTitle: false,
+    trainingDesc: false,
     date: false,
     link: false,
   });
@@ -38,9 +38,32 @@ const EditPage = () => {
     setIsEditing((prev) => ({ ...prev, [field]: true }));
   };
 
-  const handleSaveClick = ((field) => {
-    setIsEditing((prev) => ({ ...prev, [field]: false }));
-  });
+  console.log(itemData);
+
+  const handleSaveClick = async (field) => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/training/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ [field]: itemData[field] }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to update item: ${response.statusText}`);
+      }
+  
+      // Optionally, you can refetch the data or update the state to reflect changes
+      const updatedData = await response.json();
+      setItemData(updatedData);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error updating item:', err);
+    } finally {
+      setIsEditing((prev) => ({ ...prev, [field]: false }));
+    }
+  };
 
   useEffect(() => {
     const fetchResearch = async () => {
@@ -86,51 +109,70 @@ const EditPage = () => {
       </div>
       <div className="bg-[#335843] rounded-xl w-full shadow-lg p-8 text-white">
         <div className="flex justify-between items-center mb-6">
-          {isEditing.title ? (
-            <input
-              type="text"
-              value={itemData?.trainingTitle || ''}
-              onChange={(e) => setItemData({ ...itemData, trainingTitle: e.target.value })}
-              className="pl-4 text-[34px] rounded-xl font-semibold bg-inherit w-1/2 border border-gray-300 focus:border-blue-500 hover:bg-[#284c34]"
-            />
-          ) : (
-            <h1 className="text-[34px] font-semibold">
-              {itemData?.trainingTitle || 'Edit Training'}
-            </h1>
-          )}
-         <CustomButton 
-        variant="contained"
-        onClick={() => handleEdit('title')}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-          </svg>
-        </CustomButton>
+            {isEditing.trainingTitle ? (
+              <input
+                type="text"
+                value={itemData?.trainingTitle || ''}
+                onChange={(e) => setItemData({ ...itemData, trainingTitle: e.target.value })}
+                className="pl-4 text-[34px] rounded-xl font-semibold bg-inherit w-1/2 border border-gray-300 focus:border-blue-500 hover:bg-[#284c34]"
+              />
+            ) : (
+              <h1 className="text-[34px] font-semibold">
+                {itemData?.trainingTitle || 'Edit Training'}
+              </h1>
+            )}
+          <div className="flex gap-4">
+            <CustomButton 
+            variant="contained"
+            onClick={() => handleEdit('trainingTitle')}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+              </svg>
+            </CustomButton>
+            {isEditing.trainingTitle && 
+            <CustomButton 
+            variant="contained"
+            onClick={() => handleSaveClick('trainingTitle')}
+            >
+              <p className="text-black">Save</p>
+            </CustomButton>}
+          </div>
         </div>
 
         <div className="mb-10 w-full flex justify-between items-center text-[20px]">
-        {isEditing.description ? (
-    <textarea
-      value={itemData?.trainingDesc || ''}
-      onChange={(e) => setItemData({ ...itemData, trainingDesc: e.target.value })}
-      className="pl-4 text-[20px] h-40 rounded-xl bg-inherit w-3/5 border border-gray-300 focus:border-blue-500 hover:bg-[#284c34]"
-    />
-  ) : (
-    <p className="w-3/5">{itemData?.trainingDesc}</p>
-  )}
-  <CustomButton 
-    variant="contained"
-    onClick={() => handleEdit('description')}
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black" class="size-6">
-      <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-    </svg>
-  </CustomButton>
+          {isEditing.trainingDesc ? (
+            <textarea
+              value={itemData?.trainingDesc || ''}
+              onChange={(e) => setItemData({ ...itemData, trainingDesc: e.target.value })}
+              className="pl-4 text-[20px] h-40 rounded-xl bg-inherit w-3/5 border border-gray-300 focus:border-blue-500 hover:bg-[#284c34]"
+            />
+          ) : (
+            <p className="w-3/5">{itemData?.trainingDesc}</p>
+          )}
+          <div className="flex gap-4">
+            <CustomButton 
+              variant="contained"
+              onClick={() => handleEdit('trainingDesc')}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+              </svg>
+            </CustomButton>
+            {isEditing.trainingDesc && 
+            <CustomButton 
+              variant="contained"
+              onClick={() => handleSaveClick('trainingDesc')}
+            >
+              <p className="text-black">Save</p>
+            </CustomButton>}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-8 mb-8">
           <div className="flex items-center gap-4">
             <CalendarTodayIcon style={{ fontSize: 32 }} />
+            {console.log(itemData?.date)}
             <p className="text-lg">{itemData?.date}</p>
           </div>
           <div className="flex items-center gap-4">
