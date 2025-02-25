@@ -2,9 +2,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import Button from '@mui/material/Button';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PhoneIcon from '@mui/icons-material/Phone';
 import CloseIcon from '@mui/icons-material/Close';
+import { styled } from '@mui/material/styles';
+
+const CustomButton = styled(Button)({
+  backgroundColor: '#44E489',
+  borderRadius: '20px',
+  padding: '8px 24px',
+  width: '60px',
+  height: '40px',
+  '&:hover': {
+    backgroundColor: '#3acc7a', // slightly darker shade for hover
+  },
+});
 
 const Training = ({ item, index, expandedCard, toggleExpandCard, isDeleteMode, handleDeleteClick, fontName }) => {
   const contentRef = useRef(null);
@@ -31,7 +44,14 @@ const Training = ({ item, index, expandedCard, toggleExpandCard, isDeleteMode, h
         maxHeight: '150px',
       }}
     >
-      <h3 className="text-[28px] font-semibold mb-6">{item.trainingTitle}</h3>
+      <div className='flex justify-between'>
+        <h3 className="text-[28px] font-semibold mb-6">{item.trainingTitle}</h3>
+        <CustomButton variant="contained">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+          </svg>
+        </CustomButton>
+      </div>
       
       {/* Display summary if collapsed, or full description if expanded */}
       <p className="mb-10">
@@ -52,7 +72,7 @@ const Training = ({ item, index, expandedCard, toggleExpandCard, isDeleteMode, h
               <p className="text-lg">{item.link}</p>
             </div>
           </div>
-          <div className="mt-4 p-8 bg-white rounded-3xl" style={{ overflow: 'hidden' }}>
+          <div className="my-8 p-8 bg-white rounded-3xl" style={{ overflow: 'hidden' }}>
         <div className="relative" style={{ paddingBottom: '56.25%', height: 0 }}>
             <iframe
                 className="absolute top-0 left-0 w-full h-full rounded-3xl"
