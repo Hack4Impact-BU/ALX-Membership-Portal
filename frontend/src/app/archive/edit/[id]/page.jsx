@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import Button from '@mui/material/Button';
 import { FolderIcon } from '@heroicons/react/outline';
 
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -14,8 +14,33 @@ const EditPage = () => {
   const [itemData, setItemData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditing, setIsEditing] = useState({
+    title: false,
+    description: false,
+    date: false,
+    link: false,
+  });
+
+  const CustomButton = styled(Button)({
+    backgroundColor: '#44E489',
+    borderRadius: '20px',
+    padding: '8px 24px',
+    width: '60px',
+    height: '40px',
+    '&:hover': {
+      backgroundColor: '#3acc7a', // slightly darker shade for hover
+    },
+  });
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  const handleEdit = (field) => {
+    setIsEditing((prev) => ({ ...prev, [field]: true }));
+  };
+
+  const handleSaveClick = ((field) => {
+    setIsEditing((prev) => ({ ...prev, [field]: false }));
+  });
 
   useEffect(() => {
     const fetchResearch = async () => {
@@ -61,13 +86,46 @@ const EditPage = () => {
       </div>
       <div className="bg-[#335843] rounded-xl w-full shadow-lg p-8 text-white">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-[34px] font-semibold">
-            {itemData?.trainingTitle || 'Edit Training'}
-          </h1>
+          {isEditing.title ? (
+            <input
+              type="text"
+              value={itemData?.trainingTitle || ''}
+              onChange={(e) => setItemData({ ...itemData, trainingTitle: e.target.value })}
+              className="pl-4 text-[34px] rounded-xl font-semibold bg-inherit w-1/2 border border-gray-300 focus:border-blue-500 hover:bg-[#284c34]"
+            />
+          ) : (
+            <h1 className="text-[34px] font-semibold">
+              {itemData?.trainingTitle || 'Edit Training'}
+            </h1>
+          )}
+         <CustomButton 
+        variant="contained"
+        onClick={() => handleEdit('title')}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+          </svg>
+        </CustomButton>
         </div>
 
-        <div className="mb-10 text-[20px]">
-          <p>{itemData?.trainingDesc}</p>
+        <div className="mb-10 w-full flex justify-between items-center text-[20px]">
+        {isEditing.description ? (
+    <textarea
+      value={itemData?.trainingDesc || ''}
+      onChange={(e) => setItemData({ ...itemData, trainingDesc: e.target.value })}
+      className="pl-4 text-[20px] h-40 rounded-xl bg-inherit w-3/5 border border-gray-300 focus:border-blue-500 hover:bg-[#284c34]"
+    />
+  ) : (
+    <p className="w-3/5">{itemData?.trainingDesc}</p>
+  )}
+  <CustomButton 
+    variant="contained"
+    onClick={() => handleEdit('description')}
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black" class="size-6">
+      <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+    </svg>
+  </CustomButton>
         </div>
 
         <div className="grid grid-cols-1 gap-8 mb-8">
