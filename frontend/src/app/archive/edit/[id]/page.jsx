@@ -21,6 +21,7 @@ const EditPage = () => {
     date: false,
     link: false,
   });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const CustomButton = styled(Button)({
     backgroundColor: '#44E489',
@@ -65,6 +66,24 @@ const EditPage = () => {
       console.error('Error updating item:', err);
     } finally {
       setIsEditing((prev) => ({ ...prev, [field]: false }));
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/training/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete item: ${response.statusText}`);
+      }
+
+      // Redirect to archive page after successful deletion
+      window.location.href = '/archive';
+    } catch (err) {
+      setError(err.message);
+      console.error('Error deleting item:', err);
     }
   };
 
@@ -256,6 +275,56 @@ const EditPage = () => {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
+            </div>
+          </div>
+        )}
+
+        {/* Delete button and confirmation modal */}
+        <div className="mt-8 flex justify-center">
+          <Button
+            variant="contained"
+            onClick={() => setShowDeleteModal(true)}
+            sx={{
+              backgroundColor: '#dc2626',
+              borderRadius: '20px',
+              padding: '12px 24px',
+              '&:hover': {
+                backgroundColor: '#b91c1c',
+              },
+            }}
+          >
+            Delete Training
+          </Button>
+        </div>
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded-xl text-black">
+              <h2 className="text-2xl font-bold mb-4">Confirm Deletion</h2>
+              <p className="mb-6">Are you sure you want to delete this training? This action cannot be undone.</p>
+              <div className="flex justify-end gap-4">
+                <Button
+                  variant="outlined"
+                  onClick={() => setShowDeleteModal(false)}
+                  sx={{ borderRadius: '20px' }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleDelete}
+                  sx={{
+                    backgroundColor: '#dc2626',
+                    borderRadius: '20px',
+                    '&:hover': {
+                      backgroundColor: '#b91c1c',
+                    },
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
             </div>
           </div>
         )}
