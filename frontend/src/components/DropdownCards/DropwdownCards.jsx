@@ -1,9 +1,7 @@
 'use client';
-import React, { useState, useRef, useEffect } from 'react';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import React, {useRef, useEffect } from 'react';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import PhoneIcon from '@mui/icons-material/Phone';
 import CloseIcon from '@mui/icons-material/Close';
 
 const DropdownCard = ({ item, index, expandedCard, toggleExpandCard, isDeleteMode, handleDeleteClick, fontName }) => {
