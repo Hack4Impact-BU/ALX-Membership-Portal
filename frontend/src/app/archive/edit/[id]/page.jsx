@@ -178,16 +178,71 @@ const EditPage = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-8 mb-8">
-          <div className="flex items-center gap-4">
-            <CalendarTodayIcon style={{ fontSize: 32 }} />
-            {console.log(itemData?.date)}
-            <p className="text-lg">{itemData?.date}</p>
+          <div className="flex items-center justify-between">
+            <div className='flex items-center gap-4'>
+              <CalendarTodayIcon style={{ fontSize: 32 }} />
+              {isEditing.date ? (
+                <input
+                  type="date"
+                  value={itemData?.date || ''}
+                  onChange={(e) => setItemData({ ...itemData, date: e.target.value })}
+                  className="pl-4 text-lg rounded-xl bg-inherit border border-gray-300 focus:border-blue-500 hover:bg-[#284c34]"
+                />
+              ) : (
+                <p className="text-lg">{itemData?.date}</p>
+              )}
+            </div>
+            <div className="flex gap-4">
+                    <CustomButton 
+                      variant="contained"
+                      onClick={() => handleEdit('date')}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                      </svg>
+                    </CustomButton>
+                    {isEditing.date && 
+                    <CustomButton 
+                      variant="contained"
+                      onClick={() => handleSaveClick('date')}
+                    >
+                      <p className="text-black">Save</p>
+                    </CustomButton>}
+        </div>
           </div>
-          <div className="flex items-center gap-4">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-8">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
-            </svg>
-            <p className="text-lg">{itemData?.link}</p>
+          <div className="flex items-center justify-between">
+            <div className='flex items-center gap-4'>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-8">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
+              </svg>
+              {isEditing.link ? (
+                <input
+                  type="text"
+                  value={itemData?.link || ''}
+                  onChange={(e) => setItemData({ ...itemData, link: e.target.value })}
+                  className="pl-4 text-lg rounded-xl bg-inherit border border-gray-300 focus:border-blue-500 hover:bg-[#284c34]"
+                />
+              ) : (
+                <p className="text-lg">{itemData?.link}</p>
+              )}
+            </div>
+            <div className="flex gap-4">
+              <CustomButton 
+                variant="contained"
+                onClick={() => handleEdit('link')}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                </svg>
+              </CustomButton>
+              {isEditing.link && 
+              <CustomButton 
+                variant="contained"
+                onClick={() => handleSaveClick('link')}
+              >
+                <p className="text-black">Save</p>
+              </CustomButton>}
+            </div>
           </div>
         </div>
 

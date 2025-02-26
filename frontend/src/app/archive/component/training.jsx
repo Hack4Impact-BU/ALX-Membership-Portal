@@ -81,7 +81,7 @@ const Training = ({ item, index, expandedCard, toggleExpandCard, isDeleteMode, h
         <div className="relative" style={{ paddingBottom: '56.25%', height: 0 }}>
             <iframe
                 className="absolute top-0 left-0 w-full h-full rounded-3xl"
-                src={`https://www.youtube.com/embed/${extractYouTubeID("https://www.youtube.com/watch?v=dANdTnL7GxE")}`}
+                src={`https://www.youtube.com/embed/${extractYouTubeID(item.link)}`}
                 title="YouTube video player"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
