@@ -9,6 +9,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ReusableHeader from '@/components/ReusableHeader/ReusableHeader';
 import { styled } from '@mui/material/styles';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import LinkIcon from '@mui/icons-material/Link';
 
 const EditPage = () => {
   const { id } = useParams();
@@ -21,6 +22,7 @@ const EditPage = () => {
     researchDesc: false,
     date: false,
     location: false,
+    link: false,
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -41,15 +43,26 @@ const EditPage = () => {
     setIsEditing((prev) => ({ ...prev, [field]: true }));
   };
 
+  // Add function to ensure proper URL formatting
+  const formatUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    return `https://${url}`;
+  };
 
   const handleSaveClick = async (field) => {
     try {
+      // Format the URL before saving if it's the link field
+      const valueToSave = field === 'link' ? formatUrl(itemData[field]) : itemData[field];
+      
       const response = await fetch(`${apiBaseUrl}/research/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ [field]: itemData[field] }),
+        body: JSON.stringify({ [field]: valueToSave }),
       });
   
       if (!response.ok) {
@@ -250,6 +263,46 @@ const EditPage = () => {
               <CustomButton 
                 variant="contained"
                 onClick={() => handleSaveClick('location')}
+              >
+                <p className="text-black">Save</p>
+              </CustomButton>}
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className='flex items-center gap-4'>
+              <LinkIcon style={{ fontSize: 32 }} />
+              {isEditing.link ? (
+                <input
+                  type="text"
+                  value={itemData?.link || ''}
+                  onChange={(e) => setItemData({ ...itemData, link: e.target.value })}
+                  placeholder="Enter URL (e.g. example.com or https://example.com)"
+                  className="pl-4 text-lg rounded-xl bg-inherit border border-gray-300 focus:border-blue-500 hover:bg-[#284c34] w-96"
+                />
+              ) : (
+                <a 
+                  href={formatUrl(itemData?.link)} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-lg text-blue-400 hover:text-blue-300 underline"
+                >
+                  {itemData?.link || 'No link available'}
+                </a>
+              )}
+            </div>
+            <div className="flex gap-4">
+              <CustomButton 
+                variant="contained"
+                onClick={() => handleEdit('link')}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="black" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                </svg>
+              </CustomButton>
+              {isEditing.link && 
+              <CustomButton 
+                variant="contained"
+                onClick={() => handleSaveClick('link')}
               >
                 <p className="text-black">Save</p>
               </CustomButton>}
