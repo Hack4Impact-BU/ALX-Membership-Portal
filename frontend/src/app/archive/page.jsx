@@ -14,6 +14,7 @@ const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600
 export default function Archive() {
   const [activeTab, setActiveTab] = useState('Previous Events');
   const [searchTerm, setSearchTerm] = useState('');
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
   const [expandedCard, setExpandedCard] = useState(null);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
@@ -21,6 +22,7 @@ export default function Archive() {
   const [events, setEvent] = useState([])
   const [trainings, setTrainings] = useState([])
   const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true);
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -72,14 +74,27 @@ export default function Archive() {
           });
 
           setEvent(pastEvents);
+          setFilteredEvents(pastEvents);
           setLoading(false);
 
         } catch (err){
+          console.error("Error fetching events:", err);
+          setLoading(false);
         }
       };
 
       fetchEvents();
     }, []);
+
+  // Filter events when search term changes
+  useEffect(() => {
+    if (events.length > 0) {
+      const filtered = events.filter(event => 
+        event.eventName && event.eventName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredEvents(filtered);
+    }
+  }, [searchTerm, events]);
 
   const toggleExpandCard = (index) => {
     setExpandedCard(expandedCard === index ? null : index);
@@ -131,7 +146,7 @@ export default function Archive() {
           <>
             <input
             type="text"
-            placeholder="Search"
+            placeholder="Search by event name"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-1/5 p-3 pl-8 rounded-lg bg-[#335843] text-white placeholder-grey-300 mb-6"
@@ -193,7 +208,7 @@ export default function Archive() {
         // Render Horizontal Scroll Item Grid for other tabs
         <div className="w-full overflow-x-auto flex space-x-6 snap-x snap-mandatory scrollbar-hide border-y-2 py-16">
           <div className={`flex ${prozaLibre.className} space-x-8 px-4`}>
-            {events.map((event) => (
+            {filteredEvents.map((event) => (
               <EventCard
                 key={event.id}
                 saved={event.saved}
