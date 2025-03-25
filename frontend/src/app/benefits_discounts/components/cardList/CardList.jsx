@@ -17,11 +17,14 @@ export default function CardList() {
     const [card, setCard] = useState([]); // Start with an empty list
     const [loading, setLoading] = useState(true); // Track loading state
     const [error, setError] = useState(null); // Track errors during fetch
+
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   
     useEffect(() => {
       const fetchCards = async () => {
         try {
-          const response = await fetch("http://localhost:3001/product_offers"); // Adjust endpoint URL as needed
+          const response = await fetch(`${apiBaseUrl}/product_offers`); // Adjust endpoint URL as needed
           if (!response.ok) throw new Error("Failed to fetch events");
   
           const data = await response.json(); // Parse JSON response

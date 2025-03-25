@@ -30,6 +30,10 @@ export default function CreateOffer() {
         });
     };
 
+      // Define the API base URL from environment variables
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -44,7 +48,7 @@ export default function CreateOffer() {
         formData.append('product_offer[pic]', offer.pic);
 
         try {
-            const response = await fetch('http://localhost:3001/product_offers', {
+            const response = await fetch(`${apiBaseUrl}/product_offers`, {
                 method: 'POST',
                 body: formData,
             });

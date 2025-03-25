@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   resources :eventlists
   resources :jobs, only: [:index, :create, :show, :destroy]
   resources :q_and_as, only: [:index, :show, :new, :create, :destroy]
+  resources :research
+  resources :training
 
   # Custom routes
   get "up" => "rails/health#show", as: :rails_health_check

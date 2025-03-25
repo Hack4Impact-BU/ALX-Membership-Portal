@@ -1,7 +1,6 @@
 
 'use client'
 
-import { useState } from 'react';
 import { Inter, Proza_Libre } from 'next/font/google'; // Import the Proza Libre font
 import Link from 'next/link';
 
@@ -17,7 +16,7 @@ export default function Card({offerTitle, place, link, pic, startDate, index, of
 
 
     return (
-            <div className="border flex flex-col justify-evenly rounded-3xl bg-[#F6F2E9] w-80 h-56">
+            <div className="border flex flex-col justify-evenly rounded-3xl bg-[#F6F2E9] w-80 h-56 transition-transform duration-300 hover:scale-105">
                 <Link href={{
                     pathname: `/benefits_discounts/${place}`,
                     query: { offerTitle, place, link, instruct, startDate, offerDesc, index, isSaved, BusinessType, distance, toggleCardSaved, pic }
