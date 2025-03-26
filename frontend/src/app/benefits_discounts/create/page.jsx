@@ -38,14 +38,18 @@ export default function CreateOffer() {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append('product_offer[businessType]', offer.businessType);
-        formData.append('product_offer[endDate]', offer.endDate);
-        formData.append('product_offer[instruct]', offer.instruct);
-        formData.append('product_offer[offerDesc]', offer.offerDesc);
-        formData.append('product_offer[offerTitle]', offer.offerTitle);
-        formData.append('product_offer[place]', offer.place);
-        formData.append('product_offer[startDate]', offer.startDate);
-        formData.append('product_offer[pic]', offer.pic);
+        
+        // Add all text fields to the form data
+        Object.keys(offer).forEach(key => {
+            if (key !== 'pic' && offer[key]) {
+                formData.append(`product_offer[${key}]`, offer[key]);
+            }
+        });
+        
+        // Only append file if it exists
+        if (offer.pic) {
+            formData.append('product_offer[pic]', offer.pic);
+        }
 
         try {
             const response = await fetch(`${apiBaseUrl}/product_offers`, {
@@ -54,16 +58,15 @@ export default function CreateOffer() {
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('Failed to create offer');
             }
 
             const result = await response.json();
             setMessage('Offer created successfully!');
             setError(null);
         } catch (error) {
-            setError('Error creating offer.');
-            setMessage(null);
-            console.error('Error:', error);
+            console.error('Error creating offer:', error);
+            setError('Failed to create offer. Please try again.');
         }
     };
 
@@ -169,15 +172,15 @@ export default function CreateOffer() {
 
                 {/* Offer Image */}
                 <div className="mb-4">
-                    <label htmlFor="pic" className="block text-gray-700 font-bold mb-2">Offer Image</label>
+                    <label htmlFor="pic" className="block font-medium text-gray-700">
+                        Image (Optional)
+                    </label>
                     <input
                         type="file"
-                        name="pic"
                         id="pic"
-                        onChange={handleFileChange}
-                        className="w-full"
                         accept="image/*"
-
+                        onChange={handleFileChange}
+                        className="mt-1 p-2 border rounded-md w-full"
                     />
                 </div>
 

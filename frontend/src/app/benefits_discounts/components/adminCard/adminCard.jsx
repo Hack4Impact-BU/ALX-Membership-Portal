@@ -1,4 +1,3 @@
-
 'use client'
 
 import { Inter, Proza_Libre } from 'next/font/google'; // Import the Proza Libre font
@@ -9,6 +8,7 @@ const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600
 
 export default function AdminCard({id, offerTitle, place, link, pic, startDate, index, offerDesc, isSaved, BusinessType, distance, toggleCardSaved, instruct}) {
 
+    console.log("AdminCard received pic_url:", pic); // Debug image URL
 
     const handleClick = () => {
         toggleCardSaved(index);
@@ -42,7 +42,17 @@ export default function AdminCard({id, offerTitle, place, link, pic, startDate, 
                     }}>
                 <div className="flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
                     {/* gonna be image circle */}
-                    <div className="w-20 h-20 bg-orange-400 rounded-full"/>
+                    <img 
+                        src={pic} 
+                        alt={offerTitle}
+                        onError={(e) => {
+                            console.log("Image failed to load:", pic);
+                            e.target.onerror = null;
+                            e.target.style.display = "none";
+                            e.target.parentNode.classList.add("bg-[#214933]");
+                        }}
+                        className="w-20 h-20 rounded-full object-cover"
+                    />
                     <div className="flex items-center w-48 h-14 bg-white rounded-full">
                         <p className={`p-4 text-2xl text-[#214933] ${prozaLibre.className} overflow-hidden text-ellipsis whitespace-nowrap`}>{offerTitle}</p>
                     </div>

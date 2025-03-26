@@ -24,11 +24,11 @@ export default function CardList() {
     useEffect(() => {
       const fetchCards = async () => {
         try {
-          const response = await fetch(`${apiBaseUrl}/product_offers`); // Adjust endpoint URL as needed
-          if (!response.ok) throw new Error("Failed to fetch events");
-  
-          const data = await response.json(); // Parse JSON response
-          console.log("Fetched data:", data)
+          const response = await fetch(`${apiBaseUrl}/product_offers`);
+          if (!response.ok) throw new Error("Failed to fetch offers");
+
+          const data = await response.json();
+          console.log("Fetched product offers:", data); // Check if pic_url exists in response
           setCard(data);
           setLoading(false);
         } catch (err) {
@@ -68,7 +68,20 @@ export default function CardList() {
                 {/* Cards Grid  ---------------------------------CHANGED TO RENDER REGULAR CARD RATHER THAN ADMINCARD*/}
                 <div className="grid grid-cols-2 gap-6 p-10 w-[47rem]">
                     {(renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).map((offer, index) => (
-                        <AdminCard key={index} {...offer} index={index} toggleCardSaved={toggleCardSaved}></AdminCard>
+                        <AdminCard
+                            key={index}
+                            offerTitle={offer.offerTitle}
+                            businessType={offer.businessType}
+                            offerDesc={offer.offerDesc}
+                            place={offer.place}
+                            pic_url={offer.pic_url}
+                            startDate={offer.startDate}
+                            endDate={offer.endDate}
+                            isSaved={offer.isSaved}
+                            index={index}
+                            id={offer.id}
+                            toggleCardSaved={toggleCardSaved}
+                        />
                     ))}
                 </div>
 
