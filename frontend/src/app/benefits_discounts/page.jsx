@@ -1,6 +1,7 @@
 
 import ReusableHeader from "@/components/ReusableHeader/ReusableHeader"
 import CardList from "./components/cardList/CardList"
+import Hyperlinks from "@/components/Hyperlinks"
 
 export default function BenefitsDiscounts() {
 
@@ -11,7 +12,7 @@ export default function BenefitsDiscounts() {
                 
             </div>
             <CardList />
-
+            <Hyperlinks />
 
         </section>
     )

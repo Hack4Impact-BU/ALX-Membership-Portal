@@ -3,6 +3,8 @@ import UpcomingEvents from './components/events'
 import ProductOffers from './components/offers'
 import JobBoard from './components/board'
 import GetInvolved from './components/involved'
+import Hyperlinks from '@/components/Hyperlinks';
+
 
 export default function Home() {
     return (
@@ -11,6 +13,7 @@ export default function Home() {
             <ProductOffers />
             <JobBoard />
             <GetInvolved />
+            <Hyperlinks />
         </div>
     )
 }

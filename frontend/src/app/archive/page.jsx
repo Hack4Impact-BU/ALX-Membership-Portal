@@ -7,7 +7,7 @@ import EventCard from './component/card';
 import Training from './component/training';
 import ReusableHeader from '@/components/ReusableHeader/ReusableHeader';
 import DropdownCardAdmin from '@/components/DropDrownAdmin/DropDownCardsAdmin';
-
+import Hyperlinks from '@/components/Hyperlinks';
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 // Extracted filter component for better organization
@@ -321,6 +321,7 @@ export default function Archive() {
           <p className="text-[#F6F2E9] text-xl">Loading...</p>
         </div>
       ) : renderContent()}
+      <Hyperlinks />
     </div>
   );
 }

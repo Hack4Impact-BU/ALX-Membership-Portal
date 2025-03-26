@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { BookmarkIcon } from '@heroicons/react/outline';
 import { Inter, Proza_Libre } from 'next/font/google';
+import Hyperlinks from '@/components/Hyperlinks';
 
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
@@ -91,6 +92,7 @@ export default function SavedPage() {
           ))}
         </div>
       </div>
+      <Hyperlinks />
     </div>
   );
 }
