@@ -18,6 +18,7 @@ export default function Eventing({ eventType, searchField, showSavedOnly }) {
         if (!response.ok) throw new Error("Failed to fetch events");
 
         const data = await response.json(); // Parse JSON response
+        console.log("Fetched data:", data)
         setEvents(data);
         setLoading(false);
       } catch (err) {
@@ -83,6 +84,7 @@ return (
       WebsiteLink={event.websiteLink || "#"}
       ZipCode={event.ZipCode}
       EventImage={event.pic}
+      image_url={event.image_url}
       toggleCardSaved={event.toggleCardSaved}
     />
   ))}

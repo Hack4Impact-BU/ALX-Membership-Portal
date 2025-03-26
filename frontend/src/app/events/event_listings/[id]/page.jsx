@@ -1,4 +1,3 @@
-
 import { Proza_Libre } from 'next/font/google'; // Import the Proza Libre font
 
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
@@ -17,7 +16,8 @@ export default async function Page({ searchParams }) {
         distance = null,
         toggleCardSaved = null,
         EventName = null,
-        EventOrganizer = null
+        EventOrganizer = null,
+        image_url = null
       } = searchParams;
 
     
@@ -27,7 +27,27 @@ export default async function Page({ searchParams }) {
       <div className="flex flex-col w-full h-[1280px]">
         <div className="flex flex-row gap-8 w-full h-2/5 p-12">
             <div className="flex flex-col justify-center items-center basis-1/2 h-full bg-[#F6F2E9] rounded-xl">
-                <h1>IMAGE GOES HERE</h1>
+                {EventName && (
+                    <div className="w-full h-64 md:h-96">
+                        {image_url ? (
+                            <img 
+                                src={image_url} 
+                                alt={EventName} 
+                                className="w-full h-full object-cover"
+                            />
+                        ) : pic ? (
+                            <img 
+                                src={pic} 
+                                alt={EventName} 
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                <span className="text-gray-500">No image available</span>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
             <div className="flex flex-col justify-around items-start basis-1/2 h-full bg-[#F6F2E9] rounded-xl p-12">
                 <div className="flex flex-row gap-4 justify-center items-center">
@@ -66,7 +86,15 @@ export default async function Page({ searchParams }) {
             <div className='flex flex-col w-full h-full bg-[#F6F2E9] rounded-xl p-12'>
                 <div className='flex flex-row justify-between items-center gap-2'>
                     <div className='flex flex-row ju items-center gap-8'>
-                        <div className="w-36 h-36 bg-red-400 rounded-full"/>
+                        {pic ? (
+                            <img 
+                                src={pic} 
+                                alt="Organizer" 
+                                className="w-36 h-36 object-cover rounded-full"
+                            />
+                        ) : (
+                            <div className="w-36 h-36 bg-red-400 rounded-full"/>
+                        )}
                         <p className={`text-3xl text-black ${prozaLibre.className}`}>{Location}</p>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" fill={'none'} viewBox="0 0 24 24" stroke-width="2" stroke="#214933" class="size-20">

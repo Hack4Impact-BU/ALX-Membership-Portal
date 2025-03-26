@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReusableHeader from "@/components/ReusableHeader/ReusableHeader";
 import Eventing from "./components/EventListings/EventListings";
 import { Inter, Proza_Libre } from 'next/font/google';
@@ -15,6 +15,7 @@ export default function EventListings() {
   const [distance, setDistance] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [showSavedOnly, setShowSavedOnly] = useState(false);
+  const [events, setEvents] = useState([]);
 
   const handleSearch = (e) => setSearch(e.target.value);
   const handleEventType = (e) => setEventType(e.target.value);
@@ -31,7 +32,6 @@ export default function EventListings() {
   const toggleShowSavedOnly = () => setShowSavedOnly(!showSavedOnly)
   
 
-  
   return (
     <div className="w-11/12 text-white mt-20 h-screen">
         <ReusableHeader header={"Upcoming Events"} translation={"*    Próximos eventos"} isAdmin={true} directTo={"/events/event_listings/create"}/>
@@ -113,8 +113,8 @@ export default function EventListings() {
                     showSavedOnly ? "bg-green-500" : "bg-white"
                   }`}
                   onClick={toggleShowSavedOnly}>
-  {showSavedOnly ? "Show All" : "Show Saved"}
-</button>
+            {showSavedOnly ? "Show All" : "Show Saved"}
+          </button>
           
 
         </div>

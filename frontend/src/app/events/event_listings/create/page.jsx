@@ -15,6 +15,7 @@ export default function CreateEvent() {
     instruct: '',
     pic: null,
     phone: '',
+    image: null,
   });
 
   const authToken = "your_auth_token_here";
@@ -30,15 +31,23 @@ export default function CreateEvent() {
     });
   };
 
-  // Handle file upload
+  // Handle file upload for pic (contact person image)
   const handleFileChange = (e) => {
     setEvent({
       ...event,
       pic: e.target.files[0],
     });
   };
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+  // Handle file upload for event image
+  const handleImageChange = (e) => {
+    setEvent({
+      ...event,
+      image: e.target.files[0],
+    });
+  };
+
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -57,6 +66,11 @@ export default function CreateEvent() {
     formData.append('eventlist[instruct]', event.instruct);
     formData.append('eventlist[pic]', event.pic);
     formData.append('eventlist[phone]', event.phone);
+    
+    // Add the event image if one was selected
+    if (event.image) {
+      formData.append('eventlist[image]', event.image);
+    }
 
     try {
       const response = await fetch(`${apiBaseUrl}/eventlists`, {
@@ -212,9 +226,36 @@ export default function CreateEvent() {
           />
         </div>
 
-        {/* Event Image */}
+        {/* Event Description */}
         <div className="mb-4">
-          <label htmlFor="pic" className="block text-gray-700 font-bold mb-2">Event Image</label>
+          <label htmlFor="eventDesc" className="block text-gray-700 font-bold mb-2">Event Description</label>
+          <textarea
+            name="eventDesc"
+            id="eventDesc"
+            value={event.eventDesc}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            rows="3"
+            required
+          />
+        </div>
+
+        {/* Instructions */}
+        <div className="mb-4">
+          <label htmlFor="instruct" className="block text-gray-700 font-bold mb-2">Instructions</label>
+          <textarea
+            name="instruct"
+            id="instruct"
+            value={event.instruct}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            rows="3"
+          />
+        </div>
+
+        {/* Contact Image */}
+        <div className="mb-4">
+          <label htmlFor="pic" className="block text-gray-700 font-bold mb-2">Contact Image</label>
           <input
             type="file"
             name="pic"
@@ -223,6 +264,19 @@ export default function CreateEvent() {
             className="w-full"
             accept="image/*"
             required
+          />
+        </div>
+
+        {/* Event Image - NEW */}
+        <div className="mb-4">
+          <label htmlFor="image" className="block text-gray-700 font-bold mb-2">Event Banner Image</label>
+          <input
+            type="file"
+            name="image"
+            id="image"
+            onChange={handleImageChange}
+            className="w-full"
+            accept="image/*"
           />
         </div>
 
