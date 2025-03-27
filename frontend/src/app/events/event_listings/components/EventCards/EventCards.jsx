@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useState } from 'react';
@@ -8,7 +7,7 @@ import Link from 'next/link';
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
-export default function EventCard({EventDescription, Location, WebsiteLink, pic, Date, index, description, saved, Time, distance, toggleCardSaved, EventName, EventOrganizer}) {
+export default function EventCard({EventDescription, Location, WebsiteLink, pic, Date, index, description, saved, Time, distance, toggleCardSaved, EventName, EventOrganizer, id, image_url}) {
 
     const [isSaved, setIsSaved] = useState(saved);
 
@@ -20,13 +19,18 @@ export default function EventCard({EventDescription, Location, WebsiteLink, pic,
 
     return (
             <div className="border flex flex-col justify-evenly rounded-3xl bg-[#F6F2E9] w-96 h-64 transition-transform duration-300 hover:scale-105">
-                <Link href={{
-                    pathname: `/events/event_listings/${Location}`,
-                    query: { EventDescription, Location, WebsiteLink, pic, Date, description, index, saved, Time, distance, toggleCardSaved, EventName, EventOrganizer }
-                    }}>
+                <Link href={`/events/event_listings/${id}`}>
                 <div className="flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
                     {/* gonna be image circle */}
-                    <div className="w-20 h-20 bg-orange-400 rounded-full"/>
+                    {image_url ? (
+                        <img 
+                            src={image_url} 
+                            alt={EventName} 
+                            className="w-20 h-20 object-cover rounded-full"
+                        />
+                    ) : (
+                        <div className="w-20 h-20 bg-orange-400 rounded-full"/>
+                    )}
                     <div className="flex items-center justify-center w-60 h-14 bg-white rounded-full">
                         <p className={`p-4 text-2xl text-[#214933] ${prozaLibre.className} overflow-hidden text-ellipsis whitespace-nowrap`}>{EventName}</p>
                     </div>

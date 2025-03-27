@@ -16,7 +16,7 @@ export default function EventCardAdmin({EventDescription, Location, WebsiteLink,
         setIsSaved(!isSaved);
         toggleCardSaved(index);
     }
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';
 
     const openDeleteModal = () => {
         setShowDeleteModal(true);
@@ -54,25 +54,7 @@ export default function EventCardAdmin({EventDescription, Location, WebsiteLink,
     return (
         <>
             <div className="border flex flex-col justify-evenly rounded-3xl bg-[#F6F2E9] w-96 h-64 transition-transform duration-300 hover:scale-105">
-                <Link href={{
-                    pathname: `/events/event_listings/${id}`,
-                    query: { 
-                        EventDescription, 
-                        Location, 
-                        WebsiteLink, 
-                        pic, 
-                        Date, 
-                        description, 
-                        index, 
-                        saved, 
-                        Time, 
-                        distance, 
-                        toggleCardSaved, 
-                        EventName, 
-                        EventOrganizer,
-                        image_url
-                    }
-                }}>
+                <Link href={`/events/event_listings/${id}`}>
                 <div className="flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
                     {/* gonna be image circle */}
                     {image_url ? (
