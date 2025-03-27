@@ -36,18 +36,28 @@ export default function Eventing({ eventType, searchField, showSavedOnly }) {
       event.EventID === id ? { ...event, saved: !event.saved} : event))
   };
   
+  // Safe access function to handle different property naming conventions
+  const getEventProperty = (event, propertyName) => {
+    // Try both camelCase and PascalCase versions of the property
+    const camelCase = propertyName.charAt(0).toLowerCase() + propertyName.slice(1);
+    const pascalCase = propertyName.charAt(0).toUpperCase() + propertyName.slice(1);
+    
+    return event[camelCase] || event[pascalCase] || '';
+  };
 
-// Filter events based on the eventType prop
-const filteredEvents = events
-  .filter((event) => 
-    eventType ? event.EventType.toLowerCase().includes(eventType.toLowerCase()) : true
-  )
-  .filter((event) => 
-    searchField ? event.EventName.toLowerCase().includes(searchField.toLowerCase()) : true
-  )
-  .filter((event) =>
-    (showSavedOnly ? event.saved : true)
-  );
+  // Filter events based on the eventType prop
+  const filteredEvents = events
+    .filter((event) => {
+      if (!eventType) return true;
+      const eventTypeValue = getEventProperty(event, 'eventType');
+      return eventTypeValue.toLowerCase().includes(eventType.toLowerCase());
+    })
+    .filter((event) => {
+      if (!searchField) return true;
+      const eventName = getEventProperty(event, 'eventName');
+      return eventName.toLowerCase().includes(searchField.toLowerCase());
+    })
+    .filter((event) => (showSavedOnly ? event.saved : true));
 
   if (loading) return <p>Loading events...</p>;
   if (error) return <p>Error loading events: {error}</p>;
@@ -64,30 +74,31 @@ const filteredEvents = events
     hour = hour % 12 || 12; // Convert 0 to 12 for midnight case
 
     return `${hour}:${minute} ${period}`; // Append "UTC" or desired timezone
-}
+  }
 
-//////////////////change the eventcard admin 
+  //////////////////change the eventcard admin 
 
-return (
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {filteredEvents.map((event) => (
-    <EventCardAdmin
-      key={event.id}
-      id={event.id}
-      EventName={event.eventName}
-      Location={event.location}
-      Date={event.startDate}
-      Time={formatTime(event.timeStart)}
-      EventOrganizer={event.org}
-      PhoneNumber={event.phone}
-      EventDescription={event.eventDesc}
-      WebsiteLink={event.websiteLink || "#"}
-      ZipCode={event.ZipCode}
-      EventImage={event.pic}
-      image_url={event.image_url}
-      toggleCardSaved={event.toggleCardSaved}
-    />
-  ))}
-</div>
-);
+  return (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {filteredEvents.map((event) => (
+      <EventCardAdmin
+        key={event.id}
+        id={event.id}
+        EventName={getEventProperty(event, 'eventName')}
+        Location={getEventProperty(event, 'location')}
+        Date={getEventProperty(event, 'startDate')}
+        Time={formatTime(getEventProperty(event, 'timeStart'))}
+        EventOrganizer={getEventProperty(event, 'org')}
+        PhoneNumber={getEventProperty(event, 'phone')}
+        EventDescription={getEventProperty(event, 'eventDesc')}
+        WebsiteLink={getEventProperty(event, 'websiteLink') || "#"}
+        ZipCode={getEventProperty(event, 'zipCode')}
+        EventImage={getEventProperty(event, 'pic')}
+        image_url={getEventProperty(event, 'image_url')}
+        toggleCardSaved={toggleCardSaved}
+        saved={event.saved}
+      />
+    ))}
+  </div>
+  );
 }
