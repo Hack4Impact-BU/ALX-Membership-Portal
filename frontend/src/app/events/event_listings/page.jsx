@@ -125,7 +125,7 @@ export default function EventListings() {
 
         <Eventing eventType={eventType} searchField={search} showSavedOnly={showSavedOnly}/>
         <Hyperlinks />
-
+                  
       </div>
     </div>
   );

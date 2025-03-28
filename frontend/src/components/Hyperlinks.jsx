@@ -16,7 +16,7 @@ export default function Footer() {
 
   return (
     <footer className="text-white py-8">
-      <div className={`container mx-auto px-4 text-center ${prozaLibre.className} border-t py-8 w-4/12`}>
+      <div className={`container mx-auto px-4 text-center ${prozaLibre.className} border-t py-8`}>
 
         {/* Social Media Links Section */}
         <div className="flex justify-center gap-4 mb-6">
