@@ -86,7 +86,7 @@ export default function CardList() {
                         <div className="col-span-2 text-center">No offers found</div>
                     ) : (
                         (renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).map((offer, index) => (
-                            <AdminCard
+                            <Card
                                 key={index}
                                 offerTitle={offer.offerTitle}
                                 businessType={offer.businessType}
