@@ -54,7 +54,7 @@ export default function EventCardAdmin({EventDescription, Location, WebsiteLink,
     return (
         <>
             <div className="border flex flex-col justify-evenly rounded-3xl bg-[#F6F2E9] w-96 h-64 transition-transform duration-300 hover:scale-105">
-                <Link href={`/events/event_listings/${id}`}>
+                <Link href={`/events/event_listings/edit_event/${id}`}>
                 <div className="flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
                     {/* gonna be image circle */}
                     {image_url ? (
