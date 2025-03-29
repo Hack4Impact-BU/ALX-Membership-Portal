@@ -29,12 +29,6 @@ export default function Eventing({ eventType, searchField, showSavedOnly }) {
 
     fetchEvents();
   }, []);
-
-  const toggleCardSaved = (id) => {
-    setEvents((prevEvents) => 
-      prevEvents.map((event) =>
-      event.EventID === id ? { ...event, saved: !event.saved} : event))
-  };
   
   // Safe access function to handle different property naming conventions
   const getEventProperty = (event, propertyName) => {
@@ -57,7 +51,7 @@ export default function Eventing({ eventType, searchField, showSavedOnly }) {
       const eventName = getEventProperty(event, 'eventName');
       return eventName.toLowerCase().includes(searchField.toLowerCase());
     })
-    .filter((event) => (showSavedOnly ? event.saved : true));
+    .filter((event) => (showSavedOnly ? event.isSaved : true));
 
   if (loading) return <p>Loading events...</p>;
   if (error) return <p>Error loading events: {error}</p>;
@@ -95,8 +89,7 @@ export default function Eventing({ eventType, searchField, showSavedOnly }) {
         ZipCode={getEventProperty(event, 'zipCode')}
         EventImage={getEventProperty(event, 'pic')}
         image_url={getEventProperty(event, 'image_url')}
-        toggleCardSaved={toggleCardSaved}
-        saved={event.saved}
+        saved={event.isSaved}
       />
     ))}
   </div>
