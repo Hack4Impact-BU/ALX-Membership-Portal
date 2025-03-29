@@ -73,11 +73,11 @@ export default function CardList() {
     };
 
     return (
-        <div className="flex flex-col pt-24 min-h-screen bg-[#214933] text-white">
+        <div className="flex flex-col pt-24 text-white">
             {/* Main Content */}
-            <div className="flex h-[34rem] flex-row gap-10">
+            <div className="flex flex-row gap-10">
                 {/* Cards Grid  ---------------------------------CHANGED TO RENDER REGULAR CARD RATHER THAN ADMINCARD*/}
-                <div className="grid grid-cols-2 gap-6 p-10 w-[47rem]">
+                <div className="grid grid-cols-2 gap-6 p-10 w-[47rem] ">
                     {loading ? (
                         <div className="col-span-2 text-center">Loading offers...</div>
                     ) : error ? (

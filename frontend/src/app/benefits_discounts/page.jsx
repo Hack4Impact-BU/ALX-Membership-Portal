@@ -12,7 +12,7 @@ export default function BenefitsDiscounts() {
                 
             </div>
             <CardList />
-            <Hyperlinks />
+            <div className="w-10/12"><Hyperlinks /></div>
 
         </section>
     )
