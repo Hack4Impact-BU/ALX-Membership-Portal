@@ -321,7 +321,7 @@ export default function Archive() {
           <p className="text-[#F6F2E9] text-xl">Loading...</p>
         </div>
       ) : renderContent()}
-      <Hyperlinks />
+      <div className='w-10/12'><Hyperlinks /></div>
     </div>
   );
 }
