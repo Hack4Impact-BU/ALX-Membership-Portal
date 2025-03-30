@@ -7,7 +7,7 @@ class ProductOffersController < ApplicationController
     @product_offers = ProductOffer.all
     
     result = @product_offers.map do |offer|
-      json = {
+      {
         id: offer.id,
         businessType: offer.businessType,
         endDate: offer.endDate,
@@ -18,11 +18,9 @@ class ProductOffersController < ApplicationController
         startDate: offer.startDate,
         created_at: offer.created_at,
         updated_at: offer.updated_at,
-        isSaved: offer.isSaved
+        isSaved: offer.isSaved,
+        pic_url: offer.pic_url
       }
-      
-      json[:pic_url] = url_for(offer.pic) if offer.pic.attached?
-      json
     end
     
     render json: result
@@ -41,10 +39,9 @@ class ProductOffersController < ApplicationController
       startDate: @product_offer.startDate,
       created_at: @product_offer.created_at,
       updated_at: @product_offer.updated_at,
-      isSaved: @product_offer.isSaved
+      isSaved: @product_offer.isSaved,
+      pic_url: @product_offer.pic_url
     }
-    
-    result[:pic_url] = url_for(@product_offer.pic) if @product_offer.pic.attached?
     
     render json: result
   end
@@ -65,10 +62,9 @@ class ProductOffersController < ApplicationController
         startDate: @product_offer.startDate,
         created_at: @product_offer.created_at,
         updated_at: @product_offer.updated_at,
-        isSaved: @product_offer.isSaved
+        isSaved: @product_offer.isSaved,
+        pic_url: @product_offer.pic_url
       }
-      
-      result[:pic_url] = url_for(@product_offer.pic) if @product_offer.pic.attached?
       
       render json: result, status: :created, location: @product_offer
     else
@@ -90,10 +86,9 @@ class ProductOffersController < ApplicationController
         startDate: @product_offer.startDate,
         created_at: @product_offer.created_at,
         updated_at: @product_offer.updated_at,
-        isSaved: @product_offer.isSaved
+        isSaved: @product_offer.isSaved,
+        pic_url: @product_offer.pic_url
       }
-      
-      result[:pic_url] = url_for(@product_offer.pic) if @product_offer.pic.attached?
       
       render json: result
     else
@@ -116,6 +111,6 @@ class ProductOffersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def product_offer_params
-      params.require(:product_offer).permit(:businessType, :endDate, :instruct, :offerDesc, :offerTitle, :place, :startDate, :pic, :isSaved)
+      params.require(:product_offer).permit(:businessType, :endDate, :instruct, :offerDesc, :offerTitle, :place, :startDate, :pic_url, :isSaved)
     end
 end

@@ -8,7 +8,7 @@ export default function CreateOffer() {
         instruct: '',
         offerDesc: '',
         offerTitle: '',
-        pic: null,
+        pic_url: null,
         place: '',
         startDate: ''
     });
@@ -26,7 +26,7 @@ export default function CreateOffer() {
     const handleFileChange = (e) => {
         setOffer({
             ...offer,
-            pic: e.target.files[0],
+            pic_url: e.target.files[0],
         });
     };
 
