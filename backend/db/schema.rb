@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_25_032655) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_17_230538) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,24 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_25_032655) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "eventlists", force: :cascade do |t|
+    t.string "eventType"
+    t.date "startDate"
+    t.date "endDate"
+    t.string "location"
+    t.string "org"
+    t.time "timeStart"
+    t.time "timeEnd"
+    t.string "eventName"
+    t.boolean "isSaved"
+    t.text "eventDesc"
+    t.text "instruct"
+    t.string "pic"
+    t.string "phone"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "get_involveds", force: :cascade do |t|
     t.string "title"
     t.text "summary"
@@ -62,6 +80,46 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_25_032655) do
     t.text "requirements"
     t.string "salary"
     t.string "contact"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "product_offers", force: :cascade do |t|
+    t.string "place"
+    t.string "offerTitle"
+    t.text "offerDesc"
+    t.text "instruct"
+    t.boolean "isSaved"
+    t.date "startDate"
+    t.date "endDate"
+    t.string "businessType"
+    t.string "pic"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "q_and_as", force: :cascade do |t|
+    t.string "question"
+    t.string "answer"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "researches", force: :cascade do |t|
+    t.string "researchTitle"
+    t.text "researchDesc"
+    t.string "link"
+    t.date "date"
+    t.string "location"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "trainings", force: :cascade do |t|
+    t.string "trainingTitle"
+    t.text "trainingDesc"
+    t.string "link"
+    t.date "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
