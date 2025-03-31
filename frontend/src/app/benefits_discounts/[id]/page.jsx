@@ -97,7 +97,6 @@ export default function Page() {
             <div className='flex flex-col w-full h-full bg-[#F6F2E9] rounded-xl p-12'>
                 <div className='flex flex-row justify-between items-center gap-2'>
                     <div className='flex flex-row ju items-center gap-8'>
-                        <div className="w-36 h-36 bg-red-400 rounded-full"/>
                         <p className={`text-5xl text-[#214933] ${prozaLibre.className}`}>{place}</p>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" fill={'none'} viewBox="0 0 24 24" stroke-width="2" stroke="#214933" className="size-20">

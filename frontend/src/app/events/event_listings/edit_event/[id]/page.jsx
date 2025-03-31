@@ -24,6 +24,8 @@ export default function Page({ params }) {
         phone: false,
         image_url: false
     });
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
     
     const CustomButton = styled(Button)({
       backgroundColor: '#44E489',
@@ -42,24 +44,74 @@ export default function Page({ params }) {
 
     const handleEdit = (field) => {
       setIsEditing((prev) => ({ ...prev, [field]: true }));
+      setError(null);
+      
+      if (field === 'image_url') {
+        setPreviewUrl(null);
+      }
+    };
+
+    const handleFileChange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        // Check file size - 5MB limit
+        if (file.size > 5 * 1024 * 1024) {
+          setError('File is too large. Maximum size is 5MB.');
+          return;
+        }
+        setSelectedFile(file);
+        setError(null);
+        
+        // Create a preview URL
+        const fileReader = new FileReader();
+        fileReader.onload = () => {
+          setPreviewUrl(fileReader.result);
+        };
+        fileReader.readAsDataURL(file);
+      }
     };
 
     const handleSaveClick = async (field) => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/eventlists/${id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ [field]: eventData[field] }),
-        });
+        // Special handling for image_url field with file upload
+        if (field === 'image_url') {
+          if (!selectedFile) {
+            setError('Please select a file to upload');
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append('eventlist[image]', selectedFile);
+
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/eventlists/${id}`, {
+            method: 'PATCH',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to update image: ${response.statusText}`);
+          }
+
+          const updatedData = await response.json();
+          setEventData(updatedData);
+        } else {
+          // Regular text field handling - existing code
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/eventlists/${id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ [field]: eventData[field] }),
+          });
     
-        if (!response.ok) {
-          throw new Error(`Failed to update item: ${response.statusText}`);
+          if (!response.ok) {
+            throw new Error(`Failed to update item: ${response.statusText}`);
+          }
+    
+          const updatedData = await response.json();
+          setEventData(updatedData);
         }
-    
-        const updatedData = await response.json();
-        setEventData(updatedData);
+        
         setShowSuccessModal(true);
         setTimeout(() => {
           setShowSuccessModal(false);
@@ -69,6 +121,8 @@ export default function Page({ params }) {
         console.error('Error updating event:', err);
       } finally {
         setIsEditing((prev) => ({ ...prev, [field]: false }));
+        setSelectedFile(null);
+        setPreviewUrl(null);
       }
     };
 
@@ -192,30 +246,44 @@ export default function Page({ params }) {
           </div>
         )}
         <div className="flex flex-row gap-8 w-full h-2/5 p-12">
-            <div className="flex flex-col justify-center items-center basis-1/2 h-full bg-[#F6F2E9] rounded-xl relative">
+            <div className="flex flex-col justify-center items-center basis-1/2 h-full bg-[#F6F2E9] rounded-xl relative p-8">
                 {isEditing.image_url ? (
-                  <div className="flex flex-col items-center gap-4 p-4">
+                  <div className="flex flex-col items-center gap-4 p-4 w-full">
                     <input
-                      type="text"
-                      value={eventData.image_url || ''}
-                      onChange={(e) => setEventData({ ...eventData, image_url: e.target.value })}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
                       className="p-2 w-full text-black bg-white border border-gray-300 rounded-lg"
-                      placeholder="Enter image URL"
                     />
+                    {previewUrl && (
+                      <div className="mt-2 max-w-full max-h-64 overflow-hidden">
+                        <img 
+                          src={previewUrl} 
+                          alt="Preview" 
+                          className="object-contain w-full h-full border rounded-xl"
+                        />
+                      </div>
+                    )}
                     <div className="flex gap-2">
                       <CustomButton 
                         variant="contained"
                         onClick={() => handleSaveClick('image_url')}
+                        disabled={!selectedFile}
                       >
                         <p className="text-black">Save</p>
                       </CustomButton>
                       <Button 
                         variant="outlined"
-                        onClick={() => setIsEditing(prev => ({...prev, image_url: false}))}
+                        onClick={() => {
+                          setIsEditing(prev => ({...prev, image_url: false}));
+                          setSelectedFile(null);
+                          setPreviewUrl(null);
+                        }}
                       >
                         Cancel
                       </Button>
                     </div>
+                    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
                   </div>
                 ) : (
                   <>
@@ -223,16 +291,26 @@ export default function Page({ params }) {
                         <img 
                             src={image_url} 
                             alt={EventName} 
-                            className="w-full h-full object-cover"
+                            className="max-w-full max-h-full object-contain border rounded-xl"
+                            onError={(e) => {
+                              console.log("Image failed to load:", image_url);
+                              e.target.onerror = null;
+                              e.target.style.display = "none";
+                            }}
                         />
-                    ) : pic ? (
+                    ) : image_url ? (
                         <img 
-                            src={pic} 
+                            src={image_url} 
                             alt={EventName} 
-                            className="w-full h-full object-cover"
+                            className="max-w-full max-h-full object-contain border rounded-xl"
+                            onError={(e) => {
+                              console.log("Image failed to load:", image_url);
+                              e.target.onerror = null;
+                              e.target.style.display = "none";
+                            }}
                         />
                     ) : (
-                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <div className="w-full h-full flex items-center justify-center rounded-xl">
                             <span className="text-gray-500">No image available</span>
                         </div>
                     )}
@@ -403,15 +481,6 @@ export default function Page({ params }) {
             <div className='flex flex-col w-full h-full bg-[#F6F2E9] rounded-xl p-12'>
                 <div className='flex flex-row justify-between items-center gap-2'>
                     <div className='flex flex-row ju items-center gap-8'>
-                        {pic ? (
-                            <img 
-                                src={pic} 
-                                alt="Organizer" 
-                                className="w-36 h-36 object-cover rounded-full"
-                            />
-                        ) : (
-                            <div className="w-36 h-36 bg-red-400 rounded-full"/>
-                        )}
                         <div className="flex-1 flex justify-between items-center">
                           {isEditing.org ? (
                             <input

@@ -379,7 +379,6 @@ export default function Page() {
             <div className='flex flex-col w-full h-full bg-[#F6F2E9] rounded-xl p-12'>
                 <div className='flex flex-row justify-between items-center gap-2'>
                     <div className='flex flex-row ju items-center gap-8'>
-                        <div className="w-36 h-36 bg-red-400 rounded-full"/>
                         <p className={`text-5xl text-[#214933] ${prozaLibre.className}`}>{offerData.place}</p>
                     </div>
                     <div className="flex gap-2">

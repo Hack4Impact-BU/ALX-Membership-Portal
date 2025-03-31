@@ -24,6 +24,7 @@ export default function Page({ params }) {
                 const data = await response.json();
                 setEventData(data);
                 setLoading(false);
+                console.log(data);
             } catch (err) {
                 console.error('Error fetching event:', err);
                 setError(err.message);
@@ -87,21 +88,31 @@ export default function Page({ params }) {
         <div className="flex flex-row gap-8 w-full h-2/5 p-12">
             <div className="flex flex-col justify-center items-center basis-1/2 h-full bg-[#F6F2E9] rounded-xl">
                 {EventName && (
-                    <div className="w-full h-64 md:h-96">
+                    <div className="w-full h-64 md:h-96 flex justify-center items-center">
                         {image_url ? (
                             <img 
                                 src={image_url} 
                                 alt={EventName} 
-                                className="w-full h-full object-cover"
+                                className="max-w-full h-full object-contain border rounded-xl"
+                                onError={(e) => {
+                                  console.log("Image failed to load:", image_url);
+                                  e.target.onerror = null;
+                                  e.target.style.display = "none";
+                                }}
                             />
-                        ) : pic ? (
+                        ) : image_url ? (
                             <img 
-                                src={pic} 
+                                src={image_url} 
                                 alt={EventName} 
-                                className="w-full h-full object-cover"
+                                className="max-w-full h-full object-contain border rounded-xl"
+                                onError={(e) => {
+                                  console.log("Image failed to load:", image_url);
+                                  e.target.onerror = null;
+                                  e.target.style.display = "none";
+                                }}
                             />
                         ) : (
-                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                            <div className="w-full h-full flex items-center justify-center">
                                 <span className="text-gray-500">No image available</span>
                             </div>
                         )}
@@ -145,11 +156,17 @@ export default function Page({ params }) {
             <div className='flex flex-col w-full h-full bg-[#F6F2E9] rounded-xl p-12'>
                 <div className='flex flex-row justify-between items-center gap-2'>
                     <div className='flex flex-row ju items-center gap-8'>
-                        {pic ? (
+                        {image_url ? (
                             <img 
-                                src={pic} 
+                                src={image_url} 
                                 alt="Organizer" 
                                 className="w-36 h-36 object-cover rounded-full"
+                                onError={(e) => {
+                                  console.log("Profile image failed to load:", image_url);
+                                  e.target.onerror = null;
+                                  e.target.style.display = "none";
+                                  e.target.parentElement.innerHTML = '<div class="w-36 h-36 bg-red-400 rounded-full"></div>';
+                                }}
                             />
                         ) : (
                             <div className="w-36 h-36 bg-red-400 rounded-full"/>
