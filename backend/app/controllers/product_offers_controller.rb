@@ -19,7 +19,7 @@ class ProductOffersController < ApplicationController
         created_at: offer.created_at,
         updated_at: offer.updated_at,
         isSaved: offer.isSaved,
-        pic_url: offer.pic_url
+        pic_url: offer.pic.attached? ? url_for(offer.pic) : nil
       }
     end
     
@@ -40,7 +40,7 @@ class ProductOffersController < ApplicationController
       created_at: @product_offer.created_at,
       updated_at: @product_offer.updated_at,
       isSaved: @product_offer.isSaved,
-      pic_url: @product_offer.pic_url
+      pic_url: @product_offer.pic.attached? ? url_for(@product_offer.pic) : nil
     }
     
     render json: result
@@ -63,7 +63,7 @@ class ProductOffersController < ApplicationController
         created_at: @product_offer.created_at,
         updated_at: @product_offer.updated_at,
         isSaved: @product_offer.isSaved,
-        pic_url: @product_offer.pic_url
+        pic_url: @product_offer.pic.attached? ? url_for(@product_offer.pic) : nil
       }
       
       render json: result, status: :created, location: @product_offer
@@ -87,7 +87,7 @@ class ProductOffersController < ApplicationController
         created_at: @product_offer.created_at,
         updated_at: @product_offer.updated_at,
         isSaved: @product_offer.isSaved,
-        pic_url: @product_offer.pic_url
+        pic_url: @product_offer.pic.attached? ? url_for(@product_offer.pic) : nil
       }
       
       render json: result
@@ -111,6 +111,6 @@ class ProductOffersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def product_offer_params
-      params.require(:product_offer).permit(:businessType, :endDate, :instruct, :offerDesc, :offerTitle, :place, :startDate, :pic_url, :isSaved)
+      params.require(:product_offer).permit(:businessType, :endDate, :instruct, :offerDesc, :offerTitle, :place, :startDate, :isSaved, :pic)
     end
 end

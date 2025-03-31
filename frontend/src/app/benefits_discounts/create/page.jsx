@@ -8,7 +8,7 @@ export default function CreateOffer() {
         instruct: '',
         offerDesc: '',
         offerTitle: '',
-        pic_url: null,
+        pic: null,
         place: '',
         startDate: ''
     });
@@ -26,7 +26,7 @@ export default function CreateOffer() {
     const handleFileChange = (e) => {
         setOffer({
             ...offer,
-            pic_url: e.target.files[0],
+            pic: e.target.files[0],
         });
     };
 
@@ -63,6 +63,7 @@ export default function CreateOffer() {
 
             const result = await response.json();
             setMessage('Offer created successfully!');
+            console.log(result);
             setError(null);
         } catch (error) {
             console.error('Error creating offer:', error);

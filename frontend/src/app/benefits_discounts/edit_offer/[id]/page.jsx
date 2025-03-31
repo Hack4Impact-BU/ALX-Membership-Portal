@@ -14,7 +14,7 @@ export default function Page() {
       offerTitle: '',
       place: '',
       link: '',
-      pic: '',
+      pic_url: '',
       startDate: '',
       offerDesc: '',
       instruct: ''
@@ -23,11 +23,13 @@ export default function Page() {
     const [error, setError] = useState(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
     const [isEditing, setIsEditing] = useState({
       offerTitle: false,
       place: false,
       link: false,
-      pic: false,
+      pic_url: false,
       startDate: false,
       offerDesc: false,
       instruct: false
@@ -48,6 +50,31 @@ export default function Page() {
 
     const handleEdit = (field) => {
       setIsEditing((prev) => ({ ...prev, [field]: true }));
+      setError(null);
+      
+      if (field === 'pic_url') {
+        setPreviewUrl(null);
+      }
+    };
+
+    const handleFileChange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        // Check file size - 5MB limit
+        if (file.size > 5 * 1024 * 1024) {
+          setError('File is too large. Maximum size is 5MB.');
+          return;
+        }
+        setSelectedFile(file);
+        setError(null);
+        
+        // Create a preview URL
+        const fileReader = new FileReader();
+        fileReader.onload = () => {
+          setPreviewUrl(fileReader.result);
+        };
+        fileReader.readAsDataURL(file);
+      }
     };
 
     const formatUrl = (url) => {
@@ -60,22 +87,47 @@ export default function Page() {
 
     const handleSaveClick = async (field) => {
       try {
-        const valueToSave = field === 'link' ? formatUrl(offerData[field]) : offerData[field];
-        
-        const response = await fetch(`${apiBaseUrl}/product_offers/${id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ [field]: valueToSave }),
-        });
-    
-        if (!response.ok) {
-          throw new Error(`Failed to update item: ${response.statusText}`);
+        // Special handling for pic_url field with file upload
+        if (field === 'pic_url') {
+          if (!selectedFile) {
+            setError('Please select a file to upload');
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append('product_offer[pic]', selectedFile);
+
+          const response = await fetch(`${apiBaseUrl}/product_offers/${id}`, {
+            method: 'PATCH',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to update image: ${response.statusText}`);
+          }
+
+          const updatedData = await response.json();
+          setOfferData(updatedData);
+        } else {
+          // Regular text field handling
+          const valueToSave = field === 'link' ? formatUrl(offerData[field]) : offerData[field];
+          
+          const response = await fetch(`${apiBaseUrl}/product_offers/${id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ [field]: valueToSave }),
+          });
+      
+          if (!response.ok) {
+            throw new Error(`Failed to update item: ${response.statusText}`);
+          }
+      
+          const updatedData = await response.json();
+          setOfferData(updatedData);
         }
-    
-        const updatedData = await response.json();
-        setOfferData(updatedData);
+        
         setShowSuccessModal(true);
         setTimeout(() => {
           setShowSuccessModal(false);
@@ -85,6 +137,8 @@ export default function Page() {
         console.error('Error updating item:', err);
       } finally {
         setIsEditing((prev) => ({ ...prev, [field]: false }));
+        setSelectedFile(null);
+        setPreviewUrl(null);
       }
     };
 
@@ -117,6 +171,7 @@ export default function Page() {
           }
           
           const data = await response.json();
+          console.log(data);
           setOfferData(data);
         } catch (err) {
           console.error('Error fetching offer data:', err);
@@ -134,7 +189,7 @@ export default function Page() {
     if (isLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
     if (error) return <div className="flex justify-center items-center h-screen text-red-500">Error: {error}</div>;
   
-    const { offerTitle, place, link, pic, startDate, offerDesc, instruct } = offerData;
+    const { offerTitle, place, link, pic_url, startDate, offerDesc, instruct } = offerData;
   
     return (
       <div className="flex flex-col w-full h-[1280px] relative">
@@ -144,40 +199,50 @@ export default function Page() {
           </div>
         )}
         <div className="flex flex-row gap-8 w-full h-2/5 p-12">
-            <div className="flex flex-col justify-center items-center basis-1/2 h-full bg-[#F6F2E9] rounded-xl relative">
-                {isEditing.pic ? (
-                  <div className="flex flex-col items-center gap-4 p-4">
+            <div className="flex flex-col justify-center items-center basis-1/2 h-full bg-[#F6F2E9] rounded-xl relative p-8">
+                {isEditing.pic_url ? (
+                  <div className="flex flex-col items-center gap-4 p-4 w-full">
                     <input
-                      type="text"
-                      value={offerData.pic || ''}
-                      onChange={(e) => setOfferData({ ...offerData, pic: e.target.value })}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
                       className="p-2 w-full text-black bg-white border border-gray-300 rounded-lg"
-                      placeholder="Enter image URL"
                     />
+                    {previewUrl && (
+                      <div className="mt-2 max-w-full max-h-64 overflow-hidden">
+                        <img 
+                          src={previewUrl} 
+                          alt="Preview" 
+                          className="object-contain w-full h-full border rounded-xl"
+                        />
+                      </div>
+                    )}
                     <div className="flex gap-2">
                       <CustomButton 
                         variant="contained"
-                        onClick={() => handleSaveClick('pic')}
+                        onClick={() => handleSaveClick('pic_url')}
+                        disabled={!selectedFile}
                       >
                         <p className="text-black">Save</p>
                       </CustomButton>
                       <Button 
                         variant="outlined"
-                        onClick={() => setIsEditing(prev => ({...prev, pic: false}))}
+                        onClick={() => setIsEditing(prev => ({...prev, pic_url: false}))}
                       >
                         Cancel
                       </Button>
                     </div>
+                    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
                   </div>
                 ) : (
                   <>
-                    {pic ? (
+                    {pic_url ? (
                       <img 
-                        src={pic} 
+                        src={pic_url} 
                         alt={offerTitle}
-                        className="max-w-full max-h-full object-contain"
+                        className="max-w-full max-h-full object-contain border rounded-xl"
                         onError={(e) => {
-                          console.log("Image failed to load:", pic);
+                          console.log("Image failed to load:", pic_url);
                           e.target.onerror = null;
                           e.target.style.display = "none";
                         }}
@@ -188,7 +253,7 @@ export default function Page() {
                     <div className="absolute top-2 right-2">
                       <CustomButton 
                         variant="contained"
-                        onClick={() => handleEdit('pic')}
+                        onClick={() => handleEdit('pic_url')}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="black" className="size-6">
                           <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
