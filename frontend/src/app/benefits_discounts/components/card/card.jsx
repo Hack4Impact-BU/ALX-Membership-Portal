@@ -74,10 +74,10 @@ export default function Card({ id, pic }) {
                 <div className="flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
                     {/* gonna be image circle */}
                     <img 
-                        src={pic} 
+                        src={pic_url} 
                         alt={offerTitle}
                         onError={(e) => {
-                            console.log("Image failed to load:", pic);
+                            console.log("Image failed to load:", pic_url);
                             e.target.onerror = null;
                             e.target.style.display = "none";
                             e.target.parentNode.classList.add("bg-[#214933]");

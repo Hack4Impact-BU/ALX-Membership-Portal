@@ -6,9 +6,9 @@ import Link from 'next/link';
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
-export default function AdminCard({id, offerTitle, place, link, pic, startDate, index, offerDesc, isSaved, BusinessType, distance, toggleCardSaved, instruct}) {
+export default function AdminCard({id, offerTitle, place, link, pic_url, startDate, index, offerDesc, isSaved, BusinessType, distance, toggleCardSaved, instruct}) {
 
-    console.log("AdminCard received pic_url:", pic); // Debug image URL
+    console.log("AdminCard received pic_url:", pic_url); // Debug image URL
 
     const handleClick = () => {
         toggleCardSaved(index);
@@ -40,10 +40,10 @@ export default function AdminCard({id, offerTitle, place, link, pic, startDate, 
                 <div className="flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
                     {/* gonna be image circle */}
                     <img 
-                        src={pic} 
+                        src={pic_url} 
                         alt={offerTitle}
                         onError={(e) => {
-                            console.log("Image failed to load:", pic);
+                            console.log("Image failed to load:", pic_url);
                             e.target.onerror = null;
                             e.target.style.display = "none";
                             e.target.parentNode.classList.add("bg-[#214933]");

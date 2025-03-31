@@ -12,7 +12,7 @@ export default function Page() {
       offerTitle: '',
       place: '',
       link: '',
-      pic: '',
+      pic_url: '',
       startDate: '',
       offerDesc: '',
       instruct: ''
@@ -50,19 +50,19 @@ export default function Page() {
     if (isLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
     if (error) return <div className="flex justify-center items-center h-screen text-red-500">Error: {error}</div>;
   
-    const { offerTitle, place, link, pic, startDate, offerDesc, instruct } = offerData;
+    const { offerTitle, place, link, pic_url, startDate, offerDesc, instruct } = offerData;
   
     return (
       <div className="flex flex-col w-full h-[1280px]">
         <div className="flex flex-row gap-8 w-full h-2/5 p-12">
-            <div className="flex flex-col justify-center items-center basis-1/2 h-full bg-[#F6F2E9] rounded-xl">
-                {pic ? (
+            <div className="flex flex-col justify-center items-center basis-1/2 h-full bg-[#F6F2E9] rounded-xl p-8">
+                {pic_url ? (
                   <img 
-                    src={pic} 
+                    src={pic_url} 
                     alt={offerTitle}
-                    className="max-w-full max-h-full object-contain"
+                    className="max-w-full max-h-full object-contain rounded-xl"
                     onError={(e) => {
-                      console.log("Image failed to load:", pic);
+                      console.log("Image failed to load:", pic_url);
                       e.target.onerror = null;
                       e.target.style.display = "none";
                     }}
