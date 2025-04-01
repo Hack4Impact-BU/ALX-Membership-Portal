@@ -5,11 +5,14 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PhoneIcon from '@mui/icons-material/Phone';
+import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import Link from 'next/link';
 import axios from 'axios';
-import CloseIcon from '@mui/icons-material/Close';
 import LoadingScreen from '@/components/LoadingScreen';
 import Hyperlinks from '@/components/Hyperlinks';
+import InvolvementCreationForm from './create/page';
 
 const inter = Inter({ subsets: ['latin'] });
 const prozaLibre = Proza_Libre({ subsets: ['latin'], weight: ['400', '600', '700'] });
@@ -22,6 +25,12 @@ export default function GetInvolved() {
   const [showConfirmModal, setShowConfirmModal] = useState(false); // Show confirmation modal
   const [deleteId, setDeleteId] = useState(null); // ID of involvement to delete
   const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [showCreateForm, setShowCreateForm] = useState(false); // Show create form
+  
+  // Editing states
+  const [editingItem, setEditingItem] = useState(null);
+  const [editingField, setEditingField] = useState(null);
+  const [editingValue, setEditingValue] = useState('');
 
   // Define the API base URL from environment variables
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -84,6 +93,65 @@ export default function GetInvolved() {
     setDeleteId(null);
   };
 
+  // Toggle create form
+  const handleCreateInvolvement = () => {
+    setShowCreateForm(true);
+    // Reset expanded card when showing form
+    setExpandedCard(null);
+  };
+
+  // Cancel create form
+  const handleCancelCreate = () => {
+    setShowCreateForm(false);
+  };
+
+  // Handle new involvement created
+  const handleInvolvementCreated = (newInvolvement) => {
+    setData([newInvolvement, ...data]);
+    setShowCreateForm(false);
+    // Optionally expand the new card
+    setTimeout(() => {
+      setExpandedCard(0);
+      if (contentRefs.current[0]) {
+        contentRefs.current[0].style.transition = 'max-height 0.3s ease';
+        contentRefs.current[0].style.maxHeight = `${contentRefs.current[0].scrollHeight}px`;
+      }
+    }, 100);
+  };
+  
+  // Handle editing functions
+  const handleEdit = (id, field, currentValue) => {
+    setEditingItem(id);
+    setEditingField(field);
+    setEditingValue(currentValue);
+  };
+  
+  const handleCancelEdit = (e) => {
+    if (e) e.stopPropagation();
+    setEditingItem(null);
+    setEditingField(null);
+  };
+  
+  const handleSaveEdit = async (e) => {
+    if (e) e.stopPropagation();
+    try {
+      await axios.put(`${apiBaseUrl}/get_involveds/${editingItem}`, {
+        get_involved: { [editingField]: editingValue }
+      });
+      
+      // Update local state
+      setData(data.map(item => 
+        item.id === editingItem 
+          ? {...item, [editingField]: editingValue} 
+          : item
+      ));
+      
+      handleCancelEdit();
+    } catch (error) {
+      console.error('Error updating involvement:', error);
+    }
+  };
+
   // Fetch data when the component mounts
   useEffect(() => {
     fetchData();
@@ -108,7 +176,7 @@ export default function GetInvolved() {
         ref.style.maxHeight = expandedCard === index ? `${ref.scrollHeight}px` : '150px';
       }
     });
-  }, [expandedCard]);
+  }, [expandedCard, data]);
 
   return (
     <div className="flex flex-col items-center bg-[#214933] min-h-screen w-10/12 p-8 mt-12 text-white">
@@ -133,31 +201,215 @@ export default function GetInvolved() {
                 maxHeight: '150px',
               }}
             >
-              <h3 className="text-[28px] font-semibold mb-6">{item.title}</h3>
+              {/* Title with Edit Button */}
+              <div className="flex items-start mb-6">
+                {editingItem === item.id && editingField === 'title' ? (
+                  <div className="flex flex-col w-full" onClick={e => e.stopPropagation()}>
+                    <input
+                      type="text"
+                      value={editingValue}
+                      onChange={(e) => setEditingValue(e.target.value)}
+                      className="bg-[#214933] text-white p-2 rounded text-[28px] font-semibold w-full mb-2"
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <button onClick={handleSaveEdit} className="bg-green-500 text-white p-1 rounded-full">
+                        <CheckIcon style={{ fontSize: 20 }} />
+                      </button>
+                      <button onClick={handleCancelEdit} className="bg-gray-500 text-white p-1 rounded-full">
+                        <CloseIcon style={{ fontSize: 20 }} />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <h3 className="text-[28px] font-semibold flex-grow">{item.title}</h3>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(item.id, 'title', item.title);
+                      }}
+                      className="p-1 rounded-full bg-green-400 hover:bg-green-500 text-white ml-2"
+                    >
+                      <EditIcon fontSize="small" />
+                    </button>
+                  </>
+                )}
+              </div>
               
-              {/* Display summary if collapsed, or full description if expanded */}
-              <p className="mb-10">
-                {expandedCard === index ? item.description : item.summary}
-              </p>
+              {/* Description with Edit Button */}
+              {editingItem === item.id && editingField === 'description' ? (
+                <div className="mb-10" onClick={e => e.stopPropagation()}>
+                  <textarea
+                    value={editingValue}
+                    onChange={(e) => setEditingValue(e.target.value)}
+                    className="bg-[#214933] text-white p-2 rounded w-full mb-2"
+                    rows={4}
+                  />
+                  <div className="flex gap-2 justify-end">
+                    <button onClick={handleSaveEdit} className="bg-green-500 text-white p-1 rounded-full">
+                      <CheckIcon style={{ fontSize: 20 }} />
+                    </button>
+                    <button onClick={handleCancelEdit} className="bg-gray-500 text-white p-1 rounded-full">
+                      <CloseIcon style={{ fontSize: 20 }} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-start mb-10">
+                  <p className="flex-grow">
+                    {expandedCard === index ? item.description : item.summary}
+                  </p>
+                  {expandedCard === index && (
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(item.id, 'description', item.description);
+                      }}
+                      className="p-1 rounded-full bg-green-400 hover:bg-green-500 text-white ml-2"
+                    >
+                      <EditIcon fontSize="small" />
+                    </button>
+                  )}
+                </div>
+              )}
 
               {expandedCard === index && (
                 <div className="flex flex-col justify-end flex-grow mt-4">
                   <div className="grid grid-cols-2 gap-8">
+                    {/* Date with Edit Button */}
                     <div className="flex items-center gap-4">
                       <CalendarTodayIcon style={{ fontSize: 32 }} />
-                      <p className="text-lg">{item.date}</p>
+                      {editingItem === item.id && editingField === 'date' ? (
+                        <div className="flex items-center gap-2 flex-grow" onClick={e => e.stopPropagation()}>
+                          <input
+                            type="text"
+                            value={editingValue}
+                            onChange={(e) => setEditingValue(e.target.value)}
+                            className="bg-[#214933] text-white p-1 rounded flex-grow"
+                          />
+                          <button onClick={handleSaveEdit} className="bg-green-500 text-white p-1 rounded-full">
+                            <CheckIcon style={{ fontSize: 16 }} />
+                          </button>
+                          <button onClick={handleCancelEdit} className="bg-gray-500 text-white p-1 rounded-full">
+                            <CloseIcon style={{ fontSize: 16 }} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 flex-grow">
+                          <p className="text-lg">{item.date}</p>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(item.id, 'date', item.date);
+                            }}
+                            className="p-1 rounded-full bg-green-400 hover:bg-green-500 text-white"
+                          >
+                            <EditIcon style={{ fontSize: 16 }} />
+                          </button>
+                        </div>
+                      )}
                     </div>
+
+                    {/* Time with Edit Button */}
                     <div className="flex items-center gap-4">
                       <AccessTimeIcon style={{ fontSize: 32 }} />
-                      <p className="text-lg">{item.time}</p>
+                      {editingItem === item.id && editingField === 'time' ? (
+                        <div className="flex items-center gap-2 flex-grow" onClick={e => e.stopPropagation()}>
+                          <input
+                            type="text"
+                            value={editingValue}
+                            onChange={(e) => setEditingValue(e.target.value)}
+                            className="bg-[#214933] text-white p-1 rounded flex-grow"
+                          />
+                          <button onClick={handleSaveEdit} className="bg-green-500 text-white p-1 rounded-full">
+                            <CheckIcon style={{ fontSize: 16 }} />
+                          </button>
+                          <button onClick={handleCancelEdit} className="bg-gray-500 text-white p-1 rounded-full">
+                            <CloseIcon style={{ fontSize: 16 }} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 flex-grow">
+                          <p className="text-lg">{item.time}</p>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(item.id, 'time', item.time);
+                            }}
+                            className="p-1 rounded-full bg-green-400 hover:bg-green-500 text-white"
+                          >
+                            <EditIcon style={{ fontSize: 16 }} />
+                          </button>
+                        </div>
+                      )}
                     </div>
+
+                    {/* Location with Edit Button */}
                     <div className="flex items-center gap-4">
                       <LocationOnIcon style={{ fontSize: 32 }} />
-                      <p className="text-lg">{item.location}</p>
+                      {editingItem === item.id && editingField === 'location' ? (
+                        <div className="flex items-center gap-2 flex-grow" onClick={e => e.stopPropagation()}>
+                          <input
+                            type="text"
+                            value={editingValue}
+                            onChange={(e) => setEditingValue(e.target.value)}
+                            className="bg-[#214933] text-white p-1 rounded flex-grow"
+                          />
+                          <button onClick={handleSaveEdit} className="bg-green-500 text-white p-1 rounded-full">
+                            <CheckIcon style={{ fontSize: 16 }} />
+                          </button>
+                          <button onClick={handleCancelEdit} className="bg-gray-500 text-white p-1 rounded-full">
+                            <CloseIcon style={{ fontSize: 16 }} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 flex-grow">
+                          <p className="text-lg">{item.location}</p>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(item.id, 'location', item.location);
+                            }}
+                            className="p-1 rounded-full bg-green-400 hover:bg-green-500 text-white"
+                          >
+                            <EditIcon style={{ fontSize: 16 }} />
+                          </button>
+                        </div>
+                      )}
                     </div>
+
+                    {/* Phone with Edit Button */}
                     <div className="flex items-center gap-4">
                       <PhoneIcon style={{ fontSize: 32 }} />
-                      <p className="text-lg">{item.phone}</p>
+                      {editingItem === item.id && editingField === 'phone' ? (
+                        <div className="flex items-center gap-2 flex-grow" onClick={e => e.stopPropagation()}>
+                          <input
+                            type="text"
+                            value={editingValue}
+                            onChange={(e) => setEditingValue(e.target.value)}
+                            className="bg-[#214933] text-white p-1 rounded flex-grow"
+                          />
+                          <button onClick={handleSaveEdit} className="bg-green-500 text-white p-1 rounded-full">
+                            <CheckIcon style={{ fontSize: 16 }} />
+                          </button>
+                          <button onClick={handleCancelEdit} className="bg-gray-500 text-white p-1 rounded-full">
+                            <CloseIcon style={{ fontSize: 16 }} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 flex-grow">
+                          <p className="text-lg">{item.phone}</p>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(item.id, 'phone', item.phone);
+                            }}
+                            className="p-1 rounded-full bg-green-400 hover:bg-green-500 text-white"
+                          >
+                            <EditIcon style={{ fontSize: 16 }} />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -183,6 +435,17 @@ export default function GetInvolved() {
             </div>
           ))
         )}
+        
+        {/* Create Form Section - Moved to bottom of card list */}
+        {showCreateForm && (
+          <div className="w-full mb-4">
+            <InvolvementCreationForm 
+              onCancel={handleCancelCreate}
+              onInvolvementCreated={handleInvolvementCreated}
+              apiBaseUrl={apiBaseUrl}
+            />
+          </div>
+        )}
       </div>
 
       {/* Confirmation Modal */}
@@ -204,11 +467,12 @@ export default function GetInvolved() {
 
       {/* Bottom Buttons */}
       <div className="flex justify-center mt-8 gap-4">
-        <Link href="get_involved/create" passHref>
-          <p className="bg-blue-500 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700">
-            Create New Involvement
-          </p>
-        </Link>
+        <button
+          onClick={handleCreateInvolvement}
+          className="bg-blue-500 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700"
+        >
+          Create New Involvement
+        </button>
         <button
           onClick={handleDeleteMode}
           className="bg-red-500 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-red-700"

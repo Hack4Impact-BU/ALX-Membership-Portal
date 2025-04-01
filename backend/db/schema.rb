@@ -42,30 +42,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_30_033349) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "benefits_discounts", force: :cascade do |t|
-    t.string "title"
-    t.string "location"
-    t.date "start_date"
-    t.date "end_date"
-    t.text "offer_description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "link"
-    t.boolean "is_saved", default: false, null: false
-    t.string "business_type"
-  end
-
-  create_table "discounts", force: :cascade do |t|
-    t.string "title"
-    t.string "location"
-    t.boolean "is_saved"
-    t.string "offer_description"
-    t.string "redeem_desc"
-    t.date "date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "eventlists", force: :cascade do |t|
     t.string "eventType"
     t.date "startDate"
@@ -106,14 +82,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_30_033349) do
     t.string "contact"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "members", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 100, null: false
-    t.string "email", limit: 100, null: false
-    t.date "join_date", default: -> { "CURRENT_DATE" }
-
-    t.unique_constraint ["email"], name: "members_email_key"
   end
 
   create_table "product_offers", force: :cascade do |t|

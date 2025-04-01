@@ -1,5 +1,5 @@
 class GetInvolvedsController < ApplicationController
-  skip_before_action :authenticate_request, only: [:create, :index, :show, :destroy] 
+  skip_before_action :authenticate_request, only: [:create, :index, :show, :destroy, :update] 
   before_action :set_get_involved, only: %i[ show update destroy ]
 
   # GET /get_involveds

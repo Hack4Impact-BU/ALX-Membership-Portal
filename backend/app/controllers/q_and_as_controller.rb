@@ -1,5 +1,5 @@
 class QAndAsController < ApplicationController
-    skip_before_action :authenticate_request, only: [:create, :index, :show, :destroy]
+    skip_before_action :authenticate_request, only: [:create, :index, :show, :destroy, :update]
     before_action :set_q_and_a, only: [:show, :update, :destroy]
   
     # GET /q_and_as
@@ -22,19 +22,25 @@ class QAndAsController < ApplicationController
     def create
       @q_and_a = QAndA.new(q_and_a_params)
       if @q_and_a.save
-        render json: @q_and_a, status: :created
+        render json: @q_and_a, status: :created, location: @q_and_a
       else
-        render json: { error: "Failed to create Q&A pair.", details: @q_and_a.errors.full_messages }, status: :unprocessable_entity
+        render json: @q_and_a.errors, status: :unprocessable_entity
+      end
+    end
+  
+    # PUT /q_and_as/:id
+    def update
+      if @q_and_a.update(q_and_a_params)
+        render json: @q_and_a
+      else
+        render json: @q_and_a.errors, status: :unprocessable_entity
       end
     end
   
     # DELETE /q_and_as/:id
     def destroy
-      if @q_and_a.destroy
-        render json: { message: "Q&A pair deleted successfully!" }, status: :ok
-      else
-        render json: { error: "Failed to delete Q&A pair." }, status: :unprocessable_entity
-      end
+      @q_and_a.destroy
+      head :no_content
     end
   
     private
