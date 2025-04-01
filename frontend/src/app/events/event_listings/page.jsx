@@ -17,6 +17,7 @@ export default function EventListings() {
   const [zipCode, setZipCode] = useState("");
   const [showSavedOnly, setShowSavedOnly] = useState(false);
   const [events, setEvents] = useState([]);
+  const [eventTypes, setEventTypes] = useState([]);
 
   const handleSearch = (e) => setSearch(e.target.value);
   const handleEventType = (e) => setEventType(e.target.value);
@@ -32,6 +33,28 @@ export default function EventListings() {
 
   const toggleShowSavedOnly = () => setShowSavedOnly(!showSavedOnly)
   
+  // Fetch events and extract unique event types
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const response = await fetch(`${apiBaseUrl}/eventlists`);
+        
+        if (!response.ok) throw new Error("Failed to fetch events");
+        
+        const data = await response.json();
+        setEvents(data);
+        
+        // Extract unique event types
+        const uniqueEventTypes = [...new Set(data.map(event => event.eventType))].filter(Boolean);
+        setEventTypes(uniqueEventTypes);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   return (
     <div className="w-11/12 text-white mt-20 h-screen">
@@ -59,11 +82,9 @@ export default function EventListings() {
                     className="p-4 rounded-md bg-[#335843] w-48 font-light"
                   >
                         <option value="">Select Event Type</option>
-                        <option value="Community Event">Community Event</option>
-                        <option value="Workshop/Seminar">Workshops/Seminars</option>
-                        <option value="Expo/Conference">Expos/Conference</option>
-                        <option value="Health & Wellness">Health & Wellness</option>
-                        <option value="Networking Event">Networking Events</option>
+                        {eventTypes.map((type, index) => (
+                          <option key={index} value={type}>{type}</option>
+                        ))}
                   </select>
               </div>
               <div className="flex flex-col gap-2">

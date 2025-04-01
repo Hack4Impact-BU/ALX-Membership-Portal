@@ -11,7 +11,7 @@ export default function BenefitsDiscounts() {
                 <ReusableHeader header={"Product Offers"} translation={"* Ofertas de Productos"} isAdmin={true} directTo={"/benefits_discounts/create"}/>
             </div>
             <CardList />
-            <Hyperlinks />
+            <div className="w-10/12"><Hyperlinks /></div>
 
         </section>
     )

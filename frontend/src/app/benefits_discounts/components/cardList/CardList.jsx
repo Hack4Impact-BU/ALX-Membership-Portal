@@ -3,8 +3,6 @@
 import { useState, useEffect } from "react"
 import Card from "../card/card"
 import AdminCard from "../adminCard/adminCard"
-import DropDown from "@/components/DropDown/DropDown"
-
 import { Montserrat } from "next/font/google"
 const montserrat = Montserrat({
     subsets: ['latin'],
@@ -17,6 +15,7 @@ export default function CardList() {
     const [card, setCard] = useState([]); // Start with an empty list
     const [loading, setLoading] = useState(true); // Track loading state
     const [error, setError] = useState(null); // Track errors during fetch
+    const [businessTypes, setBusinessTypes] = useState([]); // Dynamic business types
 
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -28,8 +27,13 @@ export default function CardList() {
           if (!response.ok) throw new Error("Failed to fetch offers");
 
           const data = await response.json();
-          console.log("Fetched product offers:", data); // Check if pic_url exists in response
+          console.log("Fetched product offers:", data);
           setCard(data);
+          
+          // Extract unique business types from the API data
+          const types = [...new Set(data.map(offer => offer.businessType))].filter(Boolean);
+          setBusinessTypes(types);
+          
           setLoading(false);
         } catch (err) {
           setError(err.message);
@@ -41,8 +45,8 @@ export default function CardList() {
     }, []);
 
     const [renderSaved, setRenderSaved] = useState(false);
-    const [selectedBusinessType, setSelectedBusinessType] = useState(null);
-    const [selectedDistance, setSelectedDistance] = useState(null);
+    const [selectedBusinessType, setSelectedBusinessType] = useState("");
+    const [selectedDistance, setSelectedDistance] = useState("");
 
     const filteredCards = card.filter(card => {
         return (!selectedBusinessType || card.businessType === selectedBusinessType)
@@ -58,31 +62,46 @@ export default function CardList() {
         setCard(updatedCards);
     };
 
-    const businessType = ["Museum", "Cafes", "Gym", "Fashion"];
     const distance = [5, 10, 15, 20, 25, 30];
 
+    const handleBusinessTypeChange = (e) => {
+        setSelectedBusinessType(e.target.value);
+    };
+
+    const handleDistanceChange = (e) => {
+        setSelectedDistance(e.target.value);
+    };
+
     return (
-        <div className="flex flex-col pt-24 min-h-screen bg-[#214933] text-white">
+        <div className="flex flex-col pt-24 text-white">
             {/* Main Content */}
-            <div className="flex h-[34rem] flex-row gap-10">
+            <div className="flex flex-row gap-10">
                 {/* Cards Grid  ---------------------------------CHANGED TO RENDER REGULAR CARD RATHER THAN ADMINCARD*/}
-                <div className="grid grid-cols-2 gap-6 p-10 w-[47rem]">
-                    {(renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).map((offer, index) => (
-                        <AdminCard
-                            key={index}
-                            offerTitle={offer.offerTitle}
-                            businessType={offer.businessType}
-                            offerDesc={offer.offerDesc}
-                            place={offer.place}
-                            pic_url={offer.pic_url}
-                            startDate={offer.startDate}
-                            endDate={offer.endDate}
-                            isSaved={offer.isSaved}
-                            index={index}
-                            id={offer.id}
-                            toggleCardSaved={toggleCardSaved}
-                        />
-                    ))}
+                <div className="grid grid-cols-2 gap-6 p-10 w-[47rem] ">
+                    {loading ? (
+                        <div className="col-span-2 text-center">Loading offers...</div>
+                    ) : error ? (
+                        <div className="col-span-2 text-center text-red-500">Error: {error}</div>
+                    ) : (renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).length === 0 ? (
+                        <div className="col-span-2 text-center">No offers found</div>
+                    ) : (
+                        (renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).map((offer, index) => (
+                            <Card
+                                key={index}
+                                offerTitle={offer.offerTitle}
+                                businessType={offer.businessType}
+                                offerDesc={offer.offerDesc}
+                                place={offer.place}
+                                pic_url={offer.pic_url}
+                                startDate={offer.startDate}
+                                endDate={offer.endDate}
+                                isSaved={offer.isSaved}
+                                index={index}
+                                id={offer.id}
+                                toggleCardSaved={toggleCardSaved}
+                            />
+                        ))
+                    )}
                 </div>
 
                 {/* Filters Section */}
@@ -91,14 +110,16 @@ export default function CardList() {
                     <div>
                         <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>Business Type</p>
                         <div className="w-72">
-                            <DropDown
-                                font={montserrat}
-                                dropTitle={"Select Type"}
-                                dropDown={businessType}
-                                id={"dropdown1"}
-                                selectedValue={selectedBusinessType}
-                                setSelectedValue={setSelectedBusinessType}
-                            />
+                            <select 
+                                className={`w-full h-14 rounded-md bg-[#335843] px-3 py-2 text-white shadow-md ${montserrat.className}`}
+                                value={selectedBusinessType}
+                                onChange={handleBusinessTypeChange}
+                            >
+                                <option value="">Select Type</option>
+                                {businessTypes.map((type, index) => (
+                                    <option key={index} value={type}>{type}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 
@@ -106,14 +127,16 @@ export default function CardList() {
                     <div>
                         <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>Distance</p>
                         <div className="w-72">
-                            <DropDown
-                                font={montserrat}
-                                dropTitle={"Select Distance"}
-                                dropDown={distance}
-                                id={"dropdown2"}
-                                selectedValue={selectedDistance}
-                                setSelectedValue={setSelectedDistance}
-                            />
+                            <select 
+                                className={`w-full h-14 rounded-md bg-[#335843] px-3 py-2 text-white shadow-md ${montserrat.className}`}
+                                value={selectedDistance}
+                                onChange={handleDistanceChange}
+                            >
+                                <option value="">Select Distance</option>
+                                {distance.map((dist, index) => (
+                                    <option key={index} value={dist}>{dist} km</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 

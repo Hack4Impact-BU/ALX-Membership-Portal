@@ -6,9 +6,9 @@ import Link from 'next/link';
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
-export default function AdminCard({id, offerTitle, place, link, pic, startDate, index, offerDesc, isSaved, BusinessType, distance, toggleCardSaved, instruct}) {
+export default function AdminCard({id, offerTitle, place, link, pic_url, startDate, index, offerDesc, isSaved, BusinessType, distance, toggleCardSaved, instruct}) {
 
-    console.log("AdminCard received pic_url:", pic); // Debug image URL
+    console.log("AdminCard received pic_url:", pic_url); // Debug image URL
 
     const handleClick = () => {
         toggleCardSaved(index);
@@ -36,17 +36,14 @@ export default function AdminCard({id, offerTitle, place, link, pic, startDate, 
 
     return (
             <div className="border flex flex-col justify-evenly rounded-3xl bg-[#F6F2E9] w-80 h-56 transition-transform duration-300 hover:scale-105">
-                <Link href={{
-                    pathname: `/benefits_discounts/${place}`,
-                    query: { offerTitle, place, link, instruct, startDate, offerDesc, index, isSaved, BusinessType, distance, toggleCardSaved, pic }
-                    }}>
+                <Link href={`/benefits_discounts/edit_offer/${id}`}>
                 <div className="flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
                     {/* gonna be image circle */}
                     <img 
-                        src={pic} 
+                        src={pic_url} 
                         alt={offerTitle}
                         onError={(e) => {
-                            console.log("Image failed to load:", pic);
+                            console.log("Image failed to load:", pic_url);
                             e.target.onerror = null;
                             e.target.style.display = "none";
                             e.target.parentNode.classList.add("bg-[#214933]");
@@ -75,9 +72,9 @@ export default function AdminCard({id, offerTitle, place, link, pic, startDate, 
                         <svg xmlns="http://www.w3.org/2000/svg" fill="#43e48a" viewBox="0 0 24 24" stroke-width="1.5" stroke="#214933" class="size-6"  >
                             <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                         </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill={isSaved ? '#214933' : 'none'} viewBox="0 0 24 24" stroke-width="2" stroke="#214933" class="size-6" onClick={handleClick}>
+                        {/* <svg xmlns="http://www.w3.org/2000/svg" fill={isSaved ? '#214933' : 'none'} viewBox="0 0 24 24" stroke-width="2" stroke="#214933" class="size-6" onClick={handleClick}>
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
-                        </svg>
+                        </svg> */}
                     </div>
                 </div>
             </div>
