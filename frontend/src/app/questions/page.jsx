@@ -5,6 +5,9 @@ import Hyperlinks from '@/components/Hyperlinks';
 import { Inter, Proza_Libre } from 'next/font/google';
 import axios from 'axios';
 import { QuestionMarkCircleIcon } from '@heroicons/react/outline';
+import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import LoadingScreen from '@/components/LoadingScreen';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -15,6 +18,11 @@ export default function Questions() {
   const [showDelete, setShowDelete] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Editing states
+  const [editingId, setEditingId] = useState(null);
+  const [editingField, setEditingField] = useState(null);
+  const [editingValue, setEditingValue] = useState('');
 
   // Fetch Q&As from the API with a minimum delay of 300 ms
   useEffect(() => {
@@ -61,6 +69,40 @@ export default function Questions() {
       alert('Failed to delete Q&A. Please try again.');
     }
   };
+  
+  // Handle edit operations
+  const handleEdit = (id, field, value) => {
+    setEditingId(id);
+    setEditingField(field);
+    setEditingValue(value);
+  };
+  
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditingField(null);
+    setEditingValue('');
+  };
+  
+  const handleSaveEdit = async () => {
+    try {
+      await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/q_and_as/${editingId}`, {
+        q_and_a: { [editingField]: editingValue }
+      });
+      
+      // Update local state
+      setQAndAs(qAndAs.map(item => 
+        item.id === editingId 
+          ? {...item, [editingField]: editingValue} 
+          : item
+      ));
+      
+      // Reset editing state
+      handleCancelEdit();
+    } catch (error) {
+      console.error('Error updating Q&A:', error);
+      alert('Failed to update Q&A. Please try again.');
+    }
+  };
 
   return (
     <div className="flex flex-col w-10/12 text-white items-center min-h-screen p-8 mt-6">
@@ -99,11 +141,81 @@ export default function Questions() {
                 <p>No Q&A entries found.</p>
               ) : (
                 qAndAs.map((qanda) => (
-                  <div key={qanda.id} className="flex justify-between items-center">
-                    <div>
-                      <p className="font-semibold">Q: {qanda.question}</p>
-                      <p className="ml-4">A: {qanda.answer}</p>
+                  <div key={qanda.id} className="flex justify-between items-start">
+                    <div className="flex-grow">
+                      {/* Question with inline editing */}
+                      {editingId === qanda.id && editingField === 'question' ? (
+                        <div className="mb-2">
+                          <input
+                            type="text"
+                            value={editingValue}
+                            onChange={(e) => setEditingValue(e.target.value)}
+                            className="w-full p-1 border border-gray-300 rounded text-green-900 bg-white"
+                          />
+                          <div className="flex mt-1 gap-2">
+                            <button 
+                              onClick={handleSaveEdit}
+                              className="p-1 rounded-full bg-green-500 text-white"
+                            >
+                              <CheckIcon style={{ fontSize: 16 }} />
+                            </button>
+                            <button 
+                              onClick={handleCancelEdit}
+                              className="p-1 rounded-full bg-gray-500 text-white"
+                            >
+                              <CloseIcon style={{ fontSize: 16 }} />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center">
+                          <p className="font-semibold">Q: {qanda.question}</p>
+                          <button 
+                            onClick={() => handleEdit(qanda.id, 'question', qanda.question)}
+                            className="ml-2 p-1 rounded-full bg-green-400 hover:bg-green-500 text-white"
+                          >
+                            <EditIcon style={{ fontSize: 16 }} />
+                          </button>
+                        </div>
+                      )}
+                      
+                      {/* Answer with inline editing */}
+                      {editingId === qanda.id && editingField === 'answer' ? (
+                        <div className="ml-4 mt-2">
+                          <textarea
+                            value={editingValue}
+                            onChange={(e) => setEditingValue(e.target.value)}
+                            className="w-full p-1 border border-gray-300 rounded text-green-900 bg-white"
+                            rows={3}
+                          />
+                          <div className="flex mt-1 gap-2">
+                            <button 
+                              onClick={handleSaveEdit}
+                              className="p-1 rounded-full bg-green-500 text-white"
+                            >
+                              <CheckIcon style={{ fontSize: 16 }} />
+                            </button>
+                            <button 
+                              onClick={handleCancelEdit}
+                              className="p-1 rounded-full bg-gray-500 text-white"
+                            >
+                              <CloseIcon style={{ fontSize: 16 }} />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center ml-4">
+                          <p>A: {qanda.answer}</p>
+                          <button 
+                            onClick={() => handleEdit(qanda.id, 'answer', qanda.answer)}
+                            className="ml-2 p-1 rounded-full bg-green-400 hover:bg-green-500 text-white"
+                          >
+                            <EditIcon style={{ fontSize: 16 }} />
+                          </button>
+                        </div>
+                      )}
                     </div>
+                    
                     {showDelete && (
                       <button
                         onClick={() => handleDelete(qanda.id)}
@@ -116,7 +228,6 @@ export default function Questions() {
                 ))
               )}
             </div>
-
         </div>
         )}
       </div>

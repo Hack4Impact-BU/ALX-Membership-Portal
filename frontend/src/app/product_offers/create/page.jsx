@@ -63,6 +63,7 @@ export default function CreateOffer() {
 
             const result = await response.json();
             setMessage('Offer created successfully!');
+            console.log(result);
             setError(null);
         } catch (error) {
             console.error('Error creating offer:', error);
