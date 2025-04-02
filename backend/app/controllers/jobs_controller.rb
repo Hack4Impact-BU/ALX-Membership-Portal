@@ -1,13 +1,12 @@
 class JobsController < ApplicationController
-  skip_before_action :authenticate_request, only: [:create, :index, :show, :destroy]
-  before_action :set_job, only: [:show, :edit, :update, :destroy]
+  skip_before_action :authenticate_request, only: [:create, :index, :show, :destroy, :update]
+  before_action :set_job, only: [:show, :update, :destroy]
 
   # GET /jobs
   def index
     @jobs = Job.all
     render json: @jobs.map { |job| job.as_json.merge(logo_url: job.logo.attached? ? url_for(job.logo) : nil) }
   end
-
 
   # GET /jobs/:id
   def show
@@ -25,7 +24,7 @@ class JobsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /jobs/:id
+  # PUT /jobs/:id
   def update
     if @job.update(job_params)
       render json: @job
@@ -49,6 +48,6 @@ class JobsController < ApplicationController
   end
 
   def job_params
-    params.require(:job).permit(:title, :company, :description, :responsibilities, :requirements, :salary, :contact, :logo)
+    params.require(:job).permit(:title, :company, :location, :job_type, :description, :requirements, :contact, :salary, :logo)
   end
 end

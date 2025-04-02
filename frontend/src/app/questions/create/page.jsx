@@ -1,6 +1,9 @@
 'use client';
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Inter, Proza_Libre } from 'next/font/google';
+const inter = Inter({ subsets: ["latin"] });
+const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export default function CreateQA() {
   const [formData, setFormData] = useState({
@@ -10,6 +13,7 @@ export default function CreateQA() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
+  
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,7 +59,7 @@ export default function CreateQA() {
   };
 
   return (
-    <div className="flex flex-col items-center bg-[#214933] min-h-screen w-full p-8 text-white">
+    <div className={`flex flex-col items-center bg-[#214933] min-h-screen w-full p-36 ${prozaLibre.className} text-white`}>
       <h1 className="text-[70px] font-bold mb-6">Create a Q&A</h1>
 
       {/* Success or Error Message */}
