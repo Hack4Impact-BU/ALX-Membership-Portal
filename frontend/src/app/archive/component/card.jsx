@@ -8,7 +8,9 @@ const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export default function EventCard({ saved, index, toggleCardSaved, ...event }) {
-    const [isSaved, setIsSaved] = useState(saved);
+    const [isSaved, setIsSaved] = useState(event.isSaved);
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 
     const formatTime = (isoTime) => {
         const date = new Date(isoTime);
@@ -20,22 +22,49 @@ export default function EventCard({ saved, index, toggleCardSaved, ...event }) {
       };
       
 
-    const handleClick = () => {
-        setIsSaved(!isSaved);
-        toggleCardSaved(index);
-    };
+      const handleSaveToggle = async () => {
+        const newSavedStatus = !isSaved;
+        
+        try {
+
+
+            // Make API request to update saved status
+            const response = await fetch(`${apiBaseUrl}/eventlists/${event.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ isSaved: newSavedStatus }),
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to update saved status');
+            }
+            
+            // Update state only after successful API response
+            setIsSaved(newSavedStatus);
+            console.log(`Event ${newSavedStatus ? 'saved' : 'unsaved'} successfully`);
+        } catch (error) {
+            console.error('Error updating saved status:', error);
+            // Optionally revert the UI state if the API call fails
+            // setIsSaved(isSaved);
+        }
+    }
 
     return (
         <div className="border flex flex-col justify-evenly rounded-3xl bg-[#F6F2E9] w-96 h-64 transition-transform duration-300 hover:scale-105">
-            <Link
-                href={{
-                    pathname: `/events/event_listings/${event.Location}`,
-                    query: { ...event, index, saved, toggleCardSaved }, // Pass all event props
-                }}
-            >
+            <Link href={`/events/event_listings/${event.id}`}>
                 <div className="flex flex-row justify-center items-center gap-2 hover:cursor-pointer">
                     {/* Image circle */}
-                    <div className="w-20 h-20 bg-orange-400 rounded-full" />
+                    {event.image_url ? (
+                        <img 
+                            src={event.image_url} 
+                            alt={event.eventName} 
+                            className="w-20 h-20 object-cover rounded-full"
+                        />
+                    ) : (
+                        <div className="w-20 h-20 bg-orange-400 rounded-full"/>
+                    )}
                     <div className="flex items-center justify-center w-60 h-14 bg-white rounded-full">
                         <p className={`p-4 text-2xl text-[#214933] ${prozaLibre.className} overflow-hidden text-ellipsis whitespace-nowrap`}>
                             {event.eventName}
@@ -60,7 +89,7 @@ export default function EventCard({ saved, index, toggleCardSaved, ...event }) {
                         strokeWidth="2"
                         stroke="#214933"
                         className="size-6 cursor-pointer"
-                        onClick={handleClick}
+                        onClick={handleSaveToggle}
                     >
                         <path
                             strokeLinecap="round"
