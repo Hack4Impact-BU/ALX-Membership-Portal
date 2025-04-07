@@ -1,5 +1,14 @@
 'use client';
 import React, { useState } from 'react';
+import Button from '@mui/material/Button';
+import { FolderIcon } from '@heroicons/react/outline';
+import { Proza_Libre } from 'next/font/google';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import ReusableHeader from '@/components/ReusableHeader/ReusableHeader';
+import { styled } from '@mui/material/styles';
+import LinkIcon from '@mui/icons-material/Link';
+
+const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export default function CreateTraining() {
   const [training, setTraining] = useState({
@@ -9,12 +18,9 @@ export default function CreateTraining() {
     date: '',
   });
 
-  const authToken = "your_auth_token_here";
-
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
 
-  // Handle form input changes
   const handleChange = (e) => {
     setTraining({
       ...training,
@@ -24,104 +30,140 @@ export default function CreateTraining() {
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  // Handle form submission
+  const formatUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    return `https://${url}`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage(null);
+    setError(null);
+
+    const formattedLink = formatUrl(training.link);
 
     const formData = new FormData();
     formData.append('training[trainingTitle]', training.trainingTitle);
     formData.append('training[trainingDesc]', training.trainingDesc);
-    formData.append('training[link]', training.link);
+    formData.append('training[link]', formattedLink);
     formData.append('training[date]', training.date);
 
     try {
       const response = await fetch(`${apiBaseUrl}/training`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-        },
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorData = await response.json().catch(() => ({ message: 'Network response was not ok' }));
+        throw new Error(errorData.message || 'Failed to create training');
       }
 
       const result = await response.json();
       setMessage('Training created successfully!');
-      setError(null);
-    } catch (error) {
-      setError('Error creating training.');
-      setMessage(null);
-      console.error('Error:', error);
+      setTraining({ trainingTitle: '', trainingDesc: '', link: '', date: '' });
+    } catch (err) {
+      setError(`Error creating training: ${err.message}`);
+      console.error('Error:', err);
     }
   };
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
-      <h1 className="text-4xl font-bold mb-4">Create a Training</h1>
+  const SubmitButton = styled(Button)({
+    backgroundColor: '#44E489',
+    color: 'black',
+    borderRadius: '20px',
+    padding: '12px 24px',
+    marginTop: '20px',
+    '&:hover': {
+      backgroundColor: '#3acc7a',
+    },
+  });
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-        {/* Training Title */}
-        <div className="mb-4">
-          <label htmlFor="trainingTitle" className="block text-gray-700 font-bold mb-2">Training Title</label>
+  return (
+    <div className={`flex ${prozaLibre.className} flex-col items-center bg-[#214933] min-h-screen w-full md:w-10/12 p-8 mt-6 mx-auto`}>
+      {message && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white p-4 rounded-full shadow-lg z-50">
+          {message}
+        </div>
+      )}
+      {error && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white p-4 rounded-full shadow-lg z-50">
+          {error}
+        </div>
+      )}
+
+      <div className="flex w-full items-center">
+        <FolderIcon className="h-24 w-24 md:h-32 md:w-32 stroke-[#F6F2E9]" />
+        <ReusableHeader header={"Create Training"}/>
+      </div>
+
+      <form onSubmit={handleSubmit} className={`${prozaLibre.className} bg-[#335843] rounded-xl w-full shadow-lg p-8`}>
+        <div className="mb-6">
+          <label htmlFor="trainingTitle" className="block text-lg text-[#F6F2E9] bg-[#335843] mb-2">Training Title</label>
           <input
             type="text"
             name="trainingTitle"
             id="trainingTitle"
             value={training.trainingTitle}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            placeholder="Enter Training Title"
+            className="pl-4 py-2 text-[20px] rounded-xl w-full border border-gray-500 focus:border-[#44E489] outline-none bg-white"
             required
           />
         </div>
 
-        {/* Training Description */}
-        <div className="mb-4">
-          <label htmlFor="trainingDesc" className="block text-gray-700 font-bold mb-2">Training Description</label>
+        <div className="mb-10">
+          <label htmlFor="trainingDesc" className="block text-lg text-[#F6F2E9] bg-[#335843] font-semibold mb-2">Training Description</label>
           <textarea
             name="trainingDesc"
             id="trainingDesc"
             value={training.trainingDesc}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            placeholder="Describe the training..."
+            className="pl-4 py-2 text-[20px] h-40 rounded-xl w-full border border-gray-500 focus:border-[#44E489] outline-none bg-white"
             required
           />
         </div>
 
-        {/* Link */}
-        <div className="mb-4">
-          <label htmlFor="link" className="block text-gray-700 font-bold mb-2">Link</label>
-          <input
-            type="url"
-            name="link"
-            id="link"
-            value={training.link}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            required
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div className="flex items-center gap-4">
+            <CalendarTodayIcon style={{ fontSize: 32, color: '#F6F2E9' }} />
+            <input
+              type="date"
+              name="date"
+              id="date"
+              value={training.date}
+              onChange={handleChange}
+              className="pl-4 py-2 text-lg rounded-xl border bg-white border-gray-500 focus:border-[#44E489] outline-none w-full"
+              required
+              style={{ colorScheme: 'dark' }}
+            />
+          </div>
+
+          <div className="flex items-center gap-4">
+            <LinkIcon style={{ fontSize: 32, color: '#F6F2E9' }} />
+            <input
+              type="text"
+              name="link"
+              id="link"
+              value={training.link}
+              onChange={handleChange}
+              placeholder="Enter URL (e.g. example.com)"
+              className="pl-4 py-2 text-lg rounded-xl bg-white border border-gray-500 focus:border-[#44E489] outline-none w-full"
+              required
+            />
+          </div>
         </div>
 
-        {/* Date */}
-        <div className="mb-4">
-          <label htmlFor="date" className="block text-gray-700 font-bold mb-2">Date</label>
-          <input
-            type="date"
-            name="date"
-            id="date"
-            value={training.date}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            required
-          />
+        <div className="flex justify-center">
+          <SubmitButton type="submit" variant="contained">
+            Create Training
+          </SubmitButton>
         </div>
-
-        <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg">Create Training</button>
       </form>
-
-      {message && <p className="mt-4 text-green-600">{message}</p>}
-      {error && <p className="mt-4 text-red-600">{error}</p>}
     </div>
   );
 }
