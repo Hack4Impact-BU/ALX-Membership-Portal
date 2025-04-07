@@ -73,17 +73,17 @@ export default function CardList() {
     };
 
     return (
-        <div className="flex flex-col pt-24 text-white">
+        <div className="flex flex-col text-white mt-24">
             {/* Main Content */}
-            <div className="flex flex-row gap-10">
+            <div className="flex flex-row gap-10 h-auto">
                 {/* Cards Grid  ---------------------------------CHANGED TO RENDER REGULAR CARD RATHER THAN ADMINCARD*/}
                 <div className="grid grid-cols-2 gap-6 p-10 w-[47rem] ">
                     {loading ? (
-                        <div className="col-span-2 text-center">Loading offers...</div>
+                        <div className="col-span-2 text-center self-start">Loading offers...</div>
                     ) : error ? (
-                        <div className="col-span-2 text-center text-red-500">Error: {error}</div>
+                        <div className="col-span-2 text-center text-red-500 self-start">Error: {error}</div>
                     ) : (renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).length === 0 ? (
-                        <div className="col-span-2 text-center">No offers found</div>
+                        <div className="col-span-2 text-center self-start">No offers found</div>
                     ) : (
                         (renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).map((offer, index) => (
                             <Card
