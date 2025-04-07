@@ -22,12 +22,27 @@ class ApplicationController < ActionController::API
             jwks_hash[header['kid']]
           end
           user_info = decoded_token[0]
+          permissions = user_info['https://membership-portal/permissions']
+
           @current_user = {
             name: user_info['name'],
             email: user_info['email'],
             sub: user_info['sub']
+            is_admin: permissions&.include?('admin') || false
           }
 
+                # Helper method to check if current user is an admin
+          def require_admin
+            unless @current_user&.[](:is_admin)
+              render json: { error: 'Admin access required' }, status: :forbidden
+            end
+          end
+
+          # Helper method to get current user
+          def current_user
+            @current_user
+          end
+        
 
         rescue JWT::ExpiredSignature
           Rails.logger.error("JWT Error: Token has expired")
