@@ -143,6 +143,8 @@ export default function Page({ params }) {
         console.error('Error deleting event:', err);
       }
     };
+
+
     
     useEffect(() => {
         const fetchEventData = async () => {
@@ -214,6 +216,18 @@ export default function Page({ params }) {
         image_url,
         phone: PhoneNumber
     } = eventData;
+
+    function formatIsoToAmPm(isoString) {
+      const timePart = isoString.split("T")[1].split(":");
+      let hour = parseInt(timePart[0], 10);
+      const minute = timePart[1];
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+    
+      hour = hour % 12;
+      hour = hour === 0 ? 12 : hour;
+    
+      return `${hour}:${minute} ${ampm}`;
+    }
 
 
     return (
@@ -373,11 +387,18 @@ export default function Page({ params }) {
                         <input
                           type="time"
                           value={eventData.timeStart ? eventData.timeStart.substring(11, 16) : ''}
-                          onChange={(e) => setEventData({ ...eventData, timeStart: e.target.value })}
+                          onChange={(e) => {
+                            const currentTime = e.target.value; // HH:mm format
+                            // Preserve the date part from startDate or use a default if needed
+                            const datePart = eventData.startDate ? eventData.startDate.split("T")[0] : '2000-01-01';
+                            // Construct a new ISO-like string. Note: Timezone/seconds might need adjustment based on backend needs.
+                            const newIsoTime = `${datePart}T${currentTime}:00.000Z`; 
+                            setEventData({ ...eventData, timeStart: newIsoTime });
+                          }}
                           className="pl-4 text-xl rounded-xl bg-white text-black border border-gray-300 flex-1"
                         />
                       ) : (
-                        <p className={`text-2xl text-[#214933] ${prozaLibre.className}`}>{eventData.timeStart ? new Date(eventData.timeStart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}</p>
+                        <p className={`text-2xl text-[#214933] ${prozaLibre.className}`}>{formatIsoToAmPm(Time)}</p>
                       )}
                       <div className="flex gap-2">
                         {isEditing.timeStart ? (

@@ -37,6 +37,7 @@ export default function Page({ params }) {
         fetchEventData();
     }, [id]);
 
+
     const handleSaveToggle = async () => {
         const newSavedStatus = !isSaved;
         const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -112,6 +113,20 @@ export default function Page({ params }) {
         phone: PhoneNumber,
     } = eventData;
 
+    function formatIsoToAmPm(isoString) {
+        const timePart = isoString.split("T")[1].split(":");
+        let hour = parseInt(timePart[0], 10);
+        const minute = timePart[1];
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+      
+        hour = hour % 12;
+        hour = hour === 0 ? 12 : hour;
+      
+        return `${hour}:${minute} ${ampm}`;
+      }
+
+
+
     return (
       <div className="flex flex-col w-full h-[1280px]">
         <div className="flex flex-row gap-8 w-full h-2/5 p-12">
@@ -161,7 +176,7 @@ export default function Page({ params }) {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
 
-                    <p className={`text-2xl text-[#214933] ${prozaLibre.className}`}>{Time}</p>
+                    <p className={`text-2xl text-[#214933] ${prozaLibre.className}`}>{formatIsoToAmPm(Time)}</p>
                 </div>
                 <div className="flex flex-row gap-4 justify-center items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#214933" class="size-14">
