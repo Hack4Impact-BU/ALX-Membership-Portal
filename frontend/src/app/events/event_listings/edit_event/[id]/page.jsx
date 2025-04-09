@@ -109,7 +109,8 @@ export default function Page({ params }) {
           }
     
           const updatedData = await response.json();
-          setEventData(updatedData);
+          // Merge the updated data with the existing event data instead of replacing it entirely
+          setEventData(prevData => ({ ...prevData, ...updatedData }));
         }
         
         setShowSuccessModal(true);
