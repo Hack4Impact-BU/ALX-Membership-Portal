@@ -29,6 +29,7 @@ export default function Eventing({ eventType, searchField, showSavedOnly }) {
 
     fetchEvents();
   }, []);
+
   
   // Safe access function to handle different property naming conventions
   const getEventProperty = (event, propertyName) => {
@@ -75,7 +76,7 @@ export default function Eventing({ eventType, searchField, showSavedOnly }) {
   return (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {filteredEvents.map((event) => (
-      <EventCardAdmin
+      <EventCard
         key={event.id}
         id={event.id}
         EventName={getEventProperty(event, 'eventName')}

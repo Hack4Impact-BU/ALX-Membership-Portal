@@ -9,6 +9,7 @@ export default function Page({ params }) {
     const [eventData, setEventData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isSaved, setIsSaved] = useState(false);
     
     useEffect(() => {
         const fetchEventData = async () => {
@@ -23,6 +24,7 @@ export default function Page({ params }) {
                 
                 const data = await response.json();
                 setEventData(data);
+                setIsSaved(data.isSaved);
                 setLoading(false);
                 console.log(data);
             } catch (err) {
@@ -34,6 +36,34 @@ export default function Page({ params }) {
         
         fetchEventData();
     }, [id]);
+
+    const handleSaveToggle = async () => {
+        const newSavedStatus = !isSaved;
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        
+        try {
+            // Make API request to update saved status
+            const response = await fetch(`${apiBaseUrl}/eventlists/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ isSaved: newSavedStatus }),
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to update saved status');
+            }
+            
+            // Update state only after successful API response
+            setIsSaved(newSavedStatus);
+            console.log(`Event ${newSavedStatus ? 'saved' : 'unsaved'} successfully`);
+        } catch (error) {
+            console.error('Error updating saved status:', error);
+            // Optionally revert the UI state if the API call fails
+            // setIsSaved(isSaved);
+        }
+    };
 
     // Loading state
     if (loading) {
@@ -79,9 +109,8 @@ export default function Page({ params }) {
         eventName: EventName,
         org: EventOrganizer,
         image_url,
-        phone: PhoneNumber
+        phone: PhoneNumber,
     } = eventData;
-
 
     return (
       <div className="flex flex-col w-full h-[1280px]">
@@ -173,7 +202,15 @@ export default function Page({ params }) {
                         )}
                         <p className={`text-3xl text-black ${prozaLibre.className}`}>{EventOrganizer || Location}</p>
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill={'none'} viewBox="0 0 24 24" stroke-width="2" stroke="#214933" className="size-20">
+                    <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        fill={isSaved ? '#214933' : 'none'} 
+                        viewBox="0 0 24 24" 
+                        stroke-width="2" 
+                        stroke="#214933" 
+                        className="size-20 cursor-pointer"
+                        onClick={handleSaveToggle}
+                    >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
                     </svg>
                 </div>
