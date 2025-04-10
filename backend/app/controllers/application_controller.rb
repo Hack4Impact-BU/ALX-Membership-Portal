@@ -27,7 +27,7 @@ class ApplicationController < ActionController::API
           @current_user = {
             name: user_info['name'],
             email: user_info['email'],
-            sub: user_info['sub']
+            sub: user_info['sub'],
             is_admin: permissions&.include?('admin') || false
           }
 
