@@ -4,19 +4,22 @@ class EventlistsController < ApplicationController
 
   # GET /eventlists
   def index
-    @eventlists = Eventlist.all
-
-    render json: @eventlists
+    @events = Eventlist.all
+    render json: @events.map { |event| 
+      event.as_json.merge(image_url: event.image.attached? ? url_for(event.image) : nil) 
+    }
   end
 
   # GET /eventlists/1
   def show
-    render json: @eventlist
+    render json: @eventlist.as_json.merge(
+      image_url: @eventlist.image.attached? ? url_for(@eventlist.image) : nil
+    )
   end
 
   # POST /eventlists
   def create
-    @eventlist = Eventlist.new(eventlist_params)
+    @eventlist = Eventlist.new(event_params)
 
     if @eventlist.save
       render json: @eventlist, status: :created, location: @eventlist
@@ -27,7 +30,7 @@ class EventlistsController < ApplicationController
 
   # PATCH/PUT /eventlists/1
   def update
-    if @eventlist.update(eventlist_params)
+    if @eventlist.update(event_params)
       render json: @eventlist
     else
       render json: @eventlist.errors, status: :unprocessable_entity
@@ -47,21 +50,24 @@ class EventlistsController < ApplicationController
     end
 
     # Only allow a list of trusted parameters through.
-    def eventlist_params
-        params.require(:eventlist).permit(
-            :eventType, 
-            :startDate, 
-            :endDate, 
-            :location, 
-            :org, 
-            :timeStart, 
-            :timeEnd, 
-            :eventName, 
-            :isSaved, 
-            :eventDesc, 
-            :instruct, 
-            :pic, 
-            :phone
-          )
+    def event_params
+      params.require(:eventlist).permit(
+        :eventType, 
+        :startDate, 
+        :endDate, 
+        :location, 
+        :org, 
+        :timeStart, 
+        :timeEnd, 
+        :eventName, 
+        :isSaved, 
+        :eventDesc, 
+        :instruct, 
+        :pic, 
+        :phone, 
+        :lat, 
+        :lng, 
+        :image
+      )
     end
 end

@@ -45,9 +45,9 @@ export default function Sidebar() {
                 </div>
               </Link>
             </li>
-            <li onClick={() => handleLinkClick("/benefits_discounts")}>
-              <Link href="/benefits_discounts">
-                <div className={linkClasses("/benefits_discounts")}>
+            <li onClick={() => handleLinkClick("/product_offers")}>
+              <Link href="/product_offers">
+                <div className={linkClasses("/product_offers")}>
                   <GiftIcon className="h-6 w-6 text-white" />
                   <p>Product Offers</p>
                 </div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_08_232839) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_30_033349) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -93,7 +93,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_08_232839) do
     t.date "startDate"
     t.date "endDate"
     t.string "businessType"
-    t.string "pic"
+    t.string "pic_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -101,6 +101,25 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_08_232839) do
   create_table "q_and_as", force: :cascade do |t|
     t.string "question"
     t.string "answer"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "researches", force: :cascade do |t|
+    t.string "researchTitle"
+    t.text "researchDesc"
+    t.string "link"
+    t.date "date"
+    t.string "location"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "trainings", force: :cascade do |t|
+    t.string "trainingTitle"
+    t.text "trainingDesc"
+    t.string "link"
+    t.date "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
