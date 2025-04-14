@@ -29,6 +29,7 @@ export default function Eventing({ eventType, searchField, showSavedOnly }) {
 
     fetchEvents();
   }, []);
+
   
   // Safe access function to handle different property naming conventions
   const getEventProperty = (event, propertyName) => {

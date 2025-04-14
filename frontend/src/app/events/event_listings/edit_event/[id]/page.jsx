@@ -109,7 +109,8 @@ export default function Page({ params }) {
           }
     
           const updatedData = await response.json();
-          setEventData(updatedData);
+          // Merge the updated data with the existing event data instead of replacing it entirely
+          setEventData(prevData => ({ ...prevData, ...updatedData }));
         }
         
         setShowSuccessModal(true);
@@ -143,6 +144,8 @@ export default function Page({ params }) {
         console.error('Error deleting event:', err);
       }
     };
+
+
     
     useEffect(() => {
         const fetchEventData = async () => {
@@ -207,13 +210,25 @@ export default function Page({ params }) {
         location: Location,
         instruct: WebsiteLink,
         pic,
-        startDate: Date,
+        startDate: eventDate,
         timeStart: Time,
         eventName: EventName,
         org: EventOrganizer,
         image_url,
         phone: PhoneNumber
     } = eventData;
+
+    function formatIsoToAmPm(isoString) {
+      const timePart = isoString.split("T")[1].split(":");
+      let hour = parseInt(timePart[0], 10);
+      const minute = timePart[1];
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+    
+      hour = hour % 12;
+      hour = hour === 0 ? 12 : hour;
+    
+      return `${hour}:${minute} ${ampm}`;
+    }
 
 
     return (
@@ -341,7 +356,7 @@ export default function Page({ params }) {
                           className="pl-4 text-xl rounded-xl bg-white text-black border border-gray-300 flex-1"
                         />
                       ) : (
-                        <p className={`text-2xl text-[#214933] ${prozaLibre.className}`}>{Date}</p>
+                        <p className={`text-2xl text-[#214933] ${prozaLibre.className}`}>{eventDate}</p>
                       )}
                       <div className="flex gap-2">
                         {isEditing.startDate ? (
@@ -372,12 +387,19 @@ export default function Page({ params }) {
                       {isEditing.timeStart ? (
                         <input
                           type="time"
-                          value={eventData.timeStart || Time || ''}
-                          onChange={(e) => setEventData({ ...eventData, timeStart: e.target.value })}
+                          value={eventData.timeStart ? eventData.timeStart.substring(11, 16) : ''}
+                          onChange={(e) => {
+                            const currentTime = e.target.value; // HH:mm format
+                            // Preserve the date part from startDate or use a default if needed
+                            const datePart = eventData.startDate ? eventData.startDate.split("T")[0] : '2000-01-01';
+                            // Construct a new ISO-like string. Note: Timezone/seconds might need adjustment based on backend needs.
+                            const newIsoTime = `${datePart}T${currentTime}:00.000Z`; 
+                            setEventData({ ...eventData, timeStart: newIsoTime });
+                          }}
                           className="pl-4 text-xl rounded-xl bg-white text-black border border-gray-300 flex-1"
                         />
                       ) : (
-                        <p className={`text-2xl text-[#214933] ${prozaLibre.className}`}>{Time}</p>
+                        <p className={`text-2xl text-[#214933] ${prozaLibre.className}`}>{formatIsoToAmPm(Time)}</p>
                       )}
                       <div className="flex gap-2">
                         {isEditing.timeStart ? (
@@ -521,9 +543,6 @@ export default function Page({ params }) {
                       >
                         Delete Event
                       </Button>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill={'none'} viewBox="0 0 24 24" stroke-width="2" stroke="#214933" className="size-20">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
-                      </svg>
                     </div>
                 </div>
 
