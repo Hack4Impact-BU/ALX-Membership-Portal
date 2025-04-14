@@ -14,7 +14,7 @@ export default function GetInvolved() {
   useEffect(() => {
     async function fetchOpportunities() {
       try {
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
         const response = await fetch(`${apiBaseUrl}/get_involveds?limit=2`);
         
         if (!response.ok) {
