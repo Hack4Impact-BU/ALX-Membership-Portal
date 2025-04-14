@@ -5,11 +5,15 @@ import ReusableHeader from "@/components/ReusableHeader/ReusableHeader";
 import Eventing from "./components/EventListings/EventListings";
 import { Inter, Proza_Libre } from 'next/font/google';
 import Hyperlinks from '@/components/Hyperlinks';
+import { useAdmin } from "@/middleware/useAdmin";
+
 
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export default function EventListings() {
+  const { isAdmin, isLoading } = useAdmin();
+
   const [search, setSearch] = useState("");
   const [eventType, setEventType] = useState("");
   const [date, setDate] = useState("");
@@ -58,7 +62,7 @@ export default function EventListings() {
 
   return (
     <div className="w-11/12 text-white mt-20 h-screen">
-        <ReusableHeader header={"Upcoming Events"} translation={"*    Próximos eventos"} isAdmin={true} directTo={"/events/event_listings/create"}/>
+        <ReusableHeader header={"Upcoming Events"} translation={"*    Próximos eventos"} isAdmin={isAdmin} directTo={"/events/event_listings/create"}/>
 
 
       <div className={`max-w-7xl p-8 mx-auto my-8 ${prozaLibre.className}`}>
@@ -144,7 +148,7 @@ export default function EventListings() {
         {/* Event Cards */}
         
 
-        <Eventing eventType={eventType} searchField={search} showSavedOnly={showSavedOnly}/>
+        <Eventing isAdmin={isAdmin} eventType={eventType} searchField={search} showSavedOnly={showSavedOnly}/>
         <Hyperlinks />
                   
       </div>
