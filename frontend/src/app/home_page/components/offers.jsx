@@ -75,7 +75,7 @@ export default function ProductOffers() {
                 </div>
               </div>
               <div className={`flex justify-end mt-4 text-xs`}>
-                <Link href={`/benefits_discounts/${offer.id}`} className="text-blue-600 hover:underline">
+                <Link href={`/product_offers/${offer.id}`} className="text-blue-600 hover:underline">
                   See More
                 </Link>
               </div>

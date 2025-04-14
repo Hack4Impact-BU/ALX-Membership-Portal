@@ -1,26 +1,18 @@
 'use client';
 import { useState, useEffect } from 'react';
-import JobBoardAdmin from './JobBoardAdmin';
-import JobBoardMember from './JobBoardMember';
+import { useAdmin } from '@/middleware/useAdmin';
+import Admin from './admin';
+import Member from './member';
 // import { useAuth } from '@/context/AuthContext'; // Your auth context
 
 export default function JobPostingsPage() {
   // const { user, isAdmin } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const { isAdmin, isLoading } = useAdmin();
 
-  useEffect(() => {
-    // Any authentication checks
-    setLoading(false);
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  return (
-    <>
-      {/* {<JobBoardAdmin />} */}
-      {<JobBoardMember />}
-    </>
-  );
+  return isAdmin ? <Admin /> : <Member />;
+
 }
