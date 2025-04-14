@@ -9,6 +9,7 @@ export default function Page({ params }) {
     const [eventData, setEventData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isSaved, setIsSaved] = useState(false);
     
     useEffect(() => {
         const fetchEventData = async () => {
@@ -23,6 +24,7 @@ export default function Page({ params }) {
                 
                 const data = await response.json();
                 setEventData(data);
+                setIsSaved(data.isSaved);
                 setLoading(false);
                 console.log(data);
             } catch (err) {
@@ -34,6 +36,35 @@ export default function Page({ params }) {
         
         fetchEventData();
     }, [id]);
+
+
+    const handleSaveToggle = async () => {
+        const newSavedStatus = !isSaved;
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        
+        try {
+            // Make API request to update saved status
+            const response = await fetch(`${apiBaseUrl}/eventlists/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ isSaved: newSavedStatus }),
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to update saved status');
+            }
+            
+            // Update state only after successful API response
+            setIsSaved(newSavedStatus);
+            console.log(`Event ${newSavedStatus ? 'saved' : 'unsaved'} successfully`);
+        } catch (error) {
+            console.error('Error updating saved status:', error);
+            // Optionally revert the UI state if the API call fails
+            // setIsSaved(isSaved);
+        }
+    };
 
     // Loading state
     if (loading) {
@@ -79,8 +110,21 @@ export default function Page({ params }) {
         eventName: EventName,
         org: EventOrganizer,
         image_url,
-        phone: PhoneNumber
+        phone: PhoneNumber,
     } = eventData;
+
+    function formatIsoToAmPm(isoString) {
+        const timePart = isoString.split("T")[1].split(":");
+        let hour = parseInt(timePart[0], 10);
+        const minute = timePart[1];
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+      
+        hour = hour % 12;
+        hour = hour === 0 ? 12 : hour;
+      
+        return `${hour}:${minute} ${ampm}`;
+      }
+
 
 
     return (
@@ -132,7 +176,7 @@ export default function Page({ params }) {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
 
-                    <p className={`text-2xl text-[#214933] ${prozaLibre.className}`}>{Time}</p>
+                    <p className={`text-2xl text-[#214933] ${prozaLibre.className}`}>{formatIsoToAmPm(Time)}</p>
                 </div>
                 <div className="flex flex-row gap-4 justify-center items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#214933" class="size-14">
@@ -173,7 +217,15 @@ export default function Page({ params }) {
                         )}
                         <p className={`text-3xl text-black ${prozaLibre.className}`}>{EventOrganizer || Location}</p>
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill={'none'} viewBox="0 0 24 24" stroke-width="2" stroke="#214933" className="size-20">
+                    <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        fill={isSaved ? '#214933' : 'none'} 
+                        viewBox="0 0 24 24" 
+                        stroke-width="2" 
+                        stroke="#214933" 
+                        className="size-20 cursor-pointer"
+                        onClick={handleSaveToggle}
+                    >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
                     </svg>
                 </div>

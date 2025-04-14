@@ -15,10 +15,12 @@ export default function Page() {
       pic_url: '',
       startDate: '',
       offerDesc: '',
-      instruct: ''
+      instruct: '',
+      isSaved: false // Add default value for isSaved
     });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isSaved, setIsSaved] = useState(false); // Add state for save status
     
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -34,6 +36,7 @@ export default function Page() {
           
           const data = await response.json();
           setOfferData(data);
+          setIsSaved(data.isSaved); // Set initial save status from API
         } catch (err) {
           console.error('Error fetching offer data:', err);
           setError(err.message);
@@ -46,6 +49,34 @@ export default function Page() {
         fetchOfferData();
       }
     }, [id, apiBaseUrl]);
+
+    // Add handler function for saving/unsaving
+    const handleSaveToggle = async () => {
+        const newSavedStatus = !isSaved;
+        
+        try {
+            // Make API request to update saved status
+            const response = await fetch(`${apiBaseUrl}/product_offers/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ isSaved: newSavedStatus }),
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to update saved status');
+            }
+            
+            // Update state only after successful API response
+            setIsSaved(newSavedStatus);
+            console.log(`Offer ${newSavedStatus ? 'saved' : 'unsaved'} successfully`);
+        } catch (error) {
+            console.error('Error updating saved status:', error);
+            // Optionally revert the UI state if the API call fails
+            // setIsSaved(isSaved); 
+        }
+    };
 
     if (isLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
     if (error) return <div className="flex justify-center items-center h-screen text-red-500">Error: {error}</div>;
@@ -99,7 +130,15 @@ export default function Page() {
                     <div className='flex flex-row ju items-center gap-8'>
                         <p className={`text-5xl text-[#214933] ${prozaLibre.className}`}>{place}</p>
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill={'none'} viewBox="0 0 24 24" stroke-width="2" stroke="#214933" className="size-20">
+                    <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        fill={isSaved ? '#214933' : 'none'} // Use isSaved state for fill
+                        viewBox="0 0 24 24" 
+                        stroke-width="2" 
+                        stroke="#214933" 
+                        className="size-20 cursor-pointer" // Add cursor-pointer
+                        onClick={handleSaveToggle} // Add onClick handler
+                    >
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
                     </svg>
                 </div>
