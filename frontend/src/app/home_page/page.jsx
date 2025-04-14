@@ -7,7 +7,6 @@ import JobBoard from './components/board'
 import GetInvolved from './components/involved'
 import Hyperlinks from '@/components/Hyperlinks';
 
-
 export default function Home() {
     return (
         <div className="w-11/12">

@@ -8,7 +8,7 @@ class CreateJobs < ActiveRecord::Migration[7.2]
       t.text :requirements
       t.string :salary
       t.string :contact
-
+      t.string :location
       t.timestamps
     end
   end

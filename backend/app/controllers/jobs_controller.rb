@@ -24,12 +24,12 @@ class JobsController < ApplicationController
     end
   end
 
-  # PUT /jobs/:id
+  # PATCH/PUT /jobs/1
   def update
     if @job.update(job_params)
       render json: @job
     else
-      render json: { errors: @job.errors.full_messages }, status: :unprocessable_entity
+      render json: @job.errors, status: :unprocessable_entity
     end
   end
 
@@ -48,6 +48,7 @@ class JobsController < ApplicationController
   end
 
   def job_params
-    params.require(:job).permit(:title, :company, :location, :job_type, :description, :requirements, :contact, :salary, :logo)
+    params.require(:job).permit(:title, :company, :description, :requirements, 
+                               :salary, :contact, :location, :is_saved)
   end
 end
