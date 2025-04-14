@@ -14,6 +14,7 @@ export default function ProductOffers() {
   useEffect(() => {
     async function fetchOffers() {
       try {
+        console.log('Fetching offers', process.env.NEXT_PUBLIC_API_BASE_URL);
         const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         const response = await fetch(`${apiBaseUrl}/product_offers?limit=2`);
         
