@@ -69,8 +69,8 @@ export default function ProductOffers() {
                   <p className="text-xs">Company: {offer.businessType}</p>
                   <hr className="my-2 border-gray-700" />              
                   <p className="text-xs">
-                    Offer valid {new Date(offer.startDate).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })} 
-                    thru {new Date(offer.endDate).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
+                    Offer valid from {new Date(offer.startDate).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
+                    {" thru "}{new Date(offer.endDate).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
                   </p>
                 </div>
               </div>

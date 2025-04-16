@@ -24,6 +24,16 @@ Rails.application.routes.draw do
   # This custom route may be redundant with `resources :q_and_as`
   get '/q_and_a', to: 'q_and_as#index'
 
+  # Job routes with nested save functionality
+  resources :jobs do
+    # /jobs/:job_id/save
+    post 'save', to: 'saved_jobs#create'
+    delete 'save', to: 'saved_jobs#destroy'
+  end
+  
+  # Get all saved jobs for the current user
+  get 'saved_jobs', to: 'saved_jobs#index'
+
   # Uncomment and set your root route if needed
   # root "posts#index"
 end

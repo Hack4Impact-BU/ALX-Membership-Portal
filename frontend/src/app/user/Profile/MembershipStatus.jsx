@@ -8,7 +8,7 @@ const MembershipStatus = () => {
         <span className="text-center inline-block bg-green-500 text-black w-2/5 font-bold py-2 px-4 rounded-2xl">
           Amplify LatinX+ Member 💎
         </span>
-        <button className="bg-red-600 text-black font-bold  w-2/5 px-4 py-2 rounded-2xl hover:bg-red-700">
+        <button className="bg-red-600 text-black font-bold  w-2/5 px-4 py-2 rounded-2xl hover:bg-[#CD5C5C]">
           Cancel Membership
         </button>
       </div>

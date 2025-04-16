@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
@@ -9,11 +9,12 @@ import axios from 'axios';
 import LoadingScreen from '@/components/LoadingScreen';
 import Hyperlinks from '@/components/Hyperlinks';
 import JobCreationForm from './create/JobCreationForm';
+import SearchIcon from '@mui/icons-material/Search';
 
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
-export default function JobBoard() {
+export default function JobBoard() {  
   const [jobs, setJobs] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [deleteMode, setDeleteMode] = useState(false); // Toggle delete mode
@@ -23,6 +24,12 @@ export default function JobBoard() {
   // Editing states
   const [editingField, setEditingField] = useState(null);
   const [editingValue, setEditingValue] = useState('');
+
+    // New filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
+  const [minSalary, setMinSalary] = useState('');
+  
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -122,6 +129,70 @@ export default function JobBoard() {
     setEditingField(null);
   };
 
+  const cities = useMemo(() => {
+    const citySet = new Set(jobs.map(job => {
+      // Extract city from location if available
+      // This assumes a format like "City, State" or just "City"
+      if (job.location) {
+        return job.location.split(',')[0].trim();
+      }
+      return '';
+    }).filter(city => city !== ''));
+    
+    return Array.from(citySet).sort();
+  }, [jobs]);
+
+  // Extract salary ranges for filter
+  const salaryRanges = [
+    { label: 'Any', value: '' },
+    { label: '$30,000+', value: '30000' },
+    { label: '$50,000+', value: '50000' },
+    { label: '$70,000+', value: '70000' },
+    { label: '$100,000+', value: '100000' },
+    { label: '$150,000+', value: '150000' },
+    { label: '$200,000+', value: '200000' },
+    { label: '$250,000+', value: '250000' },
+  ];
+
+  // Improved salary parsing to handle ranges properly
+  const parseSalary = (salaryStr) => {
+    if (!salaryStr) return 0;
+    
+    // Extract all numbers from the salary string
+    const matches = salaryStr.match(/\d[\d,]*/g);
+    if (!matches || matches.length === 0) return 0;
+    
+    // Convert all matches to numbers by removing commas and parsing
+    const numbers = matches.map(num => parseInt(num.replace(/,/g, ''), 10));
+    
+    // If there are multiple numbers (likely a range), return the highest value
+    // This assumes ranges like "$30,000 - $50,000" or "$30,000 to $50,000"
+    if (numbers.length > 1) {
+      return Math.max(...numbers);
+    }
+    
+    // Otherwise just return the single number found
+    return numbers[0];
+  };
+
+  // Filter jobs based on all criteria
+  const filteredJobs = useMemo(() => {
+    return jobs.filter(job => {
+      // Filter by search query (job title)
+      const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Filter by city
+      const matchesCity = !selectedCity || 
+        (job.location && job.location.toLowerCase().includes(selectedCity.toLowerCase()));
+      
+      // Filter by minimum salary
+      const jobSalary = parseSalary(job.salary);
+      const matchesSalary = !minSalary || jobSalary >= parseInt(minSalary, 10);
+      
+      return matchesSearch && matchesCity && matchesSalary;
+    });
+  }, [jobs, searchQuery, selectedCity, minSalary]);
+
   return (
     <div className="flex flex-col bg-[#214933] min-h-screen w-10/12 p-8 mt-12 text-white">
       {/* Header */}
@@ -132,45 +203,58 @@ export default function JobBoard() {
 
       {/* Filters Section - Removed Saved Button */}
       <div className={`flex justify-center gap-4 mb-8 ${prozaLibre.className}`}>
-        {/* Business Type Selection */}
+
         <div className={`flex flex-col w-1/4 ${prozaLibre.className}`}>
-          <label htmlFor="businessType" className="mb-2 text-[#F6F2E9]">Business Type</label>
-          <select id="businessType" className="py-3 px-3 bg-[#335843] text-[#A9A9A9] rounded-m shadow-lg">
-            <option>Select Type</option>
-            <option value="tech">Tech</option>
-            <option value="finance">Finance</option>
-            <option value="healthcare">Healthcare</option>
-          </select>
+          <label htmlFor="searchQuery" className="mb-2 text-[#F6F2E9]">Search Jobs</label>
+          <div className="relative">
+            <input
+              id="searchQuery"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search job titles..."
+              className="py-3 px-3 pl-10 bg-[#335843] text-[#F6F2E9] rounded-m shadow-lg w-full"
+            />
+            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#A9A9A9]" />
+          </div>
         </div>
 
-        {/* Distance Selection */}
         <div className={`flex flex-col w-1/4 ${prozaLibre.className}`}>
-          <label htmlFor="distance" className="mb-2 text-[#F6F2E9]">Distance</label>
-          <select id="distance" className="py-3 px-3 bg-[#335843] text-[#A9A9A9] rounded-m shadow-lg">
-            <option>Select Distance</option>
-            <option value="5">5 miles</option>
-            <option value="10">10 miles</option>
-            <option value="20">20 miles</option>
-          </select>
-        </div>
-
-        {/* Zip Code Input */}
-        <div className={`flex flex-col w-1/4 ${prozaLibre.className}`}>
-          <label htmlFor="zipCode" className="mb-2 text-[#F6F2E9]">Zip Code</label>
-          <input
-            type="text"
-            id="zipCode"
-            placeholder="Zip Code"
+          <label htmlFor="citySelect" className="mb-2 text-[#F6F2E9]">City</label>
+          <select 
+            id="citySelect"
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
             className="py-3 px-3 bg-[#335843] text-[#F6F2E9] rounded-m shadow-lg"
-          />
+          >
+            <option value="">All Cities</option>
+            {cities.map(city => (
+              <option key={city} value={city}>{city}</option>
+            ))}
+          </select>
         </div>
+
+        <div className={`flex flex-col w-1/4 ${prozaLibre.className}`}>
+          <label htmlFor="minSalary" className="mb-2 text-[#F6F2E9]">Minimum Salary</label>
+          <select
+            id="minSalary"
+            value={minSalary}
+            onChange={(e) => setMinSalary(e.target.value)}
+            className="py-3 px-3 bg-[#335843] text-[#F6F2E9] rounded-m shadow-lg"
+          >
+            {salaryRanges.map(range => (
+              <option key={range.value} value={range.value}>{range.label}</option>
+            ))}
+          </select>
+        </div>
+
       </div>
 
       {/* Job Content Section - Increased height */}
       <div className="job-content-section h-[72vh] flex-grow mb-8">
         {isLoading ? (
           <LoadingScreen />
-        ) : jobs.length === 0 && !showCreateForm ? (
+        ) : filteredJobs.length === 0 && !showCreateForm ? (
           <div className="flex flex-col items-center h-full justify-center">
             <p className="text-white text-2xl mb-4">No jobs found</p>
           </div>
@@ -180,7 +264,7 @@ export default function JobBoard() {
             <div className="w-1/4 overflow-y-auto overflow-x-visible pr-4 pl-2 h-full">
               {/* The list container now has padding to account for card expansion */}
               <div className="pr-3 pl-1">
-                {jobs.map((job) => (
+                {filteredJobs.map((job) => (
                   <div
                     key={job.id}
                     onClick={() => {
