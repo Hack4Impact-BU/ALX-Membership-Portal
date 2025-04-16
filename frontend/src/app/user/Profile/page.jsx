@@ -3,6 +3,10 @@ import React, { useState, useEffect } from 'react';
 import jwtDecode from 'jwt-decode'; // Ensure this import works after downgrading jwt-decode
 import {UserIcon} from '@heroicons/react/outline';
 import MembershipStatus from './MembershipStatus';
+import { Inter, Proza_Libre } from 'next/font/google';
+
+const inter = Inter({ subsets: ["latin"] });
+const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 const Profile = () => {
   const [userName, setUserName] = useState('');
@@ -48,15 +52,15 @@ const Profile = () => {
   };
 
   return (
-    <div className=" text-white p-8 rounded-lg w-10/12 min-h-screen">
+    <div className={`text-white p-8 rounded-lg w-10/12 min-h-screen ${prozaLibre.className}`}>
       <div className="flex items-center gap-4 mb-8">
         <UserIcon className="h-32 w-32 text-white" />
-        <h1 className="text-white text-[80px] font-custom mb-6 pt-12">Profile</h1>
+        <h1 className={`text-white text-[80px] mb-6 pt-12 font-custom`}>Profile</h1>
       </div>
 
       <div className="bg-[#F6F2E9] p-6 rounded-lg mb-8 w-full">
         <div className="mb-4 ">
-          <label className="block text-sm text-[15px] text-black font-semibold  mb-2">Name</label>
+          <label className={`block text-sm text-[15px] text-black font-semibold mb-2`}>Name</label>
           <div className="flex gap-4">
             <input
               type="text"
@@ -64,7 +68,7 @@ const Profile = () => {
               readOnly
               className="flex-1 p-2 px-4 border text-gray-500 w-3/4 rounded-full bg-white focus:outline-none"
             />
-            <button className="bg-green-800 text-white px-4 py-2  w-1/5 rounded-full hover:bg-green-700">
+            <button className={`bg-green-800 text-white px-4 py-2 w-1/5 rounded-full hover:bg-green-700 ${prozaLibre.className}`}>
               Confirm
             </button>
           </div>
@@ -72,7 +76,7 @@ const Profile = () => {
 
         {/* Email Input */}
         <div className="mb-4">
-          <label className="block text-sm font-semibold  text-[15px] text-black mb-2">Email</label>
+          <label className={`block text-sm font-semibold text-[15px] text-black mb-2 ${prozaLibre.className}`}>Email</label>
           <div className="flex gap-4">
             <input
               type="email"
@@ -80,7 +84,7 @@ const Profile = () => {
               readOnly
               className="flex-1 p-2 px-4 border text-gray-500 w-3/4 rounded-full bg-white focus:outline-none"
             />
-            <button className="bg-green-800 text-white px-4 py-2  w-1/5 rounded-full hover:bg-green-700">
+            <button className={`bg-green-800 text-white px-4 py-2 w-1/5 rounded-full hover:bg-green-700 ${prozaLibre.className}`}>
               Confirm
             </button>
           </div>
@@ -88,16 +92,16 @@ const Profile = () => {
 
         {/* Phone Input */}
         <div className="mb-4">
-          <label className="block text-sm font-semibold text-[15px] text-black  mb-2">Phone</label>
+          <label className={`block text-sm font-semibold text-[15px] text-black mb-2 ${prozaLibre.className}`}>Phone</label>
           <div className="flex gap-4">
           
             <input
               type="tel"
               value={phoneNumber}
               readOnly
-              className="flex-1 p-2 px-4 border rounded-full  w-3/4 text-gray-500 bg-white focus:outline-none"
+              className="flex-1 p-2 px-4 border rounded-full w-3/4 text-gray-500 bg-white focus:outline-none"
             />
-            <button className="bg-green-800 text-white px-4 py-2  w-1/5 rounded-full hover:bg-green-700">
+            <button className={`bg-green-800 text-white px-4 py-2 w-1/5 rounded-full hover:bg-green-700 ${prozaLibre.className}`}>
               Confirm
             </button>
           </div>

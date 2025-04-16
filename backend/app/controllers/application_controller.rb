@@ -30,8 +30,13 @@ class ApplicationController < ActionController::API
             sub: user_info['sub'],
             is_admin: permissions&.include?('admin') || false
           }
+          
+          # Make the user_id (sub) accessible to controllers
+          @current_user_id = user_info['sub']
+          # Also store in request.env for middleware compatibility
+          request.env['current_user_id'] = @current_user_id
 
-                # Helper method to check if current user is an admin
+          # Helper method to check if current user is an admin
           def require_admin
             unless @current_user&.[](:is_admin)
               render json: { error: 'Admin access required' }, status: :forbidden
@@ -43,6 +48,10 @@ class ApplicationController < ActionController::API
             @current_user
           end
         
+          # Helper method to get current user_id (Auth0 sub)
+          def current_user_id
+            @current_user_id
+          end
 
         rescue JWT::ExpiredSignature
           Rails.logger.error("JWT Error: Token has expired")

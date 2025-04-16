@@ -1,10 +1,11 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import { Inter, Proza_Libre } from 'next/font/google';
 import axios from 'axios';
 import LoadingScreen from '@/components/LoadingScreen';
 import Hyperlinks from '@/components/Hyperlinks';
+import SearchIcon from '@mui/icons-material/Search';
 
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
@@ -16,21 +17,63 @@ export default function JobBoardMember() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showSavedOnly, setShowSavedOnly] = useState(false);
 
+  // New filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
+  const [minSalary, setMinSalary] = useState('');
+
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+  // Get auth token helper function - UPDATED with more debug logging
+  const getAuthToken = () => {
+    // Try different token storage locations
+    const token = localStorage.getItem('accessToken') || 
+                  localStorage.getItem('idToken') || 
+                  localStorage.getItem('auth0Token') ||
+                  localStorage.getItem('token');
+                  
+    if (!token) {
+      console.warn('No authentication token found in storage');
+    } else {
+      console.log('Found authentication token:', token.substring(0, 10) + '...');
+    }
+    
+    return token;
+  };
+  
+  // Get auth headers helper function
+  const getAuthHeaders = () => {
+    const token = getAuthToken();
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
   useEffect(() => {
+    console.log('Component mounted, fetching jobs...');
     fetchJobs();
   }, []);
 
   const fetchJobs = async () => {
     setIsLoading(true);
     const startTime = Date.now();
+    
     try {
-      const response = await axios.get(`${apiBaseUrl}/jobs`);
+      // Include auth headers to get personalized saved status
+      const headers = getAuthHeaders();
+      console.log('Fetching jobs with auth headers:', Object.keys(headers).length > 0);
+      
+      const response = await axios.get(`${apiBaseUrl}/jobs`, { headers });
+      
       const result = response.data;
+      console.log(`Fetched ${result.length} jobs, checking saved status...`);
+      
+      // Log some info about saved status
+      const savedCount = result.filter(job => job.is_saved).length;
+      console.log(`Found ${savedCount} saved jobs out of ${result.length} total`);
+      
       const elapsed = Date.now() - startTime;
       const minDelay = 300;
       const remainingDelay = minDelay - elapsed;
+      
       if (remainingDelay > 0) {
         setTimeout(() => {
           setJobs(result);
@@ -57,12 +100,18 @@ export default function JobBoardMember() {
     return requirementsText.split('. ').filter(item => item.trim());
   };
 
+  // Improved toggleBookmark function with better error handling
   const toggleBookmark = async (jobId) => {
     try {
       // Find the job in the current jobs state
+      const job = jobs.find(j => j.id === jobId);
+      if (!job) return;
+      
+      const isSaved = job.is_saved;
+      
+      // Optimistically update UI
       const updatedJobs = jobs.map(job => {
         if (job.id === jobId) {
-          // Toggle the is_saved status
           const updatedJob = { ...job, is_saved: !job.is_saved };
           
           // If this is the selected job, update that too
@@ -75,36 +124,161 @@ export default function JobBoardMember() {
         return job;
       });
       
-      // Update the jobs state
+      // Update the jobs state immediately for responsive UI
       setJobs(updatedJobs);
       
-      // Get the updated job
-      const jobToUpdate = updatedJobs.find(job => job.id === jobId);
+      // Get auth token
+      const token = getAuthToken();
+      if (!token) {
+        console.error('No authentication token found!');
+        alert('Please log in to save jobs');
+        return;
+      }
       
-      // Send the update to the backend using the regular update endpoint
-      // Add Content-Type header to ensure proper JSON parsing
-      await axios.patch(`${apiBaseUrl}/jobs/${jobId}`, 
-        { job: { is_saved: jobToUpdate.is_saved } },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      };
+      
+      // Call the appropriate endpoint based on current saved status
+      if (isSaved) {
+        // If job was saved, unsave it
+        const response = await axios.delete(`${apiBaseUrl}/jobs/${jobId}/save`, { headers });
+        console.log('Unsave response:', response.data);
+      } else {
+        // If job wasn't saved, save it
+        const response = await axios.post(`${apiBaseUrl}/jobs/${jobId}/save`, {}, { headers });
+        console.log('Save response:', response.data);
+      }
     } catch (error) {
       console.error('Error toggling bookmark:', error);
-      // Revert the change if there was an error
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+      }
+      // On error, revert by fetching jobs again
+      if (showSavedOnly) {
+        fetchSavedJobs();
+      } else {
+        fetchJobs();
+      }
+    }
+  };
+
+  // Function to fetch only saved jobs - with better error handling
+  const fetchSavedJobs = async () => {
+    setIsLoading(true);
+    
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        console.error('No authentication token found!');
+        setIsLoading(false);
+        return;
+      }
+      
+      const response = await axios.get(`${apiBaseUrl}/saved_jobs`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      console.log('Saved jobs response:', response.data);
+      
+      setJobs(response.data);
+      if (response.data.length > 0) {
+        setSelectedJob(response.data[0]);
+      } else {
+        setSelectedJob(null);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error fetching saved jobs:', error);
+      setIsLoading(false);
+      // If we can't fetch saved jobs, revert to all jobs
+      setShowSavedOnly(false);
       fetchJobs();
     }
   };
 
+  // Toggle between all jobs and saved jobs
   const toggleSavedFilter = () => {
-    setShowSavedOnly(!showSavedOnly);
+    const newSavedOnlyState = !showSavedOnly;
+    setShowSavedOnly(newSavedOnlyState);
     
-    if (showSavedOnly && selectedJob) {
-      setSelectedJob(jobs[0] || null);
+    // Fetch appropriate jobs based on filter
+    if (newSavedOnlyState) {
+      fetchSavedJobs();
+    } else {
+      fetchJobs();
     }
   };
 
-  const filteredJobs = showSavedOnly 
-    ? jobs.filter(job => job.is_saved) 
-    : jobs;
+  // Extract unique cities from jobs
+  const cities = useMemo(() => {
+    const citySet = new Set(jobs.map(job => {
+      // Extract city from location if available
+      // This assumes a format like "City, State" or just "City"
+      if (job.location) {
+        return job.location.split(',')[0].trim();
+      }
+      return '';
+    }).filter(city => city !== ''));
+    
+    return Array.from(citySet).sort();
+  }, [jobs]);
+
+  // Extract salary ranges for filter
+  const salaryRanges = [
+    { label: 'Any', value: '' },
+    { label: '$30,000+', value: '30000' },
+    { label: '$50,000+', value: '50000' },
+    { label: '$70,000+', value: '70000' },
+    { label: '$100,000+', value: '100000' },
+    { label: '$150,000+', value: '150000' },
+    { label: '$200,000+', value: '200000' },
+    { label: '$250,000+', value: '250000' },
+  ];
+
+  // Improved salary parsing to handle ranges properly
+  const parseSalary = (salaryStr) => {
+    if (!salaryStr) return 0;
+    
+    // Extract all numbers from the salary string
+    const matches = salaryStr.match(/\d[\d,]*/g);
+    if (!matches || matches.length === 0) return 0;
+    
+    // Convert all matches to numbers by removing commas and parsing
+    const numbers = matches.map(num => parseInt(num.replace(/,/g, ''), 10));
+    
+    // If there are multiple numbers (likely a range), return the highest value
+    // This assumes ranges like "$30,000 - $50,000" or "$30,000 to $50,000"
+    if (numbers.length > 1) {
+      return Math.max(...numbers);
+    }
+    
+    // Otherwise just return the single number found
+    return numbers[0];
+  };
+
+  // Filter jobs based on all criteria
+  const filteredJobs = useMemo(() => {
+    return jobs.filter(job => {
+      // Filter by search query (job title)
+      const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Filter by city
+      const matchesCity = !selectedCity || 
+        (job.location && job.location.toLowerCase().includes(selectedCity.toLowerCase()));
+      
+      // Filter by minimum salary
+      const jobSalary = parseSalary(job.salary);
+      const matchesSalary = !minSalary || jobSalary >= parseInt(minSalary, 10);
+      
+      // Filter by saved status if enabled
+      const matchesSaved = !showSavedOnly || job.is_saved;
+      
+      return matchesSearch && matchesCity && matchesSalary && matchesSaved;
+    });
+  }, [jobs, searchQuery, selectedCity, minSalary, showSavedOnly]);
 
   return (
     <div className="flex flex-col bg-[#214933] min-h-screen w-10/12 p-8 mt-12 text-white">
@@ -118,51 +292,65 @@ export default function JobBoardMember() {
       <div className={`flex justify-center gap-4 mb-8 ${prozaLibre.className}`}>
         {/* Saved Button */}
         <div className="flex flex-col w-1/5">
-          <label className="mb-2 invisible ">Placeholder</label>
+          <label className="mb-2 invisible">Placeholder</label>
           <button 
             onClick={toggleSavedFilter}
             className={`py-3 px-6 rounded-lg flex items-center gap-2 shadow-lg transition-all ${
               showSavedOnly 
                 ? 'bg-white text-[#214933]' 
-                : 'bg-[#335843] text-white'
+                : 'bg-[#214933] text-white border border-white'
             }`}
           >
             <BookmarksIcon />
-            Saved
+            {showSavedOnly ? 'Showing Saved' : 'Show Saved'}
           </button>
         </div>
 
-        {/* Business Type Selection */}
-        <div className={`flex flex-col w-1/5 ${prozaLibre.className}`}>
-          <label htmlFor="businessType" className="mb-2 text-[#F6F2E9]">Business Type</label>
-          <select id="businessType" className="py-3 px-3 bg-[#335843] text-[#A9A9A9] rounded-m shadow-lg">
-            <option>Select Type</option>
-            <option value="tech">Tech</option>
-            <option value="finance">Finance</option>
-            <option value="healthcare">Healthcare</option>
-          </select>
+        {/* Search Bar */}
+        <div className={`flex flex-col w-1/4 ${prozaLibre.className}`}>
+          <label htmlFor="searchQuery" className="mb-2 text-[#F6F2E9]">Search Jobs</label>
+          <div className="relative">
+            <input
+              id="searchQuery"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search job titles..."
+              className="py-3 px-3 pl-10 bg-[#335843] text-[#F6F2E9] rounded-m shadow-lg w-full"
+            />
+            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#A9A9A9]" />
+          </div>
         </div>
 
-        {/* Distance Selection */}
-        <div className={`flex flex-col w-1/5 ${prozaLibre.className}`}>
-          <label htmlFor="distance" className="mb-2 text-[#F6F2E9]">Distance</label>
-          <select id="distance" className="py-3 px-3 bg-[#335843] text-[#A9A9A9] rounded-m shadow-lg">
-            <option>Select Distance</option>
-            <option value="5">5 miles</option>
-            <option value="10">10 miles</option>
-            <option value="20">20 miles</option>
-          </select>
-        </div>
-
-        {/* Zip Code Input */}
-        <div className={`flex flex-col w-1/5 ${prozaLibre.className}`}>
-          <label htmlFor="zipCode" className="mb-2 text-[#F6F2E9]">Zip Code</label>
-          <input
-            type="text"
-            id="zipCode"
-            placeholder="Zip Code"
+        {/* City Selection */}
+        <div className={`flex flex-col w-1/4 ${prozaLibre.className}`}>
+          <label htmlFor="citySelect" className="mb-2 text-[#F6F2E9]">City</label>
+          <select 
+            id="citySelect"
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
             className="py-3 px-3 bg-[#335843] text-[#F6F2E9] rounded-m shadow-lg"
-          />
+          >
+            <option value="">All Cities</option>
+            {cities.map(city => (
+              <option key={city} value={city}>{city}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Minimum Salary */}
+        <div className={`flex flex-col w-1/4 ${prozaLibre.className}`}>
+          <label htmlFor="minSalary" className="mb-2 text-[#F6F2E9]">Minimum Salary</label>
+          <select
+            id="minSalary"
+            value={minSalary}
+            onChange={(e) => setMinSalary(e.target.value)}
+            className="py-3 px-3 bg-[#335843] text-[#F6F2E9] rounded-m shadow-lg"
+          >
+            {salaryRanges.map(range => (
+              <option key={range.value} value={range.value}>{range.label}</option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -172,17 +360,20 @@ export default function JobBoardMember() {
           <LoadingScreen />
         ) : filteredJobs.length === 0 ? (
           <div className="flex flex-col items-center h-full justify-center">
-            <p className="text-white text-2xl mb-4">
-              {showSavedOnly ? "No saved jobs found" : "No jobs found"}
-            </p>
-            {showSavedOnly && (
+            <p className="text-white text-2xl mb-4">No jobs found matching your criteria</p>
+            {searchQuery || selectedCity || minSalary || showSavedOnly ? (
               <button 
-                onClick={toggleSavedFilter}
-                className="bg-[#F6F2E9] text-[#214933] py-2 px-4 rounded-lg mt-4"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedCity('');
+                  setMinSalary('');
+                  setShowSavedOnly(false);
+                }}
+                className="bg-white text-[#214933] py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors"
               >
-                Show All Jobs
+                Clear Filters
               </button>
-            )}
+            ) : null}
           </div>
         ) : (
           <div className={`flex justify-center gap-8 ${prozaLibre.className} h-full`}>
