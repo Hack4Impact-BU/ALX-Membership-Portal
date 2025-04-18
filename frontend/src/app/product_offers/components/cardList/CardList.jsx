@@ -10,7 +10,7 @@ const montserrat = Montserrat({
   })
 
 
-export default function CardList() {
+export default function CardList( { isAdmin } ) {
 
     const [card, setCard] = useState([]); // Start with an empty list
     const [loading, setLoading] = useState(true); // Track loading state
@@ -86,8 +86,24 @@ export default function CardList() {
                         <div className="col-span-2 text-center self-start">No offers found</div>
                     ) : (
                         (renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).map((offer, index) => (
-                            <Card
-                                key={index}
+                            isAdmin ? (
+                                <AdminCard
+                                    key={index}
+                                    offerTitle={offer.offerTitle}
+                                    businessType={offer.businessType}
+                                    offerDesc={offer.offerDesc}
+                                    place={offer.place}
+                                    pic_url={offer.pic_url}
+                                    startDate={offer.startDate}
+                                    endDate={offer.endDate}
+                                    isSaved={offer.isSaved}
+                                    index={index}
+                                    id={offer.id}
+
+                                />
+                            ) : (
+                                <Card   
+                                    key={index}
                                 offerTitle={offer.offerTitle}
                                 businessType={offer.businessType}
                                 offerDesc={offer.offerDesc}
@@ -100,6 +116,7 @@ export default function CardList() {
                                 id={offer.id}
                                 toggleCardSaved={toggleCardSaved}
                             />
+                            )
                         ))
                     )}
                 </div>
