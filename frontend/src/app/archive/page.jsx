@@ -8,6 +8,9 @@ import Training from './component/training';
 import ReusableHeader from '@/components/ReusableHeader/ReusableHeader';
 import DropdownCardAdmin from '@/components/DropDrownAdmin/DropDownCardsAdmin';
 import Hyperlinks from '@/components/Hyperlinks';
+
+import { useAdmin } from "@/middleware/useAdmin";
+
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 // Extracted filter component for better organization
@@ -65,6 +68,8 @@ const EventFilters = ({
 );
 
 export default function Archive() {
+  const { isAdmin, isLoading } = useAdmin();
+
   const [activeTab, setActiveTab] = useState('Previous Events');
   const [searchTerm, setSearchTerm] = useState('');
   
@@ -227,6 +232,7 @@ export default function Archive() {
   const renderContent = () => {
     if (activeTab === 'Research Work') {
       return researchData.map((item, index) => (
+        isAdmin ? (
         <DropdownCardAdmin
           key={item.id}
           item={item}
@@ -237,6 +243,18 @@ export default function Archive() {
           handleDeleteClick={handleDeleteClick}
           fontName={prozaLibre.className}
         />
+        ) : (
+          <DropdownCard
+            key={item.id}
+            item={item}
+            index={index}
+            expandedCard={expandedCard}
+            toggleExpandCard={toggleExpandCard}
+            isDeleteMode={isDeleteMode}
+            handleDeleteClick={handleDeleteClick}
+            fontName={prozaLibre.className}
+          />
+        )
       ));
     } 
     
@@ -251,6 +269,7 @@ export default function Archive() {
           isDeleteMode={isDeleteMode}
           handleDeleteClick={handleDeleteClick}
           fontName={prozaLibre.className}
+          isAdmin={isAdmin}
         />
       ));
     }
@@ -282,7 +301,7 @@ export default function Archive() {
       {/* Header */}
       <div className="flex w-full">
         <FolderIcon className="h-32 w-32 stroke-[#F6F2E9]" />
-        <ReusableHeader header={"Archive"} isAdmin={true} directTo={tabUrls[activeTab]}/>
+        <ReusableHeader header={"Archive"} isAdmin={isAdmin} directTo={tabUrls[activeTab]}/>
       </div>
 
       <div className={`flex flex-col items-start pl-8 my-12 w-full ${prozaLibre.className}`}>

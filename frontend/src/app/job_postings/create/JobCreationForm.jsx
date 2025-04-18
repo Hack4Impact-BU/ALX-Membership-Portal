@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
+import { Proza_Libre } from 'next/font/google';
+
+const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export default function JobCreationForm({ onCancel, onJobCreated, apiBaseUrl }) {
   const [formData, setFormData] = useState({
@@ -12,7 +15,10 @@ export default function JobCreationForm({ onCancel, onJobCreated, apiBaseUrl }) 
     requirements: '',
     salary: '',
     contact: '',
-    logo: null
+    logo: null,
+    location: '',
+    job_type: '',
+    logo_url: '',
   });
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,9 +62,8 @@ export default function JobCreationForm({ onCancel, onJobCreated, apiBaseUrl }) 
     form.append('job[requirements]', formData.requirements);
     form.append('job[salary]', formData.salary);
     form.append('job[contact]', formData.contact);
-    if (formData.logo) {
-      form.append('job[logo]', formData.logo);
-    }
+    form.append('job[location]', formData.location);
+    form.append('job[job_type]', formData.job_type);
 
     axios.post(`${apiBaseUrl}/jobs`, form, {
       headers: {
@@ -77,7 +82,8 @@ export default function JobCreationForm({ onCancel, onJobCreated, apiBaseUrl }) 
           requirements: '',
           salary: '',
           contact: '',
-          logo: null
+          location: '',
+          job_type: '',
         });
         setPreviewUrl(null);
       })
@@ -90,8 +96,17 @@ export default function JobCreationForm({ onCancel, onJobCreated, apiBaseUrl }) 
       });
   };
 
+  // Helper function to create display format with bullet points
+  const formatWithBullets = (text) => {
+    if (!text) return '';
+    return text.split('. ')
+      .filter(item => item.trim())
+      .map(item => `• ${item}${!item.endsWith('.') ? '.' : ''}`)
+      .join('\n');
+  };
+
   return (
-    <div className="relative flex-grow bg-[#F6F2E9] text-black p-8 rounded-xl shadow-lg max-w-[600px] w-full">
+    <div className={`relative flex-grow bg-[#F6F2E9] text-black p-8 rounded-xl shadow-lg max-w-[600px] w-full ${prozaLibre.className}`}>
       <button 
         onClick={onCancel}
         className="absolute top-4 right-4 text-gray-500 hover:text-black"
@@ -108,7 +123,7 @@ export default function JobCreationForm({ onCancel, onJobCreated, apiBaseUrl }) 
       )}
       
       <form onSubmit={handleSubmit}>
-        <div className="flex gap-4 mb-4">
+        <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="w-1/3 flex flex-col items-center">
             <label className="block text-lg font-semibold mb-2">Logo</label>
             <div className="h-16 w-16 rounded-full overflow-hidden bg-gray-200 mb-2 flex items-center justify-center">
@@ -215,6 +230,37 @@ export default function JobCreationForm({ onCancel, onJobCreated, apiBaseUrl }) 
             className="w-full p-2 border rounded"
             required
           />
+        </div>
+        
+        <div>
+          <label className="block text-lg font-semibold mb-2">Location:</label>
+          <input
+            type="text"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            placeholder="e.g. New York, NY or Remote"
+            className="w-full p-2 border rounded"
+            required
+          />
+        </div>
+        
+        <div>
+          <label className="block text-lg font-semibold mb-2">Job Type:</label>
+          <select
+            name="job_type"
+            value={formData.job_type}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          >
+            <option value="">Select Job Type</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Contract">Contract</option>
+            <option value="Internship">Internship</option>
+            <option value="Temporary">Temporary</option>
+          </select>
         </div>
         
         <div className="pt-4">

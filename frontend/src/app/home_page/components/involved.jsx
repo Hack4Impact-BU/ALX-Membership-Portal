@@ -96,7 +96,7 @@ export default function GetInvolved() {
                 </div>
               </div>
               <div className="flex justify-end mt-4 text-xs">
-                <Link href={`/get_involved/${opportunity.id}`} className="text-blue-600 hover:underline">
+                <Link href={`/get_involved/`} className="text-blue-600 hover:underline">
                   See More
                 </Link>
               </div>

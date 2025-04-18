@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_30_033349) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_16_195330) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -82,6 +82,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_30_033349) do
     t.string "contact"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "location"
+    t.string "job_type"
+    t.boolean "is_saved"
   end
 
   create_table "product_offers", force: :cascade do |t|
@@ -115,6 +118,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_30_033349) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "saved_jobs", force: :cascade do |t|
+    t.string "user_id", null: false
+    t.bigint "job_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["job_id"], name: "index_saved_jobs_on_job_id"
+    t.index ["user_id", "job_id"], name: "index_saved_jobs_on_user_id_and_job_id", unique: true
+  end
+
   create_table "trainings", force: :cascade do |t|
     t.string "trainingTitle"
     t.text "trainingDesc"
@@ -133,4 +145,5 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_30_033349) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "saved_jobs", "jobs"
 end

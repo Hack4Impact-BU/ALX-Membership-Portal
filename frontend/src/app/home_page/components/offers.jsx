@@ -14,7 +14,7 @@ export default function ProductOffers() {
   useEffect(() => {
     async function fetchOffers() {
       try {
-        console.log('Fetching offers', process.env.NEXT_PUBLIC_API_URL);
+        console.log('Fetching offers', process.env.NEXT_PUBLIC_API_BASE_URL);
         const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
         const response = await fetch(`${apiBaseUrl}/product_offers?limit=2`);
         
@@ -69,13 +69,13 @@ export default function ProductOffers() {
                   <p className="text-xs">Company: {offer.businessType}</p>
                   <hr className="my-2 border-gray-700" />              
                   <p className="text-xs">
-                    Offer valid {new Date(offer.startDate).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })} 
-                    thru {new Date(offer.endDate).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
+                    Offer valid from {new Date(offer.startDate).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
+                    {" thru "}{new Date(offer.endDate).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
                   </p>
                 </div>
               </div>
               <div className={`flex justify-end mt-4 text-xs`}>
-                <Link href={`/benefits_discounts/${offer.id}`} className="text-blue-600 hover:underline">
+                <Link href={`/product_offers/${offer.id}`} className="text-blue-600 hover:underline">
                   See More
                 </Link>
               </div>

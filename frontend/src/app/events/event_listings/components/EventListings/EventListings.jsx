@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import EventCard from "../EventCards/EventCards";
 import EventCardAdmin from "../EventCardsAdmin/EventCardsAdmin";
 
-export default function Eventing({ eventType, searchField, showSavedOnly }) {
+export default function Eventing({ eventType, searchField, showSavedOnly, isAdmin }) {
  
   const [events, setEvents] = useState([]); // Start with an empty list
   const [loading, setLoading] = useState(true); // Track loading state
@@ -76,7 +76,8 @@ export default function Eventing({ eventType, searchField, showSavedOnly }) {
   return (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {filteredEvents.map((event) => (
-      <EventCardAdmin
+      isAdmin ? (
+        <EventCardAdmin
         key={event.id}
         id={event.id}
         EventName={getEventProperty(event, 'eventName')}
@@ -92,6 +93,24 @@ export default function Eventing({ eventType, searchField, showSavedOnly }) {
         image_url={getEventProperty(event, 'image_url')}
         saved={event.isSaved}
       />
+      ) : (
+        <EventCard
+        key={event.id}
+        id={event.id}
+        EventName={getEventProperty(event, 'eventName')}
+        Location={getEventProperty(event, 'location')}
+        Date={getEventProperty(event, 'startDate')}
+        Time={formatTime(getEventProperty(event, 'timeStart'))}
+        EventOrganizer={getEventProperty(event, 'org')}
+        PhoneNumber={getEventProperty(event, 'phone')}
+        EventDescription={getEventProperty(event, 'eventDesc')}
+        WebsiteLink={getEventProperty(event, 'websiteLink') || "#"}
+        ZipCode={getEventProperty(event, 'zipCode')}
+        EventImage={getEventProperty(event, 'pic')}
+        image_url={getEventProperty(event, 'image_url')}
+        saved={event.isSaved}
+        />
+      )
     ))}
   </div>
   );

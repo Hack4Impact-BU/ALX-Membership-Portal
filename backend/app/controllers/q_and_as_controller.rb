@@ -33,7 +33,7 @@ class QAndAsController < ApplicationController
       if @q_and_a.update(q_and_a_params)
         render json: @q_and_a
       else
-        render json: @q_and_a.errors, status: :unprocessable_entity
+        render json: @q_and_a.errors, status: :unprocessable_entity 
       end
     end
   

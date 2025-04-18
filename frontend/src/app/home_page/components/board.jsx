@@ -82,7 +82,7 @@ export default function JobBoard() {
                 </div>
               </div>
               <div className="flex justify-end mt-4 text-xs">
-                <Link href={`/job_postings/${job.id}`} className="text-blue-600 hover:underline">
+                <Link href={`/job_postings/`} className="text-blue-600 hover:underline">
                   See More
                 </Link>
               </div>
