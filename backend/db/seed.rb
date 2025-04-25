@@ -195,13 +195,16 @@ end
 puts "#{GetInvolved.count} 'get involved' items in DB."
 
 puts "Creating ProductOffers..."
+# Make sure ProductOffer doesn't have isSaved field anymore
+ProductOffer.column_names.include?('isSaved') && ProductOffer.reset_column_information
+
 20.times do
   ProductOffer.create!(
     place: Faker::Company.name,
     offerTitle: "#{rand(5..50)}% off #{Faker::Commerce.product_name}",
     offerDesc: Faker::Lorem.paragraph(sentence_count: 3 + rand(3)),
     instruct: "Mention this offer or show your membership card.",
-    isSaved: [true, false].sample, # Randomly save some
+    # isSaved: [true, false].sample, # Removed: This is now derived
     startDate: Faker::Date.between(from: 1.month.ago, to: 1.month.from_now),
     endDate: Faker::Date.between(from: 1.month.from_now, to: 6.months.from_now),
     businessType: Faker::Company.industry,
@@ -209,7 +212,22 @@ puts "Creating ProductOffers..."
   )
 end
 puts "#{ProductOffer.count} product offers in DB."
+# Store offers for associations
+product_offers = ProductOffer.all
 
+# --- Seed SavedProductOffers ---
+puts "Creating SavedProductOffers..."
+if users.any? && product_offers.any?
+  users.first(5).each do |user|
+    product_offers.sample(5).each do |offer|
+      # Use user's email as user_id
+      SavedProductOffer.find_or_create_by!(user_id: user.email, product_offer: offer)
+    end
+  end
+else
+  puts "Skipping SavedProductOffers creation as no users or offers found."
+end
+puts "#{SavedProductOffer.count} saved product offers in DB."
 
 puts "Creating Researches..."
 12.times do

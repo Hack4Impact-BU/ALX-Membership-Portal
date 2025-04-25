@@ -41,6 +41,13 @@ Rails.application.routes.draw do
   # Get all saved events for the current user
   get 'saved_events', to: 'saved_events#index'
 
+  # Product Offer routes with nested save functionality
+  resources :product_offers, only: [:index, :show, :create, :update, :destroy] do
+    post 'save', to: 'saved_product_offers#create', on: :member
+    delete 'save', to: 'saved_product_offers#destroy', on: :member
+  end
+  get 'saved_product_offers', to: 'saved_product_offers#index'
+
   # Uncomment and set your root route if needed
   # root "posts#index"
 end
