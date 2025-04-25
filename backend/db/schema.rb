@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_24_234501) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_25_142400) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -118,6 +118,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_24_234501) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "saved_events", force: :cascade do |t|
+    t.string "user_id", null: false
+    t.bigint "eventlist_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["eventlist_id"], name: "index_saved_events_on_eventlist_id"
+    t.index ["user_id", "eventlist_id"], name: "index_saved_events_on_user_id_and_eventlist_id", unique: true
+  end
+
   create_table "saved_jobs", force: :cascade do |t|
     t.string "user_id", null: false
     t.bigint "job_id", null: false
@@ -145,5 +154,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_24_234501) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "saved_events", "eventlists"
   add_foreign_key "saved_jobs", "jobs"
 end

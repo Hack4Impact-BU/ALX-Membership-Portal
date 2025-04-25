@@ -112,11 +112,12 @@ jobs = Job.all
 puts "Creating SavedJobs..."
 # Ensure users and jobs exist before creating saved jobs
 if users.any? && jobs.any?
-  5.times do
-    user = users.sample
-    job = jobs.sample
-    # Use find_or_create_by to avoid duplicate saved jobs for the same user/job pair
-    SavedJob.find_or_create_by!(user_id: user.email, job: job)
+  # Using first 5 users and sample jobs for predictability if needed
+  users.first(5).each do |user|
+    jobs.sample(3).each do |job|
+      # Use user's email as user_id, matching SavedJobsController logic
+      SavedJob.find_or_create_by!(user_id: user.email, job: job)
+    end
   end
 else
   puts "Skipping SavedJobs creation as no users or jobs found."
@@ -142,10 +143,9 @@ QAndA.find_or_create_by!(question: "Where can I find the event schedule?") do |q
 end
 puts "#{QAndA.count} Q&As in DB."
 
-# --- Seed Other Models ---
-
+# --- Seed Eventlists --- 
 puts "Creating Eventlists..."
-15.times do
+15.times do |i|
   Eventlist.create!(
     eventType: ['Workshop', 'Seminar', 'Conference', 'Meetup', 'Webinar', 'Social Gathering'].sample,
     startDate: Faker::Date.between(from: 1.week.from_now, to: 4.months.from_now),
@@ -154,14 +154,31 @@ puts "Creating Eventlists..."
     org: Faker::Company.name,
     timeStart: Faker::Time.between(from: DateTime.now.beginning_of_day + 8.hours, to: DateTime.now.beginning_of_day + 16.hours).strftime("%H:%M"),
     timeEnd: Faker::Time.between(from: DateTime.now.beginning_of_day + 10.hours, to: DateTime.now.beginning_of_day + 18.hours).strftime("%H:%M"),
-    eventName: Faker::Company.catch_phrase + " " + ['Workshop', 'Summit', 'Meetup', 'Talk'].sample,
-    isSaved: [true, false].sample, # Randomly save some
+    eventName: "#{Faker::Company.catch_phrase} #{['Workshop', 'Summit', 'Meetup', 'Talk'].sample} ##{i+1}",
     eventDesc: Faker::Lorem.paragraph(sentence_count: 5 + rand(5)),
     instruct: Faker::Lorem.sentence,
     phone: Faker::PhoneNumber.phone_number
   )
 end
 puts "#{Eventlist.count} events in DB."
+# Store eventlists for associations
+eventlists = Eventlist.all 
+
+# --- Seed SavedEvents ---
+puts "Creating SavedEvents..."
+if users.any? && eventlists.any?
+  users.first(5).each do |user|
+    eventlists.sample(4).each do |event|
+      # Use user's email as user_id
+      SavedEvent.find_or_create_by!(user_id: user.email, eventlist: event)
+    end
+  end
+else
+  puts "Skipping SavedEvents creation as no users or eventlists found."
+end
+puts "#{SavedEvent.count} saved events in DB."
+
+# --- Seed Other Models ---
 
 puts "Creating GetInvolveds..."
 10.times do

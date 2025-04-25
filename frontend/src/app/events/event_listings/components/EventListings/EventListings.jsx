@@ -2,15 +2,17 @@ import { useState, useEffect } from "react";
 import EventCard from "../EventCards/EventCards";
 import EventCardAdmin from "../EventCardsAdmin/EventCardsAdmin";
 
-export default function Eventing({ eventType, searchField, showSavedOnly, isAdmin }) {
+export default function Eventing({ eventType, searchField, showSavedOnly, isAdmin, events }) {
  
-  const [events, setEvents] = useState([]); // Start with an empty list
-  const [loading, setLoading] = useState(true); // Track loading state
-  const [error, setError] = useState(null); // Track errors during fetch
+  // Remove the internal state and useEffect for fetching
+  // const [events, setEvents] = useState([]); 
+  // const [loading, setLoading] = useState(true); 
+  // const [error, setError] = useState(null); 
 
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  // const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-
+  // Remove the useEffect hook entirely
+  /*
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -29,6 +31,7 @@ export default function Eventing({ eventType, searchField, showSavedOnly, isAdmi
 
     fetchEvents();
   }, []);
+  */
 
   
   // Safe access function to handle different property naming conventions
@@ -40,8 +43,8 @@ export default function Eventing({ eventType, searchField, showSavedOnly, isAdmi
     return event[camelCase] || event[pascalCase] || '';
   };
 
-  // Filter events based on the eventType prop
-  const filteredEvents = events
+  // Filter directly using the 'events' prop
+  const filteredEvents = events // <-- Use prop here
     .filter((event) => {
       if (!eventType) return true;
       const eventTypeValue = getEventProperty(event, 'eventType');
@@ -54,8 +57,17 @@ export default function Eventing({ eventType, searchField, showSavedOnly, isAdmi
     })
     .filter((event) => (showSavedOnly ? event.isSaved : true));
 
-  if (loading) return <p>Loading events...</p>;
-  if (error) return <p>Error loading events: {error}</p>;
+  // Remove loading/error checks based on internal fetch
+  // if (loading) return <p>Loading events...</p>;
+  // if (error) return <p>Error loading events: {error}</p>;
+
+  // Check if the received events array is empty or filtering results in empty
+   if (!events || events.length === 0) {
+     return <p>No events available.</p>; 
+   }
+   if (filteredEvents.length === 0) {
+     return <p>No events match your current filters.</p>;
+   }
 
   function formatTime(timeString) {
     // Extract the hour from the string

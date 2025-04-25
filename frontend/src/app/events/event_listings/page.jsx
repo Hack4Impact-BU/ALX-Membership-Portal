@@ -42,12 +42,37 @@ export default function EventListings() {
     const fetchEvents = async () => {
       try {
         const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const response = await fetch(`${apiBaseUrl}/eventlists`);
         
-        if (!response.ok) throw new Error("Failed to fetch events");
+        // Retrieve the auth token
+        const token = localStorage.getItem('authToken') || 
+                      localStorage.getItem('idToken') || 
+                      localStorage.getItem('auth0Token') ||
+                      localStorage.getItem('token');
+
+        // Prepare headers object - include Authorization only if token exists
+        const headers = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+          console.log("Fetching initial events with auth token."); // Log for debugging
+        } else {
+          console.log("Fetching initial events without auth token (user likely not logged in)."); 
+        }
+
+        // Make the fetch request with the headers
+        const response = await fetch(`${apiBaseUrl}/eventlists`, { headers }); 
+        
+        if (!response.ok) {
+            const errorText = await response.text(); // Get error text for debugging
+            throw new Error(`Failed to fetch events: ${response.status} - ${errorText}`);
+        }
         
         const data = await response.json();
-        setEvents(data);
+        
+        // Log saved status from initial fetch
+        const savedCount = data.filter(event => event.isSaved).length;
+        console.log(`Initial fetch returned ${data.length} events, ${savedCount} marked as saved.`);
+
+        setEvents(data); // Events now have the correct isSaved status if user was authenticated
         
         // Extract unique event types
         const uniqueEventTypes = [...new Set(data.map(event => event.eventType))].filter(Boolean);
@@ -58,7 +83,7 @@ export default function EventListings() {
     };
 
     fetchEvents();
-  }, []);
+  }, []); // Empty dependency array means this runs once on mount
 
   return (
     <div className="w-11/12 text-white mt-20 h-screen">
@@ -148,7 +173,13 @@ export default function EventListings() {
         {/* Event Cards */}
         
 
-        <Eventing isAdmin={isAdmin} eventType={eventType} searchField={search} showSavedOnly={showSavedOnly}/>
+        <Eventing 
+          isAdmin={isAdmin} 
+          eventType={eventType} 
+          searchField={search} 
+          showSavedOnly={showSavedOnly}
+          events={events}
+        />
         <Hyperlinks />
                   
       </div>
