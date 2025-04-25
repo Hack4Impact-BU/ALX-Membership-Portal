@@ -149,17 +149,6 @@ export default function EventListings() {
                         ))}
                   </select>
               </div>
-
-              <div className="flex flex-col gap-2">
-                  <p>Zip Code:</p>
-                  <input
-                    type="text"
-                    value={zipCode}
-                    onChange={handleZipCode}
-                    placeholder="Zip Code"
-                    className="p-3 rounded-md bg-gray-100 text-gray-800"
-                />
-              </div>
           </div>
 
           <button
@@ -183,6 +172,7 @@ export default function EventListings() {
           showSavedOnly={showSavedOnly}
           events={events}
           selectedLocation={selectedLocation}
+          selectedDateRange={date}
         />
         <Hyperlinks />
                   
