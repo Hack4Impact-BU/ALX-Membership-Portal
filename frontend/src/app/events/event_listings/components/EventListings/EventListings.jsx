@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import EventCard from "../EventCards/EventCards";
 import EventCardAdmin from "../EventCardsAdmin/EventCardsAdmin";
 
-export default function Eventing({ eventType, searchField, showSavedOnly, isAdmin, events }) {
+export default function Eventing({ eventType, searchField, showSavedOnly, isAdmin, events, selectedLocation }) {
  
   // Remove the internal state and useEffect for fetching
   // const [events, setEvents] = useState([]); 
@@ -54,6 +54,12 @@ export default function Eventing({ eventType, searchField, showSavedOnly, isAdmi
       if (!searchField) return true;
       const eventName = getEventProperty(event, 'eventName');
       return eventName.toLowerCase().includes(searchField.toLowerCase());
+    })
+    .filter((event) => {
+        if (!selectedLocation) return true;
+        const eventLocation = getEventProperty(event, 'location');
+        const eventCity = eventLocation?.split(',')[0].trim();
+        return eventCity && eventCity.toLowerCase() === selectedLocation.toLowerCase();
     })
     .filter((event) => (showSavedOnly ? event.isSaved : true));
 

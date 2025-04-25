@@ -17,16 +17,17 @@ export default function EventListings() {
   const [search, setSearch] = useState("");
   const [eventType, setEventType] = useState("");
   const [date, setDate] = useState("");
-  const [distance, setDistance] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [showSavedOnly, setShowSavedOnly] = useState(false);
   const [events, setEvents] = useState([]);
   const [eventTypes, setEventTypes] = useState([]);
+  const [locations, setLocations] = useState([]);
 
   const handleSearch = (e) => setSearch(e.target.value);
   const handleEventType = (e) => setEventType(e.target.value);
   const handleDate = (e) => setDate(e.target.value);
-  const handleDistance = (e) => setDistance(e.target.value);
+  const handleLocationChange = (e) => setSelectedLocation(e.target.value);
   const handleZipCode = (e) => {
     const value = e.target.value;
     // Allow only numeric values and ensure the length does not exceed 5
@@ -37,7 +38,7 @@ export default function EventListings() {
 
   const toggleShowSavedOnly = () => setShowSavedOnly(!showSavedOnly)
   
-  // Fetch events and extract unique event types
+  // Fetch events and extract unique event types and locations
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -77,6 +78,10 @@ export default function EventListings() {
         // Extract unique event types
         const uniqueEventTypes = [...new Set(data.map(event => event.eventType))].filter(Boolean);
         setEventTypes(uniqueEventTypes);
+
+        // Extract unique locations (assuming event.location exists and is like 'City, State')
+        const uniqueLocations = [...new Set(data.map(event => event.location?.split(',')[0].trim()).filter(Boolean))];
+        setLocations(uniqueLocations);
       } catch (error) {
         console.error("Error fetching events:", error);
       }
@@ -132,18 +137,16 @@ export default function EventListings() {
                   </select>
               </div>
               <div className="flex flex-col gap-2">
-                  <p>Distance</p>
+                  <p>Location</p>
                   <select
-                    value={distance}
-                    onChange={handleDistance}
+                    value={selectedLocation}
+                    onChange={handleLocationChange}
                     className="p-4 rounded-md bg-[#335843] w-48 font-light"
                   >
-                        <option value="">Select Distance</option>
-                        <option value="5">5 miles</option>
-                        <option value="10">10 miles</option>
-                        <option value="25">25 miles</option>
-                        <option value="50">50 miles</option>
-                        <option value="100">100 miles</option>
+                        <option value="">Select Location</option>
+                        {locations.map((loc, index) => (
+                          <option key={index} value={loc}>{loc}</option>
+                        ))}
                   </select>
               </div>
 
@@ -179,6 +182,7 @@ export default function EventListings() {
           searchField={search} 
           showSavedOnly={showSavedOnly}
           events={events}
+          selectedLocation={selectedLocation}
         />
         <Hyperlinks />
                   
