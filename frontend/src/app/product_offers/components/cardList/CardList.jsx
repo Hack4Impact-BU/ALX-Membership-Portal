@@ -16,6 +16,7 @@ export default function CardList( { isAdmin } ) {
     const [loading, setLoading] = useState(true); // Track loading state
     const [error, setError] = useState(null); // Track errors during fetch
     const [businessTypes, setBusinessTypes] = useState([]); // Dynamic business types
+    const [cities, setCities] = useState([]); // Dynamic cities
 
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -57,6 +58,10 @@ export default function CardList( { isAdmin } ) {
           const types = [...new Set(data.map(offer => offer.businessType))].filter(Boolean);
           setBusinessTypes(types);
           
+          // Extract unique cities from the 'place' field
+          const extractedCities = [...new Set(data.map(offer => offer.place?.split(',')[0].trim()).filter(Boolean))];
+          setCities(extractedCities);
+          
         } catch (err) {
           console.error("Error fetching product offers:", err); // Log the detailed error
           setError(err.message);
@@ -70,12 +75,12 @@ export default function CardList( { isAdmin } ) {
 
     const [renderSaved, setRenderSaved] = useState(false);
     const [selectedBusinessType, setSelectedBusinessType] = useState("");
-    const [selectedDistance, setSelectedDistance] = useState("");
+    const [selectedCity, setSelectedCity] = useState(""); // State for selected city
 
     const filteredCards = card.filter(offer => {
+        const cityMatch = !selectedCity || (offer.place && offer.place.toLowerCase().includes(selectedCity.toLowerCase()));
         return (!selectedBusinessType || offer.businessType === selectedBusinessType)
-               // Add distance filter here if needed in the future
-               // Add renderSaved filter here
+               && cityMatch // Filter by city
                && (renderSaved ? offer.isSaved : true);
     });
 
@@ -83,14 +88,12 @@ export default function CardList( { isAdmin } ) {
         setRenderSaved(!renderSaved);
     };
 
-    const distance = [5, 10, 15, 20, 25, 30];
-
     const handleBusinessTypeChange = (e) => {
         setSelectedBusinessType(e.target.value);
     };
 
-    const handleDistanceChange = (e) => {
-        setSelectedDistance(e.target.value);
+    const handleCityChange = (e) => { // Handler for city change
+        setSelectedCity(e.target.value);
     };
 
     return (
@@ -160,18 +163,18 @@ export default function CardList( { isAdmin } ) {
                         </div>
                     </div>
 
-                    {/* Distance Filter */}
+                    {/* City Filter */}
                     <div>
-                        <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>Distance</p>
+                        <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>City</p>
                         <div className="w-72">
-                            <select 
+                            <select
                                 className={`w-full h-14 rounded-md bg-[#335843] px-3 py-2 text-white shadow-md ${montserrat.className}`}
-                                value={selectedDistance}
-                                onChange={handleDistanceChange}
+                                value={selectedCity}
+                                onChange={handleCityChange} // Use city handler
                             >
-                                <option value="">Select Distance</option>
-                                {distance.map((dist, index) => (
-                                    <option key={index} value={dist}>{dist} km</option>
+                                <option value="">Select City</option>
+                                {cities.map((city, index) => ( // Use cities state
+                                    <option key={index} value={city}>{city}</option>
                                 ))}
                             </select>
                         </div>
