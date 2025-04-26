@@ -11,36 +11,63 @@ export default function EventCard({Location, WebsiteLink, pic, Date, index, desc
 
     const [isSaved, setIsSaved] = useState(saved);
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
     // console.log("the card", EventName, "saved status is",isSaved);
     // console.log("the card", EventName, "saved status is",saved);
 
 
     const handleSaveToggle = async () => {
         const newSavedStatus = !isSaved;
-        
+        const action = newSavedStatus ? 'saving' : 'unsaving';
+
+        // Optimistically update UI
+        setIsSaved(newSavedStatus); 
+
         try {
+            // Retrieve the auth token (using the same logic as before)
+            const token = localStorage.getItem('authToken') || 
+                          localStorage.getItem('idToken') || 
+                          localStorage.getItem('auth0Token') ||
+                          localStorage.getItem('token');
 
+            if (!token) {
+                 console.error('Authentication token not found.');
+                 alert('Please log in to save events.');
+                 setIsSaved(!newSavedStatus); // Revert optimistic update
+                 return; 
+            }
 
-            // Make API request to update saved status
-            const response = await fetch(`${apiBaseUrl}/eventlists/${id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ isSaved: newSavedStatus }),
+            const headers = { 'Authorization': `Bearer ${token}` };
+            const method = newSavedStatus ? 'POST' : 'DELETE';
+
+            // Make the API call
+            const response = await fetch(`${apiBaseUrl}/eventlists/${id}/save`, {
+                method: method,
+                headers: headers,
+                // No body needed
             });
-            
+
             if (!response.ok) {
-                throw new Error('Failed to update saved status');
+                // Try to get error details, but handle non-JSON responses too
+                let errorData = { message: `Request failed with status ${response.status}` };
+                try {
+                    const potentialJson = await response.json();
+                    errorData = potentialJson;
+                } catch (e) {
+                    console.warn("Response was not JSON:", await response.text());
+                }
+                throw new Error(errorData.message || `Failed to ${action} event`);
             }
             
-            // Update state only after successful API response
-            setIsSaved(newSavedStatus);
-            console.log(`Event ${newSavedStatus ? 'saved' : 'unsaved'} successfully`);
+            const result = await response.json(); 
+            console.log(`Event ${action} successful:`, result); 
+
         } catch (error) {
-            console.error('Error updating saved status:', error);
-            // Optionally revert the UI state if the API call fails
-            // setIsSaved(isSaved);
+            console.error(`Error ${action} event:`, error);
+            // Revert optimistic update on error
+            setIsSaved(!newSavedStatus); 
+            // Show generic error message
+            alert(`Could not ${action} the event. ${error.message}. Please try again or log in again if the issue persists.`); 
         }
     }
 

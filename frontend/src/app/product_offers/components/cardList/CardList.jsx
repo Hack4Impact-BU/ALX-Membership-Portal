@@ -16,60 +16,84 @@ export default function CardList( { isAdmin } ) {
     const [loading, setLoading] = useState(true); // Track loading state
     const [error, setError] = useState(null); // Track errors during fetch
     const [businessTypes, setBusinessTypes] = useState([]); // Dynamic business types
+    const [cities, setCities] = useState([]); // Dynamic cities
 
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   
     useEffect(() => {
       const fetchCards = async () => {
+        setLoading(true); // Set loading true at the start
+        setError(null); // Reset error state
         try {
-          const response = await fetch(`${apiBaseUrl}/product_offers`);
-          if (!response.ok) throw new Error("Failed to fetch offers");
+          // Retrieve the auth token
+          const token = localStorage.getItem('authToken') || 
+                        localStorage.getItem('idToken') || 
+                        localStorage.getItem('auth0Token') ||
+                        localStorage.getItem('token');
+
+          // Prepare headers object
+          const headers = {};
+          if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+            console.log("Fetching product offers with auth token.");
+          } else {
+            console.log("Fetching product offers without auth token.");
+          }
+
+          const response = await fetch(`${apiBaseUrl}/product_offers`, { headers });
+          if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(`Failed to fetch offers: ${response.status} - ${errorText}`);
+          }
 
           const data = await response.json();
           console.log("Fetched product offers:", data);
-          setCard(data);
+          const savedCount = data.filter(offer => offer.isSaved).length;
+          console.log(`Initial fetch returned ${data.length} offers, ${savedCount} marked as saved.`);
+
+          setCard(data); // Set the fetched data with correct isSaved status
           
-          // Extract unique business types from the API data
+          // Extract unique business types
           const types = [...new Set(data.map(offer => offer.businessType))].filter(Boolean);
           setBusinessTypes(types);
           
-          setLoading(false);
+          // Extract unique cities from the 'place' field
+          const extractedCities = [...new Set(data.map(offer => offer.place?.split(',')[0].trim()).filter(Boolean))];
+          setCities(extractedCities);
+          
         } catch (err) {
+          console.error("Error fetching product offers:", err); // Log the detailed error
           setError(err.message);
-          setLoading(false);
+        } finally {
+          setLoading(false); // Set loading false in finally block
         }
       };
-  
+
       fetchCards();
-    }, []);
+    }, []); // Runs once on component mount
 
     const [renderSaved, setRenderSaved] = useState(false);
     const [selectedBusinessType, setSelectedBusinessType] = useState("");
-    const [selectedDistance, setSelectedDistance] = useState("");
+    const [selectedCity, setSelectedCity] = useState(""); // State for selected city
 
-    const filteredCards = card.filter(card => {
-        return (!selectedBusinessType || card.businessType === selectedBusinessType)
+    const filteredCards = card.filter(offer => {
+        const cityMatch = !selectedCity || (offer.place && offer.place.toLowerCase().includes(selectedCity.toLowerCase()));
+        return (!selectedBusinessType || offer.businessType === selectedBusinessType)
+               && cityMatch // Filter by city
+               && (renderSaved ? offer.isSaved : true);
     });
 
     const handleSaved = () => {
         setRenderSaved(!renderSaved);
     };
 
-    const toggleCardSaved = (index) => {
-        const updatedCards = [...card];
-        updatedCards[index].isSaved = !updatedCards[index].isSaved;
-        setCard(updatedCards);
-    };
-
-    const distance = [5, 10, 15, 20, 25, 30];
-
     const handleBusinessTypeChange = (e) => {
         setSelectedBusinessType(e.target.value);
     };
 
-    const handleDistanceChange = (e) => {
-        setSelectedDistance(e.target.value);
+    const handleCityChange = (e) => { // Handler for city change
+        setSelectedCity(e.target.value);
     };
 
     return (
@@ -114,7 +138,6 @@ export default function CardList( { isAdmin } ) {
                                 isSaved={offer.isSaved}
                                 index={index}
                                 id={offer.id}
-                                toggleCardSaved={toggleCardSaved}
                             />
                             )
                         ))
@@ -140,18 +163,18 @@ export default function CardList( { isAdmin } ) {
                         </div>
                     </div>
 
-                    {/* Distance Filter */}
+                    {/* City Filter */}
                     <div>
-                        <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>Distance</p>
+                        <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>City</p>
                         <div className="w-72">
-                            <select 
+                            <select
                                 className={`w-full h-14 rounded-md bg-[#335843] px-3 py-2 text-white shadow-md ${montserrat.className}`}
-                                value={selectedDistance}
-                                onChange={handleDistanceChange}
+                                value={selectedCity}
+                                onChange={handleCityChange} // Use city handler
                             >
-                                <option value="">Select Distance</option>
-                                {distance.map((dist, index) => (
-                                    <option key={index} value={dist}>{dist} km</option>
+                                <option value="">Select City</option>
+                                {cities.map((city, index) => ( // Use cities state
+                                    <option key={index} value={city}>{city}</option>
                                 ))}
                             </select>
                         </div>

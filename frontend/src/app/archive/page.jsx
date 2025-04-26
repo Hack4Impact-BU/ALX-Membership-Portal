@@ -43,7 +43,9 @@ const EventFilters = ({
             value={filters[key]}
             onChange={(e) => setFilters({ ...filters, [key]: e.target.value })}
           >
-            <option value="">{`All ${label}s`}</option>
+            <option value="">
+              {label === 'City' ? 'All Cities' : label === 'Category' ? 'All Categories' : `All ${label}s`}
+            </option>
             {options.map((option, index) => (
               <option key={index} value={option}>{option}</option>
             ))}
@@ -156,6 +158,8 @@ export default function Archive() {
       return eventDate < currentDate;
     });
 
+    console.log('Fetched past events:', pastEvents);
+
     setEvents(pastEvents);
     setFilteredEvents(pastEvents);
     
@@ -195,6 +199,7 @@ export default function Archive() {
         return matchesSearch && matchesEventType && matchesDate && matchesCity && matchesCategory;
       });
       
+      console.log('Filtered events:', filtered);
       setFilteredEvents(filtered);
     }
   }, [searchTerm, filters, events]);
@@ -277,6 +282,7 @@ export default function Archive() {
     // Previous Events tab
     return (
       <div className="w-full overflow-x-auto flex space-x-6 snap-x snap-mandatory scrollbar-hide border-y-2 py-16">
+        {console.log('Rendering filteredEvents:', filteredEvents)}
         {filteredEvents.length > 0 ? (
           <div className={`flex ${prozaLibre.className} space-x-8 px-4`}>
             {filteredEvents.map((event) => (
