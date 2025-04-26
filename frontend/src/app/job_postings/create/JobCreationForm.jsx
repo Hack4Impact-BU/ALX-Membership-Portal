@@ -64,7 +64,10 @@ export default function JobCreationForm({ onCancel, onJobCreated, apiBaseUrl }) 
     form.append('job[contact]', formData.contact);
     form.append('job[location]', formData.location);
     form.append('job[job_type]', formData.job_type);
-
+    if (formData.logo) {
+      form.append('job[logo]', formData.logo);
+    }
+    
     axios.post(`${apiBaseUrl}/jobs`, form, {
       headers: {
         'Content-Type': 'multipart/form-data'

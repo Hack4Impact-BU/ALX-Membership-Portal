@@ -30,6 +30,10 @@ export default function JobBoard() {
   const [selectedCity, setSelectedCity] = useState('');
   const [minSalary, setMinSalary] = useState('');
   
+  // Add this to your existing state variables
+  const [logoFile, setLogoFile] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [isEditingLogo, setIsEditingLogo] = useState(false);
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -193,7 +197,65 @@ export default function JobBoard() {
     });
   }, [jobs, searchQuery, selectedCity, minSalary]);
 
+  // Add these handler functions
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setLogoFile(file);
+      
+      // Create a preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveLogo = async () => {
+    if (!logoFile) return;
+    
+    try {
+      const formData = new FormData();
+      formData.append('job[logo]', logoFile);
+      
+      await axios.put(`${apiBaseUrl}/jobs/${selectedJob.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      // Update the logo URL in the local state
+      const updatedJob = { 
+        ...selectedJob, 
+        logo_url: logoPreview  // Temporarily use preview until reload
+      };
+      
+      setSelectedJob(updatedJob);
+      setJobs(prevJobs => 
+        prevJobs.map(job => job.id === selectedJob.id ? updatedJob : job)
+      );
+      
+      // Reset editing state
+      setIsEditingLogo(false);
+      setLogoFile(null);
+      
+      // Optionally refresh job data to get the actual URL from server
+      fetchJobs();
+      
+    } catch (error) {
+      console.error('Error saving logo:', error);
+    }
+  };
+
+  const handleCancelLogoEdit = () => {
+    setIsEditingLogo(false);
+    setLogoFile(null);
+    setLogoPreview(null);
+  };
+
   return (
+
     <div className="flex flex-col bg-[#214933] min-h-screen w-10/12 p-8 mt-12 text-white">
       {/* Header */}
       <div className="mb-8">
@@ -284,8 +346,10 @@ export default function JobBoard() {
                         ✕
                       </button>
                     )}
-                    {job.logo_url ? (
-                      <img src={job.logo_url} alt={`${job.title} logo`} className="h-12 w-12 rounded-full object-cover" />
+                      {job.logo_url ? (
+                      <>
+                        <img src={job.logo_url} alt={`${job.title} logo`} className="h-12 w-12 rounded-full object-cover" />
+                      </>
                     ) : (
                       <div className="h-12 w-12 rounded-full" style={{ backgroundColor: '#FFA500' }}></div>
                     )}
@@ -313,58 +377,111 @@ export default function JobBoard() {
             ) : selectedJob && (
               <div className="relative flex-grow bg-[#F6F2E9] text-black p-8 rounded-xl shadow-lg max-w-[600px] w-full h-full overflow-y-auto">
                 <div className="flex items-center gap-4 mb-8">
-                  {selectedJob?.logo_url ? (
-                    <img src={selectedJob.logo_url} alt={`${selectedJob.title} logo`} className="h-16 w-16 rounded-full object-cover" />
-                  ) : (
-                    <div className="h-16 w-16 rounded-full" style={{ backgroundColor: '#FFA500' }}></div>
-                  )}
+                  <div className="relative">
+                    {isEditingLogo ? (
+                      <div className="w-16 h-16 relative border-2 border-dashed border-gray-300 rounded-full overflow-hidden">
+                        {logoPreview ? (
+                          <img src={logoPreview} alt="Logo preview" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                            <span className="text-xs text-gray-500">Select image</span>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      selectedJob?.logo_url ? (
+                        <img src={selectedJob.logo_url} alt={`${selectedJob.title} logo`} className="h-16 w-16 rounded-full object-cover" />
+                      ) : (
+                        <div className="h-16 w-16 rounded-full" style={{ backgroundColor: '#FFA500' }}></div>
+                      )
+                    )}
+                    
+                    {isEditingLogo ? (
+                      <div className="mt-2 flex gap-1">
+                        <input
+                          type="file"
+                          id="logo-upload"
+                          accept="image/*"
+                          onChange={handleLogoChange}
+                          className="hidden"
+                        />
+                        <label
+                          htmlFor="logo-upload"
+                          className="cursor-pointer bg-blue-500 text-white px-2 py-1 rounded text-sm"
+                        >
+                          Select
+                        </label>
+                        <button
+                          onClick={handleSaveLogo}
+                          className="bg-green-500 text-white px-2 py-1 rounded text-sm"
+                          disabled={!logoFile}
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={handleCancelLogoEdit}
+                          className="bg-gray-300 text-gray-700 px-2 py-1 rounded text-sm"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setIsEditingLogo(true)}
+                        className="absolute bottom-0 right-0 p-1 rounded-full bg-gray-200 hover:bg-gray-300"
+                      >
+                        <EditIcon fontSize="small" className="text-gray-700" />
+                      </button>
+                    )}
+                  </div>
+                  
                   <div className="flex-grow">
                     {editingField === 'title' ? (
-                      <div className="flex items-center gap-2">
+                      <div className="mb-1">
                         <input
                           type="text"
                           value={editingValue}
                           onChange={handleEditChange}
-                          className="bg-white border border-gray-300 rounded p-2 text-3xl font-bold w-full"
+                          className="bg-white border border-gray-300 rounded p-1 w-full text-3xl font-bold"
                         />
-                        <div className="flex gap-1">
-                          <button onClick={handleSaveEdit} className="p-1 rounded-full bg-green-500 text-white">
-                            <CheckIcon fontSize="small" />
+                        <div className="flex justify-end gap-1 mt-1">
+                          <button onClick={handleSaveEdit} className="p-1 px-2 rounded bg-green-500 text-white text-sm">
+                            Save
                           </button>
-                          <button onClick={handleCancelEdit} className="p-1 rounded-full bg-gray-300 text-gray-700">
-                            <CloseIcon fontSize="small" />
+                          <button onClick={handleCancelEdit} className="p-1 px-2 rounded bg-gray-300 text-gray-700 text-sm">
+                            Cancel
                           </button>
                         </div>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-3xl font-bold">{selectedJob?.title}</h3>
+                      <div className="flex items-center">
+                        <h3 className="text-3xl font-bold flex-grow">{selectedJob?.title}</h3>
                         <button onClick={() => handleEdit('title')} className="p-1 rounded-full bg-gray-200 hover:bg-gray-300">
                           <EditIcon fontSize="small" className="text-gray-700" />
                         </button>
                       </div>
                     )}
-
+                    
                     {editingField === 'company' ? (
-                      <div className="flex items-center gap-2">
+                      <div>
                         <input
                           type="text"
                           value={editingValue}
                           onChange={handleEditChange}
                           className="bg-white border border-gray-300 rounded p-1 w-full"
                         />
-                        <div className="flex gap-1">
-                          <button onClick={handleSaveEdit} className="p-1 rounded-full bg-green-500 text-white">
-                            <CheckIcon fontSize="small" />
+                        <div className="flex justify-end gap-1 mt-1">
+                          <button onClick={handleSaveEdit} className="p-1 px-2 rounded bg-green-500 text-white text-sm">
+                            Save
                           </button>
-                          <button onClick={handleCancelEdit} className="p-1 rounded-full bg-gray-300 text-gray-700">
-                            <CloseIcon fontSize="small" />
+                          <button onClick={handleCancelEdit} className="p-1 px-2 rounded bg-gray-300 text-gray-700 text-sm">
+                            Cancel
                           </button>
                         </div>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-2">
-                        <p>{selectedJob?.company}</p>
+                      <div className="flex items-center">
+                        <p className="flex-grow">{selectedJob?.company}</p>
                         <button onClick={() => handleEdit('company')} className="p-1 rounded-full bg-gray-200 hover:bg-gray-300">
                           <EditIcon fontSize="small" className="text-gray-700" />
                         </button>
