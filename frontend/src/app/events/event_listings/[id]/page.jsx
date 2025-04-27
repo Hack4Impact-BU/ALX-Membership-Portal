@@ -132,19 +132,8 @@ export default function Page({ params }) {
         <div className="flex flex-row gap-8 w-full h-2/5 p-12">
             <div className="flex flex-col justify-center items-center basis-1/2 h-full bg-[#F6F2E9] rounded-xl">
                 {EventName && (
-                    <div className="w-full h-64 md:h-96 flex justify-center items-center">
+                    <div className="w-full h-64 md:h-96 flex justify-center items-center p-8">
                         {image_url ? (
-                            <img 
-                                src={image_url} 
-                                alt={EventName} 
-                                className="max-w-full h-full object-contain border rounded-xl"
-                                onError={(e) => {
-                                  console.log("Image failed to load:", image_url);
-                                  e.target.onerror = null;
-                                  e.target.style.display = "none";
-                                }}
-                            />
-                        ) : image_url ? (
                             <img 
                                 src={image_url} 
                                 alt={EventName} 

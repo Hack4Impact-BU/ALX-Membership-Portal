@@ -36,8 +36,11 @@ const Profile = () => {
         const secondPart = cleaned.slice(6);
         const formattedPhoneNumber = `(${areaCode}) ${firstPart}-${secondPart}`;
 
+        console.log('Setting state with Name:', name);
         setUserName(name || 'User');
+        console.log('Setting state with Email:', email);
         setUserEmail(email || '');
+        console.log('Setting state with Phone:', formattedPhoneNumber);
         setPhoneNumber(formattedPhoneNumber || '');
         setMembershipStatus('Active'); 
       } catch (error) {
@@ -50,6 +53,11 @@ const Profile = () => {
     localStorage.removeItem('idToken'); 
     window.location.reload(); 
   };
+
+  // Log state values right before rendering
+  console.log('Rendering with userName:', userName);
+  console.log('Rendering with userEmail:', userEmail);
+  console.log('Rendering with phoneNumber:', phoneNumber);
 
   return (
     <div className={`text-white p-8 rounded-lg w-10/12 min-h-screen ${prozaLibre.className}`}>

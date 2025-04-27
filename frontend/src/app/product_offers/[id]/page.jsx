@@ -99,7 +99,9 @@ export default function Page() {
                     }}
                   />
                 ) : (
-                  <h1>IMAGE GOES HERE</h1>
+                  <div className="w-full h-full flex items-center justify-center">
+                                <span className="text-gray-500">No image available</span>
+                  </div>
                 )}
             </div>
             <div className="flex flex-col justify-around items-start basis-1/2 h-full bg-[#F6F2E9] rounded-xl p-12">
