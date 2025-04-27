@@ -24,11 +24,15 @@ class SavedJobsController < ApplicationController
     render json: @saved_jobs
   end
 
-  # POST /jobs/:job_id/save
+  # POST /jobs/:id/save
   # Save a job for current user
   def create
-    # Check if job is already saved by this user
+    Rails.logger.debug "SavedJobs#create: params=#{params.inspect}"
+    
     user_id = current_user_id
+    Rails.logger.debug "User ID: #{user_id}"
+    
+    # Check if job is already saved by this user
     existing = SavedJob.find_by(user_id: user_id, job_id: @job.id)
     
     if existing
@@ -48,10 +52,15 @@ class SavedJobsController < ApplicationController
     end
   end
 
-  # DELETE /jobs/:job_id/save
+  # DELETE /jobs/:id/save
   # Unsave a job for current user
   def destroy
-    @saved_job = SavedJob.find_by(user_id: current_user_id, job_id: @job.id)
+    Rails.logger.debug "SavedJobs#destroy: params=#{params.inspect}"
+    
+    user_id = current_user_id
+    Rails.logger.debug "User ID: #{user_id}, Job ID: #{@job.id}"
+    
+    @saved_job = SavedJob.find_by(user_id: user_id, job_id: @job.id)
     
     if @saved_job
       @saved_job.destroy
@@ -64,7 +73,7 @@ class SavedJobsController < ApplicationController
   private
   
   def set_job
-    @job = Job.find(params[:job_id])
+    @job = Job.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     render json: { status: 'error', message: 'Job not found' }, status: :not_found
   end

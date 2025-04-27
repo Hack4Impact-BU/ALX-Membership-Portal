@@ -1,5 +1,5 @@
 class ProductOffersController < ApplicationController
-  skip_before_action :authenticate_request, only: [:index, :show]
+  skip_before_action :authenticate_request, only: [:create, :index, :show, :destroy, :update]
   before_action :set_product_offer, only: %i[show update destroy]
 
   # GET /product_offers

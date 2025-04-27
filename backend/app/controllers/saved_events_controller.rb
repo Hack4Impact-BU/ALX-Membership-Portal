@@ -1,6 +1,8 @@
 class SavedEventsController < ApplicationController
   before_action :authenticate_request
   before_action :set_eventlist, only: [:create, :destroy]
+  skip_before_action :authenticate_request, only: [:create, :index, :show, :destroy, :update]
+
   # Decide if authentication is needed for index based on your app logic
   # skip_before_action :authenticate_request, only: [:index] 
 
