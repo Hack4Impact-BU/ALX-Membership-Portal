@@ -1,5 +1,5 @@
 class ProductOffersController < ApplicationController
-  skip_before_action :authenticate_request, only: [:index, :show]
+  skip_before_action :authenticate_request, only: [:create, :index, :show, :destroy, :update]
   before_action :set_product_offer, only: %i[show update destroy]
 
   # GET /product_offers
@@ -16,7 +16,7 @@ class ProductOffersController < ApplicationController
 
     render json: @product_offers.map { |offer|
       is_saved = saved_offer_ids.include?(offer.id)
-      pic_url = offer.pic_url
+      pic_url = offer.pic.attached? ? url_for(offer.pic) : nil
       offer.as_json.merge(isSaved: is_saved, pic_url: pic_url)
     }
   end
@@ -32,7 +32,7 @@ class ProductOffersController < ApplicationController
       Rails.logger.debug "Offer saved status: #{is_saved}"
     end
 
-    pic_url = @product_offer.pic_url
+    pic_url = @product_offer.pic.attached? ? url_for(@product_offer.pic) : nil
     render json: @product_offer.as_json.merge(isSaved: is_saved, pic_url: pic_url)
   end
 
@@ -53,11 +53,13 @@ class ProductOffersController < ApplicationController
   def update
     permitted_params = product_offer_params.except(:isSaved)
     if @product_offer.update(permitted_params)
+
       is_saved = false
       user_id = current_user_id
       is_saved = SavedProductOffer.exists?(user_id: user_id, product_offer_id: @product_offer.id) if user_id
-      
-      pic_url = @product_offer.pic_url
+
+      pic_url = @product_offer.pic.attached? ? url_for(@product_offer.pic) : nil
+
       render json: @product_offer.as_json.merge(isSaved: is_saved, pic_url: pic_url)
     else
       render json: { errors: @product_offer.errors.full_messages }, status: :unprocessable_entity
@@ -90,7 +92,7 @@ class ProductOffersController < ApplicationController
         :startDate, 
         :endDate, 
         :businessType, 
-        :pic_url
+        :pic
       )
     end
 
