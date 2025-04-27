@@ -77,11 +77,32 @@ export default function CardList( { isAdmin } ) {
     const [selectedBusinessType, setSelectedBusinessType] = useState("");
     const [selectedCity, setSelectedCity] = useState(""); // State for selected city
 
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Set to midnight to compare dates only
+
     const filteredCards = card.filter(offer => {
         const cityMatch = !selectedCity || (offer.place && offer.place.toLowerCase().includes(selectedCity.toLowerCase()));
-        return (!selectedBusinessType || offer.businessType === selectedBusinessType)
-               && cityMatch // Filter by city
-               && (renderSaved ? offer.isSaved : true);
+        const typeMatch = !selectedBusinessType || offer.businessType === selectedBusinessType;
+        const savedMatch = renderSaved ? offer.isSaved : true;
+
+        // Date filtering logic: Only include if endDate is not in the past
+        let isFutureEvent = true; // Default to true if no endDate or parsing fails
+        if (offer.endDate) {
+            try {
+                const eventStartDate = new Date(offer.startDate);
+                // Consider the event valid until the end of its endDate
+                eventStartDate.setHours(23, 59, 59, 999);
+                isFutureEvent = eventStartDate >= currentDate;
+            } catch (e) {
+                console.error("Error parsing startDate:", offer.startDate, e);
+                // Keep the offer if the date is invalid, or decide otherwise
+            }
+        }
+
+        return typeMatch
+               && cityMatch
+               && savedMatch
+               && isFutureEvent; // Add date check
     });
 
     const handleSaved = () => {
