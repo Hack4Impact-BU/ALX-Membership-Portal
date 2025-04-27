@@ -5,6 +5,7 @@ import ReusableHeader from "@/components/ReusableHeader/ReusableHeader";
 import Eventing from "./components/EventListings/EventListings";
 import { Inter, Proza_Libre } from 'next/font/google';
 import Hyperlinks from '@/components/Hyperlinks';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import { useAdmin } from "@/middleware/useAdmin";
 
 
@@ -151,15 +152,18 @@ export default function EventListings() {
               </div>
           </div>
 
-          <button
-                  className={`p-3 text-green-900 h-1/2 w-3/12 rounded-md ${
-                    showSavedOnly ? "bg-green-500" : "bg-white"
-                  }`}
-                  onClick={toggleShowSavedOnly}>
-            {showSavedOnly ? "Show All" : "Show Saved"}
+          <button 
+            onClick={toggleShowSavedOnly}
+            className={`py-3 px-6 rounded-lg flex items-center justify-center w-[14rem] gap-2 shadow-lg transition-all ${
+              showSavedOnly 
+                ? 'bg-white text-[#214933]' 
+                : 'bg-[#214933] text-white border border-white'
+            }`}
+          >
+            <BookmarksIcon />
+            {showSavedOnly ? 'Showing Saved' : 'Show Saved'}
           </button>
           
-
         </div>
 
         {/* Event Cards */}
