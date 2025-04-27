@@ -16,12 +16,10 @@ export default function Card({ id, offerTitle, place, pic_url, startDate, isSave
     const [isSaved, setIsSaved] = useState(initialIsSaved || false);
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     
-    // Remove useEffect that fetches individual offer data
-    /*
+    // Add a useEffect to sync local state with the prop
     useEffect(() => {
-        // ... fetchOfferData logic removed ...
-    }, [id, apiBaseUrl]);
-    */
+        setIsSaved(initialIsSaved || false);
+    }, [initialIsSaved]); // Re-run this effect if the initialIsSaved prop changes
     
     // Update handleSaveToggle to use POST/DELETE and Authorization header
     const handleSaveToggle = async () => {
