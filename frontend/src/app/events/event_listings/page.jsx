@@ -91,6 +91,17 @@ export default function EventListings() {
     fetchEvents();
   }, []); // Empty dependency array means this runs once on mount
 
+  // Handler function to update event save status in the main state
+  const handleSaveStatusChange = (eventId, newStatus) => {
+    setEvents(prevEvents => 
+      prevEvents.map(event => 
+        event.id === eventId ? { ...event, isSaved: newStatus } : event
+      )
+    );
+    // Optional: Log the update for debugging
+    console.log(`Updated event ${eventId} saved status to ${newStatus} in parent component.`);
+  };
+
   return (
     <div className="w-11/12 text-white mt-20 h-screen">
         <ReusableHeader header={"Upcoming Events"} translation={"*    Próximos eventos"} isAdmin={isAdmin} directTo={"/events/event_listings/create"}/>
@@ -177,6 +188,7 @@ export default function EventListings() {
           events={events}
           selectedLocation={selectedLocation}
           selectedDateRange={date}
+          onSaveChange={handleSaveStatusChange}
         />
         <Hyperlinks />
                   

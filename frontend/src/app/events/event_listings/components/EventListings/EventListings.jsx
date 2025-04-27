@@ -9,7 +9,7 @@ const getStartOfDay = (date) => {
     return start;
 };
 
-export default function Eventing({ eventType, searchField, showSavedOnly, isAdmin, events, selectedLocation, selectedDateRange }) {
+export default function Eventing({ eventType, searchField, showSavedOnly, isAdmin, events, selectedLocation, selectedDateRange, onSaveChange }) {
  
   // Remove the internal state and useEffect for fetching
   // const [events, setEvents] = useState([]); 
@@ -199,6 +199,7 @@ export default function Eventing({ eventType, searchField, showSavedOnly, isAdmi
         EventImage={getEventProperty(event, 'pic')}
         image_url={getEventProperty(event, 'image_url')}
         saved={event.isSaved}
+        onSaveChange={onSaveChange}
       />
       ) : (
         <EventCard
@@ -216,6 +217,7 @@ export default function Eventing({ eventType, searchField, showSavedOnly, isAdmi
         EventImage={getEventProperty(event, 'pic')}
         image_url={getEventProperty(event, 'image_url')}
         saved={event.isSaved}
+        onSaveChange={onSaveChange}
         />
       )
     ))}
