@@ -79,6 +79,17 @@ export default function CardList( { isAdmin } ) {
     const [selectedBusinessType, setSelectedBusinessType] = useState("");
     const [selectedCity, setSelectedCity] = useState(""); // State for selected city
 
+    // Handler function to update offer save status in the main state
+    const handleSaveStatusChange = (offerId, newStatus) => {
+        setCard(prevCards => 
+          prevCards.map(offer => 
+            offer.id === offerId ? { ...offer, isSaved: newStatus } : offer
+          )
+        );
+        // Optional: Log the update for debugging
+        console.log(`Updated offer ${offerId} saved status to ${newStatus} in CardList.`);
+      };
+
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0); // Set to midnight to compare dates only
 
@@ -146,22 +157,23 @@ export default function CardList( { isAdmin } ) {
                                     isSaved={offer.isSaved}
                                     index={index}
                                     id={offer.id}
-
+                                    onSaveChange={handleSaveStatusChange}
                                 />
                             ) : (
                                 <Card   
                                     key={index}
-                                offerTitle={offer.offerTitle}
-                                businessType={offer.businessType}
-                                offerDesc={offer.offerDesc}
-                                place={offer.place}
-                                pic_url={offer.pic_url}
-                                startDate={offer.startDate}
-                                endDate={offer.endDate}
-                                isSaved={offer.isSaved}
-                                index={index}
-                                id={offer.id}
-                            />
+                                    offerTitle={offer.offerTitle}
+                                    businessType={offer.businessType}
+                                    offerDesc={offer.offerDesc}
+                                    place={offer.place}
+                                    pic_url={offer.pic_url}
+                                    startDate={offer.startDate}
+                                    endDate={offer.endDate}
+                                    isSaved={offer.isSaved}
+                                    index={index}
+                                    id={offer.id}
+                                    onSaveChange={handleSaveStatusChange}
+                                />
                             )
                         ))
                     )}
