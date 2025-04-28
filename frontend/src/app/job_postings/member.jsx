@@ -182,13 +182,35 @@ export default function JobBoardMember() {
         return;
       }
       
-      const response = await axios.get(`${apiBaseUrl}/saved_jobs`, {
+      // First get saved job IDs
+      const savedResponse = await axios.get(`${apiBaseUrl}/saved_jobs`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
-      console.log('Saved jobs response:', response.data);
+      console.log('Saved jobs response:', savedResponse.data);
       
-      setJobs(response.data);
+      if (savedResponse.data.length === 0) {
+        setJobs([]);
+        setIsLoading(false);
+        return;
+      }
+      
+      // Extract the job IDs
+      const savedJobIds = savedResponse.data.map(job => job.id);
+      
+      // Then fetch the complete job data for those IDs
+      const jobsResponse = await axios.get(`${apiBaseUrl}/jobs`, { 
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      // Filter to only include saved jobs and mark them as saved
+      const completeJobs = jobsResponse.data
+        .filter(job => savedJobIds.includes(job.id))
+        .map(job => ({ ...job, is_saved: true }));
+      
+      console.log(`Found ${completeJobs.length} complete job records`);
+      
+      setJobs(completeJobs);
       setIsLoading(false);
     } catch (error) {
       console.error('Error fetching saved jobs:', error);
@@ -204,6 +226,9 @@ export default function JobBoardMember() {
     const newSavedOnlyState = !showSavedOnly;
     setShowSavedOnly(newSavedOnlyState);
     
+    // Reset selected job so it will be re-selected from the new filtered list
+    setSelectedJob(null);
+    
     // Fetch appropriate jobs based on filter
     if (newSavedOnlyState) {
       fetchSavedJobs();
@@ -211,6 +236,55 @@ export default function JobBoardMember() {
       fetchJobs();
     }
   };
+
+  // Define the parseSalary function first
+  const parseSalary = (salaryStr) => {
+    if (!salaryStr) return 0;
+    
+    // Extract all numbers from the salary string
+    const matches = salaryStr.match(/\d[\d,]*/g);
+    if (!matches || matches.length === 0) return 0;
+    
+    // Convert all matches to numbers by removing commas and parsing
+    const numbers = matches.map(num => parseInt(num.replace(/,/g, ''), 10));
+    
+    // If there are multiple numbers (likely a range), return the highest value
+    if (numbers.length > 1) {
+      return Math.max(...numbers);
+    }
+    
+    // Otherwise just return the single number found
+    return numbers[0];
+  };
+
+  // Now define filteredJobs (which uses parseSalary)
+  const filteredJobs = useMemo(() => {
+    return jobs.filter(job => {
+      // Filter by search query (job title)
+      const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Filter by city
+      const matchesCity = !selectedCity || 
+        (job.location && job.location.toLowerCase().includes(selectedCity.toLowerCase()));
+      
+      // Filter by minimum salary
+      const jobSalary = parseSalary(job.salary);
+      const matchesSalary = !minSalary || jobSalary >= parseInt(minSalary, 10);
+      
+      // Filter by saved status if enabled
+      const matchesSaved = !showSavedOnly || job.is_saved;
+      
+      return matchesSearch && matchesCity && matchesSalary && matchesSaved;
+    });
+  }, [jobs, searchQuery, selectedCity, minSalary, showSavedOnly]);
+
+  // Now it's safe to use filteredJobs in useEffect
+  useEffect(() => {
+    if (!isLoading && filteredJobs.length > 0 && (!selectedJob || !filteredJobs.find(job => job.id === selectedJob.id))) {
+      // If no job selected yet or selected job is not in the filtered list, select the first one
+      setSelectedJob(filteredJobs[0]);
+    }
+  }, [filteredJobs, isLoading, selectedJob]);
 
   // Simplify the job selection handler to not update URL
   const handleJobSelect = (job) => {
@@ -241,47 +315,6 @@ export default function JobBoardMember() {
     { label: '$200,000+', value: '200000' },
     { label: '$250,000+', value: '250000' },
   ];
-
-  // Improved salary parsing to handle ranges properly
-  const parseSalary = (salaryStr) => {
-    if (!salaryStr) return 0;
-    
-    // Extract all numbers from the salary string
-    const matches = salaryStr.match(/\d[\d,]*/g);
-    if (!matches || matches.length === 0) return 0;
-    
-    // Convert all matches to numbers by removing commas and parsing
-    const numbers = matches.map(num => parseInt(num.replace(/,/g, ''), 10));
-    
-    // If there are multiple numbers (likely a range), return the highest value
-    if (numbers.length > 1) {
-      return Math.max(...numbers);
-    }
-    
-    // Otherwise just return the single number found
-    return numbers[0];
-  };
-
-  // Filter jobs based on all criteria
-  const filteredJobs = useMemo(() => {
-    return jobs.filter(job => {
-      // Filter by search query (job title)
-      const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      // Filter by city
-      const matchesCity = !selectedCity || 
-        (job.location && job.location.toLowerCase().includes(selectedCity.toLowerCase()));
-      
-      // Filter by minimum salary
-      const jobSalary = parseSalary(job.salary);
-      const matchesSalary = !minSalary || jobSalary >= parseInt(minSalary, 10);
-      
-      // Filter by saved status if enabled
-      const matchesSaved = !showSavedOnly || job.is_saved;
-      
-      return matchesSearch && matchesCity && matchesSalary && matchesSaved;
-    });
-  }, [jobs, searchQuery, selectedCity, minSalary, showSavedOnly]);
 
   return (
     <div className="flex flex-col bg-[#214933] min-h-screen w-10/12 p-8 mt-12 text-white">
@@ -407,7 +440,7 @@ export default function JobBoardMember() {
                       </div>
                     ) : (
                       <div className="h-12 w-12 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FFA500' }}>
-                        {job.company && <span className="text-white font-bold">{job.company.charAt(0)}</span>}
+                        {job.company && <span className="text-white font-bold"></span>}
                       </div>
                     )}
                     <div>
