@@ -22,6 +22,7 @@ export default function UpcomingEvents() {
         }
         
         const data = await response.json();
+        console.log('Upcoming Events Data: ', data);
         setEvents(data.slice(0, 2)); // Take first two events
         setLoading(false);
       } catch (error) {

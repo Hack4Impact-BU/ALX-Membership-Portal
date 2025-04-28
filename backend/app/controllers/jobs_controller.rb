@@ -23,24 +23,42 @@ class JobsController < ApplicationController
           saved_job_ids = SavedJob.where(user_id: user_id).pluck(:job_id)
           Rails.logger.debug "User has saved job IDs: #{saved_job_ids}"
           
-          # Map jobs with saved status
+          # Map jobs with saved status and logo URL
           @jobs = @jobs.map do |job|
             is_saved = saved_job_ids.include?(job.id)
             Rails.logger.debug "Job #{job.id} saved status: #{is_saved}"
-            job.as_json.merge(is_saved: is_saved)
+            job.as_json.merge(
+              is_saved: is_saved,
+              logo_url: job.logo.attached? ? url_for(job.logo) : nil
+            )
           end
         else
           # No user ID found, mark all as not saved
-          @jobs = @jobs.map { |job| job.as_json.merge(is_saved: false) }
+          @jobs = @jobs.map { |job| 
+            job.as_json.merge(
+              is_saved: false,
+              logo_url: job.logo.attached? ? url_for(job.logo) : nil
+            ) 
+          }
         end
       rescue => e
         # Log error but continue with jobs unmarked as saved
         Rails.logger.error "Error determining saved status: #{e.message}"
-        @jobs = @jobs.map { |job| job.as_json.merge(is_saved: false) }
+        @jobs = @jobs.map { |job| 
+          job.as_json.merge(
+            is_saved: false,
+            logo_url: job.logo.attached? ? url_for(job.logo) : nil
+          ) 
+        }
       end
     else
       # No token, mark all as not saved
-      @jobs = @jobs.map { |job| job.as_json.merge(is_saved: false) }
+      @jobs = @jobs.map { |job| 
+        job.as_json.merge(
+          is_saved: false,
+          logo_url: job.logo.attached? ? url_for(job.logo) : nil
+        ) 
+      }
     end
     
     render json: @jobs
@@ -65,7 +83,10 @@ class JobsController < ApplicationController
       end
     end
     
-    render json: @job.as_json.merge(is_saved: is_saved)
+    render json: @job.as_json.merge(
+      is_saved: is_saved,
+      logo_url: @job.logo.attached? ? url_for(@job.logo) : nil
+    )
   end
 
   # POST /jobs
@@ -73,7 +94,10 @@ class JobsController < ApplicationController
     @job = Job.new(job_params)
 
     if @job.save
-      render json: { message: "Job created successfully", job: @job }, status: :created
+      render json: { 
+        message: "Job created successfully", 
+        job: @job.as_json.merge(logo_url: @job.logo.attached? ? url_for(@job.logo) : nil) 
+      }, status: :created
     else
       render json: { errors: @job.errors.full_messages }, status: :unprocessable_entity
     end
@@ -82,7 +106,7 @@ class JobsController < ApplicationController
   # PATCH/PUT /jobs/1
   def update
     if @job.update(job_params)
-      render json: @job
+      render json: @job.as_json.merge(logo_url: @job.logo.attached? ? url_for(@job.logo) : nil)
     else
       render json: @job.errors, status: :unprocessable_entity
     end
@@ -103,7 +127,8 @@ class JobsController < ApplicationController
   end
 
   def job_params
-    params.require(:job).permit(:title, :company, :location, :description, :requirements, :salary, :contact, :logo_url)
+    params.require(:job).permit(:title, :company, :location, :description, :requirements, 
+                             :responsibilities, :job_type, :salary, :contact, :logo, :logo_url)
   end
 
   def current_user_id

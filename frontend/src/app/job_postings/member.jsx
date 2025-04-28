@@ -6,11 +6,14 @@ import axios from 'axios';
 import LoadingScreen from '@/components/LoadingScreen';
 import Hyperlinks from '@/components/Hyperlinks';
 import SearchIcon from '@mui/icons-material/Search';
+import { useRouter } from 'next/navigation';
 
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export default function JobBoardMember() {
+  const router = useRouter();
+  
   const [jobs, setJobs] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +27,7 @@ export default function JobBoardMember() {
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  // Get auth token helper function - UPDATED with more debug logging
+  // Get auth token helper function
   const getAuthToken = () => {
     // Try different token storage locations
     const token = localStorage.getItem('accessToken') || 
@@ -52,6 +55,14 @@ export default function JobBoardMember() {
     fetchJobs();
   }, []);
 
+  // Simplify this effect to not depend on URL params
+  useEffect(() => {
+    if (!isLoading && jobs.length > 0 && !selectedJob) {
+      // If no job selected yet and we have jobs, select the first one
+      setSelectedJob(jobs[0]);
+    }
+  }, [jobs, isLoading]);
+
   const fetchJobs = async () => {
     setIsLoading(true);
     const startTime = Date.now();
@@ -77,16 +88,10 @@ export default function JobBoardMember() {
       if (remainingDelay > 0) {
         setTimeout(() => {
           setJobs(result);
-          if (result.length > 0) {
-            setSelectedJob(result[0]);
-          }
           setIsLoading(false);
         }, remainingDelay);
       } else {
         setJobs(result);
-        if (result.length > 0) {
-          setSelectedJob(result[0]);
-        }
         setIsLoading(false);
       }
     } catch (error) {
@@ -165,7 +170,7 @@ export default function JobBoardMember() {
     }
   };
 
-  // Function to fetch only saved jobs - with better error handling
+  // Function to fetch only saved jobs
   const fetchSavedJobs = async () => {
     setIsLoading(true);
     
@@ -184,11 +189,6 @@ export default function JobBoardMember() {
       console.log('Saved jobs response:', response.data);
       
       setJobs(response.data);
-      if (response.data.length > 0) {
-        setSelectedJob(response.data[0]);
-      } else {
-        setSelectedJob(null);
-      }
       setIsLoading(false);
     } catch (error) {
       console.error('Error fetching saved jobs:', error);
@@ -212,11 +212,15 @@ export default function JobBoardMember() {
     }
   };
 
+  // Simplify the job selection handler to not update URL
+  const handleJobSelect = (job) => {
+    setSelectedJob(job);
+  };
+
   // Extract unique cities from jobs
   const cities = useMemo(() => {
     const citySet = new Set(jobs.map(job => {
       // Extract city from location if available
-      // This assumes a format like "City, State" or just "City"
       if (job.location) {
         return job.location.split(',')[0].trim();
       }
@@ -250,7 +254,6 @@ export default function JobBoardMember() {
     const numbers = matches.map(num => parseInt(num.replace(/,/g, ''), 10));
     
     // If there are multiple numbers (likely a range), return the highest value
-    // This assumes ranges like "$30,000 - $50,000" or "$30,000 to $50,000"
     if (numbers.length > 1) {
       return Math.max(...numbers);
     }
@@ -378,22 +381,34 @@ export default function JobBoardMember() {
         ) : (
           <div className={`flex justify-center gap-8 ${prozaLibre.className} h-full`}>
             {/* Job List - Fixed overflow and added padding */}
-            <div className="w-1/4 overflow-y-auto overflow-x-visible pr-4 pl-2 h-full">
+            <div className="w-1/3 overflow-y-auto overflow-x-visible pr-4 pl-2 h-full">
               {/* The list container now has padding to account for card expansion */}
               <div className="pr-3 pl-1">
                 {filteredJobs.map((job) => (
                   <div
                     key={job.id}
-                    onClick={() => {
-                      setSelectedJob(job);
-                    }}
+                    onClick={() => handleJobSelect(job)}
                     className={`relative bg-[#F6F2E9] text-black p-4 mb-4 rounded-xl shadow-lg flex items-center gap-4 cursor-pointer 
                       ${selectedJob?.id === job.id ? 'ring-4 ring-[#214933] scale-105 transition-transform' : ''}`}
                   >
                     {job.logo_url ? (
-                      <img src={job.logo_url} alt={`${job.title} logo`} className="h-12 w-12 rounded-full object-cover" />
+                      console.log('Job: ', job),
+                      <div className="h-12 w-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-100">
+                        <img 
+                          src={job.logo_url} 
+                          alt={`${job.title} logo`} 
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            console.log("Logo failed to load:", job.logo_url);
+                            e.target.style.display = "none";
+                            e.target.parentElement.style.backgroundColor = "#FFA500";
+                          }} 
+                        />
+                      </div>
                     ) : (
-                      <div className="h-12 w-12 rounded-full" style={{ backgroundColor: '#FFA500' }}></div>
+                      <div className="h-12 w-12 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FFA500' }}>
+                        {job.company && <span className="text-white font-bold">{job.company.charAt(0)}</span>}
+                      </div>
                     )}
                     <div>
                       <p className="text-lg font-bold">{job.title}</p>

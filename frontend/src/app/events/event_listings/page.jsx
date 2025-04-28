@@ -17,16 +17,17 @@ export default function EventListings() {
   const [search, setSearch] = useState("");
   const [eventType, setEventType] = useState("");
   const [date, setDate] = useState("");
-  const [distance, setDistance] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [showSavedOnly, setShowSavedOnly] = useState(false);
   const [events, setEvents] = useState([]);
   const [eventTypes, setEventTypes] = useState([]);
+  const [locations, setLocations] = useState([]);
 
   const handleSearch = (e) => setSearch(e.target.value);
   const handleEventType = (e) => setEventType(e.target.value);
   const handleDate = (e) => setDate(e.target.value);
-  const handleDistance = (e) => setDistance(e.target.value);
+  const handleLocationChange = (e) => setSelectedLocation(e.target.value);
   const handleZipCode = (e) => {
     const value = e.target.value;
     // Allow only numeric values and ensure the length does not exceed 5
@@ -37,28 +38,57 @@ export default function EventListings() {
 
   const toggleShowSavedOnly = () => setShowSavedOnly(!showSavedOnly)
   
-  // Fetch events and extract unique event types
+  // Fetch events and extract unique event types and locations
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const response = await fetch(`${apiBaseUrl}/eventlists`);
         
-        if (!response.ok) throw new Error("Failed to fetch events");
+        // Retrieve the auth token
+        const token = localStorage.getItem('authToken') || 
+                      localStorage.getItem('idToken') || 
+                      localStorage.getItem('auth0Token') ||
+                      localStorage.getItem('token');
+
+        // Prepare headers object - include Authorization only if token exists
+        const headers = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+          console.log("Fetching initial events with auth token."); // Log for debugging
+        } else {
+          console.log("Fetching initial events without auth token (user likely not logged in)."); 
+        }
+
+        // Make the fetch request with the headers
+        const response = await fetch(`${apiBaseUrl}/eventlists`, { headers }); 
+        
+        if (!response.ok) {
+            const errorText = await response.text(); // Get error text for debugging
+            throw new Error(`Failed to fetch events: ${response.status} - ${errorText}`);
+        }
         
         const data = await response.json();
-        setEvents(data);
+        
+        // Log saved status from initial fetch
+        const savedCount = data.filter(event => event.isSaved).length;
+        console.log(`Initial fetch returned ${data.length} events, ${savedCount} marked as saved.`);
+
+        setEvents(data); // Events now have the correct isSaved status if user was authenticated
         
         // Extract unique event types
         const uniqueEventTypes = [...new Set(data.map(event => event.eventType))].filter(Boolean);
         setEventTypes(uniqueEventTypes);
+
+        // Extract unique locations (assuming event.location exists and is like 'City, State')
+        const uniqueLocations = [...new Set(data.map(event => event.location?.split(',')[0].trim()).filter(Boolean))];
+        setLocations(uniqueLocations);
       } catch (error) {
         console.error("Error fetching events:", error);
       }
     };
 
     fetchEvents();
-  }, []);
+  }, []); // Empty dependency array means this runs once on mount
 
   return (
     <div className="w-11/12 text-white mt-20 h-screen">
@@ -107,30 +137,17 @@ export default function EventListings() {
                   </select>
               </div>
               <div className="flex flex-col gap-2">
-                  <p>Distance</p>
+                  <p>Location</p>
                   <select
-                    value={distance}
-                    onChange={handleDistance}
+                    value={selectedLocation}
+                    onChange={handleLocationChange}
                     className="p-4 rounded-md bg-[#335843] w-48 font-light"
                   >
-                        <option value="">Select Distance</option>
-                        <option value="5">5 miles</option>
-                        <option value="10">10 miles</option>
-                        <option value="25">25 miles</option>
-                        <option value="50">50 miles</option>
-                        <option value="100">100 miles</option>
+                        <option value="">Select Location</option>
+                        {locations.map((loc, index) => (
+                          <option key={index} value={loc}>{loc}</option>
+                        ))}
                   </select>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                  <p>Zip Code:</p>
-                  <input
-                    type="text"
-                    value={zipCode}
-                    onChange={handleZipCode}
-                    placeholder="Zip Code"
-                    className="p-3 rounded-md bg-gray-100 text-gray-800"
-                />
               </div>
           </div>
 
@@ -148,7 +165,15 @@ export default function EventListings() {
         {/* Event Cards */}
         
 
-        <Eventing isAdmin={isAdmin} eventType={eventType} searchField={search} showSavedOnly={showSavedOnly}/>
+        <Eventing 
+          isAdmin={isAdmin} 
+          eventType={eventType} 
+          searchField={search} 
+          showSavedOnly={showSavedOnly}
+          events={events}
+          selectedLocation={selectedLocation}
+          selectedDateRange={date}
+        />
         <Hyperlinks />
                   
       </div>
