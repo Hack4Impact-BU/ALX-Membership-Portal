@@ -392,6 +392,7 @@ export default function JobBoardMember() {
                       ${selectedJob?.id === job.id ? 'ring-4 ring-[#214933] scale-105 transition-transform' : ''}`}
                   >
                     {job.logo_url ? (
+                      console.log('Job: ', job),
                       <div className="h-12 w-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-100">
                         <img 
                           src={job.logo_url} 

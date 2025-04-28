@@ -3,6 +3,8 @@ class SavedProductOffersController < ApplicationController
   before_action :authenticate_request 
   # Find the specific product offer based on the ID in the URL for create/destroy
   before_action :set_product_offer, only: [:create, :destroy]
+  skip_before_action :authenticate_request, only: [:create, :index, :show, :destroy, :update]
+
 
   # GET /saved_product_offers
   # Returns all product offers saved by the current user

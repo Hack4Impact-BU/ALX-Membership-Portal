@@ -21,7 +21,7 @@ const Profile = () => {
       try {
         const decodedToken = jwtDecode(idToken);
         console.log('Decoded ID Token:', decodedToken);
-
+        console.log('Variables: ', process.env.NEXT_PUBLIC_NAME, process.env.NEXT_PUBLIC_EMAIL, process.env.NEXT_PUBLIC_NUMBER);
         console.log('Name:', decodedToken[process.env.NEXT_PUBLIC_NAME]);
         console.log('Email:', decodedToken[process.env.NEXT_PUBLIC_EMAIL]);
         console.log('Phone:', decodedToken[process.env.NEXT_PUBLIC_NUMBER]);

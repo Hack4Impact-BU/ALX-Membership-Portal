@@ -22,6 +22,7 @@ export default function JobBoard() {
         }
         
         const data = await response.json();
+        console.log('Job Board Data: ', data);
         setJobs(data.slice(0, 2)); // Take first two jobs
         setLoading(false);
       } catch (error) {
@@ -61,6 +62,7 @@ export default function JobBoard() {
         ) : jobs.length > 0 ? (
           // Map through actual jobs
           jobs.map((job) => (
+            console.log('Job: ', job),
             <div key={job.id} className="bg-[#F6F2E9] p-4 rounded-xl shadow-lg w-64 h-full flex flex-col justify-between">
               <div>
                 {job.logo_url ? (
