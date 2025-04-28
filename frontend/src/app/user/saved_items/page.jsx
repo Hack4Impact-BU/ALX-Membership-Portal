@@ -305,15 +305,19 @@ export default function SavedPage() {
                     <div className="p-4 bg-white rounded-xl">
                       <p className="text-lg text-center">{item.title}</p>
                     </div>
-                    <div className="px-2 py-4 rounded-lg">
-                      <p className="text-s">{item.description}</p>
-                      <p className="text-s mt-2">Location: {item.details}</p>
+                    <div className="px-2 py-4 rounded-lg space-y-3">
+                      <p className="text-s italic mb-6">{item.description}</p>
+                      <p className="text-s">
+                        Location: {item.details}
+                      </p>
                       {activeTab === 'Jobs' && (
-                        <p className="text-s mt-2">Salary: {item.salary}</p>
+                        <p className="text-s">
+                          Salary: {item.salary}
+                        </p>
                       )}
-                    </div>
+                    </div>  
                   </div>
-                  <div className="flex justify-between items-center mt-4">
+                  <div className="flex justify-between items-center mt-6">
                     <div
                       className="cursor-pointer text-[#214933]"
                       onClick={() => handleUnsave(item.id, activeTab)}

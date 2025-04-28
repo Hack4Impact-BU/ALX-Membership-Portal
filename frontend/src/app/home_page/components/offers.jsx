@@ -21,8 +21,9 @@ export default function ProductOffers() {
         if (!response.ok) {
           throw new Error('Failed to fetch offers');
         }
-        
+          
         const data = await response.json();
+        console.log('Product Offers Data: ', data);
         setOffers(data.slice(0, 2)); // Take first two offers
         setLoading(false);
       } catch (error) {
@@ -66,7 +67,7 @@ export default function ProductOffers() {
                   <p className="text-lg text-center">{offer.offerTitle}</p>
                 </div>
                 <div className={`px-2 py-4 rounded-lg`}>
-                  <p className="text-xs">Company: {offer.businessType}</p>
+                  <p className="text-xs">Company: {offer.place}</p>
                   <hr className="my-2 border-gray-700" />              
                   <p className="text-xs">
                     Offer valid from {new Date(offer.startDate).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
