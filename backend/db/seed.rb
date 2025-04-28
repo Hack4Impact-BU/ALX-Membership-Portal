@@ -15,7 +15,11 @@ rescue LoadError
     module Lorem; def self.sentence(word_count:); "Fake sentence."; end; def self.paragraph(sentence_count:); "Fake paragraph."; end; def self.paragraphs(number:); ["Fake paragraphs."]; end; end
     module Name; def self.name; "Fake Name"; end; end
     module Internet; def self.email; "fake-#{rand(10000)}@example.com"; end; end
-    module Company; def self.name; "Fake Company"; end; def self.bs; "fake business stuff"; end; end
+    module Company
+      def self.name; "Fake Company"; end
+      def self.bs; "fake business stuff"; end
+      def self.catch_phrase; "Innovative business solution"; end
+    end
     module Address; def self.full_address; "Fake Address"; end; end
     module PhoneNumber; def self.phone_number; "555-123-4567"; end; end
     module Date; def self.between(from:, to:); ::Date.today; end; end

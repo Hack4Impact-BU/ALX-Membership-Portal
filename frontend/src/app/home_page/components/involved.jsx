@@ -61,7 +61,7 @@ export default function GetInvolved() {
   };
   
   return (
-    <section className="flex flex-col md:flex-row justify-between items-center px-8 py-24 border-b-2 ">
+    <section className="flex flex-col md:flex-row justify-between items-center px-8 py-24 border-b-2 min-h-[450px]">
       {/* Title Section */}
       <TitleCard 
         header="Get Involved" 
@@ -73,7 +73,7 @@ export default function GetInvolved() {
       <div className={`md:w-6/12 flex flex-wrap justify-between ${prozaLibre.className}`}>
         {loading ? (
           // Loading state
-          <p>Loading opportunities...</p>
+          <p className="text-white">Loading opportunities...</p>
         ) : opportunities.length > 0 ? (
           // Map through actual opportunities
           opportunities.map((opportunity) => (

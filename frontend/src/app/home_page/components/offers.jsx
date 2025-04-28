@@ -15,7 +15,7 @@ export default function ProductOffers() {
     async function fetchOffers() {
       try {
         console.log('Fetching offers', process.env.NEXT_PUBLIC_API_BASE_URL);
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
         const response = await fetch(`${apiBaseUrl}/product_offers?limit=2`);
         
         if (!response.ok) {
@@ -36,19 +36,19 @@ export default function ProductOffers() {
   }, []);
   
   return (
-    <section className="flex flex-col md:flex-row justify-between items-center px-8 py-24 border-b-2">
+    <section className="flex flex-col md:flex-row justify-between items-center px-8 py-24 border-b-2 min-h-[450px]">
       {/* Title Section */}
       <TitleCard 
         header="Product Offers" 
         translation="* Ofertas de Productos" 
-        link="/benefits_discounts" 
+        link="/product_offers" 
       />
 
       {/* Product Cards Section */}
       <div className={`md:w-6/12 flex flex-wrap justify-between ${prozaLibre.className}`}>
         {loading ? (
           // Loading state
-          <p>Loading offers...</p>
+          <p className="text-white">Loading offers...</p>
         ) : offers.length > 0 ? (
           // Map through actual offers
           offers.map((offer) => (

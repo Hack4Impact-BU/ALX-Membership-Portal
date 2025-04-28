@@ -35,7 +35,7 @@ export default function UpcomingEvents() {
   }, []);
   
   return (
-    <section className="flex flex-col md:flex-row justify-between items-center px-8 py-8 pb-24 border-b-2">
+    <section className="flex flex-col md:flex-row justify-between items-center px-8 py-8 pb-24 border-b-2 min-h-[450px]">
       {/* Title Section (Replaced with ReusableHeader) */}
       <TitleCard 
         header="Upcoming Events" 
@@ -47,7 +47,7 @@ export default function UpcomingEvents() {
       <div className={`md:w-6/12 flex flex-wrap justify-between ${prozaLibre.className}`}>
         {loading ? (
           // Loading state
-          <p>Loading events...</p>
+          <p className="text-white">Loading events...</p>
         ) : events.length > 0 ? (
           // Map through actual events
           events.map((event) => (

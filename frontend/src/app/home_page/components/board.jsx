@@ -46,7 +46,7 @@ export default function JobBoard() {
   };
   
   return (
-    <section className="flex flex-col md:flex-row justify-between items-center px-8 py-24 border-b-2">
+    <section className="flex flex-col md:flex-row justify-between items-center px-8 py-24 border-b-2 min-h-[450px]">
       {/* Title Section (Replaced with ReusableHeader) */}
       <TitleCard 
         header="Job Board" 
@@ -58,7 +58,7 @@ export default function JobBoard() {
       <div className={`md:w-6/12 flex flex-wrap justify-between ${prozaLibre.className}`}>
         {loading ? (
           // Loading state
-          <p>Loading jobs...</p>
+          <p className="text-white">Loading jobs...</p>
         ) : jobs.length > 0 ? (
           // Map through actual jobs
           jobs.map((job) => (
