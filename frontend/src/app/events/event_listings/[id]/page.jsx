@@ -4,65 +4,148 @@ import { Proza_Libre } from 'next/font/google'; // Import the Proza Libre font
 
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
+// Helper function to format ISO time string to AM/PM
+function formatIsoToAmPm(isoString) {
+    if (!isoString || typeof isoString !== 'string' || !isoString.includes('T')) {
+        console.warn("Invalid ISO string for time formatting:", isoString);
+        return "Invalid Time";
+    }
+    try {
+        const timePart = isoString.split("T")[1]?.split(":"); // Use optional chaining
+        if (!timePart || timePart.length < 2) return "Invalid Time";
+
+        let hour = parseInt(timePart[0], 10);
+        const minute = timePart[1];
+
+        if (isNaN(hour) || isNaN(parseInt(minute, 10))) {
+            return "Invalid Time";
+        }
+
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        hour = hour % 12;
+        hour = hour === 0 ? 12 : hour; // Handle midnight (0) as 12 AM
+        const minutePadded = parseInt(minute, 10) < 10 ? `0${parseInt(minute, 10)}` : minute;
+
+        return `${hour}:${minutePadded} ${ampm}`;
+    } catch (e) {
+        console.error("Error formatting time:", isoString, e);
+        return "Invalid Time";
+    }
+}
+
 export default function Page({ params }) {
     const { id } = params;
     const [eventData, setEventData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isSaved, setIsSaved] = useState(false);
-    
+    const [isSaved, setIsSaved] = useState(false); // Initial state, will be updated by fetch
+
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    // Fetch event data on component mount
     useEffect(() => {
         const fetchEventData = async () => {
+            setLoading(true);
+            setError(null);
             try {
-                // Fetch event data from API
-                const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-                const response = await fetch(`${apiBaseUrl}/eventlists/${id}`);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to load event details');
+                const token = localStorage.getItem('authToken') || localStorage.getItem('idToken') || localStorage.getItem('auth0Token') || localStorage.getItem('token');
+                const headers = {};
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
                 }
-                
+
+                const response = await fetch(`${apiBaseUrl}/eventlists/${id}`, {
+                    headers: headers, // Include auth header to potentially get correct isSaved status
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to load event details (Status: ${response.status})`);
+                }
+
                 const data = await response.json();
                 setEventData(data);
-                setIsSaved(data.isSaved);
-                setLoading(false);
-                console.log(data);
+                // Use the isSaved status directly from the fetched data as the source of truth
+                setIsSaved(!!data.isSaved); // Ensure boolean value
+                console.log("Fetched event data:", data);
+
             } catch (err) {
                 console.error('Error fetching event:', err);
                 setError(err.message);
+                setEventData(null); // Clear potentially stale data on error
+            } finally {
                 setLoading(false);
             }
         };
-        
-        fetchEventData();
-    }, [id]);
 
+        if (id) {
+            fetchEventData();
+        } else {
+            setError("Event ID is missing.");
+            setLoading(false);
+        }
+    }, [id, apiBaseUrl]); // Add apiBaseUrl to dependencies
 
+    // Unified function to handle saving/unsaving, mirroring EventCard logic
     const handleSaveToggle = async () => {
         const newSavedStatus = !isSaved;
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        
+        const action = newSavedStatus ? 'saving' : 'unsaving';
+
+        // Optimistically update UI
+        setIsSaved(newSavedStatus);
+
         try {
-            // Make API request to update saved status
-            const response = await fetch(`${apiBaseUrl}/eventlists/${id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ isSaved: newSavedStatus }),
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to update saved status');
+            // Retrieve the auth token
+            const token = localStorage.getItem('authToken') ||
+                          localStorage.getItem('idToken') ||
+                          localStorage.getItem('auth0Token') ||
+                          localStorage.getItem('token');
+
+            if (!token) {
+                 console.error('Authentication token not found.');
+                 // Show alert, but don't revert optimistic update immediately, let fetch handle consistency
+                 alert('Please log in to save events.');
+                 // Revert optimistic update only if token is strictly required and missing
+                 setIsSaved(!newSavedStatus);
+                 return;
             }
-            
-            // Update state only after successful API response
-            setIsSaved(newSavedStatus);
-            console.log(`Event ${newSavedStatus ? 'saved' : 'unsaved'} successfully`);
+
+            const headers = { 'Authorization': `Bearer ${token}` };
+            const method = newSavedStatus ? 'POST' : 'DELETE';
+
+            // Make the API call to the /save endpoint
+            const response = await fetch(`${apiBaseUrl}/eventlists/${id}/save`, {
+                method: method,
+                headers: headers,
+                // No body needed for POST/DELETE to this endpoint based on EventCard
+            });
+
+            if (!response.ok) {
+                let errorData = { message: `Request failed with status ${response.status}` };
+                try {
+                    // Try to parse error message from backend if available
+                    const potentialJson = await response.json();
+                    errorData = potentialJson;
+                } catch (e) {
+                     // Backend might not return JSON on error, use status text or generic message
+                    errorData.message = response.statusText || errorData.message;
+                    console.warn("Response was not JSON or text() failed:", e);
+                }
+                // Throw an error that includes message from backend if possible
+                throw new Error(errorData.message || `Failed to ${action} event`);
+            }
+
+            // Optionally parse success response if backend sends one
+            // const result = await response.json();
+            // console.log(`Event ${action} successful:`, result);
+            console.log(`Event ${action} successful.`);
+            // UI state is already updated optimistically
+
         } catch (error) {
-            console.error('Error updating saved status:', error);
-            // Optionally revert the UI state if the API call fails
-            // setIsSaved(isSaved);
+            console.error(`Error ${action} event:`, error);
+            // Revert optimistic update on error
+            setIsSaved(!newSavedStatus);
+            // Show specific error message from catch
+            alert(`Could not ${action} the event. ${error.message}. Please try again.`);
         }
     };
 
@@ -87,7 +170,7 @@ export default function Page({ params }) {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <p className={`text-2xl text-red-500 ${prozaLibre.className} mb-4`}>Failed to load event details</p>
-                    <p className={`text-gray-600 ${prozaLibre.className}`}>{error || "The event may not exist or has been removed."}</p>
+                    <p className={`text-gray-600 ${prozaLibre.className}`}>{error || "Event data could not be loaded."}</p>
                     <button 
                         onClick={() => window.history.back()} 
                         className="mt-6 px-6 py-2 bg-[#214933] text-white rounded-lg hover:bg-[#1a3a29] transition-colors"
@@ -113,19 +196,7 @@ export default function Page({ params }) {
         phone: PhoneNumber,
     } = eventData;
 
-    function formatIsoToAmPm(isoString) {
-        const timePart = isoString.split("T")[1].split(":");
-        let hour = parseInt(timePart[0], 10);
-        const minute = timePart[1];
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-      
-        hour = hour % 12;
-        hour = hour === 0 ? 12 : hour;
-      
-        return `${hour}:${minute} ${ampm}`;
-      }
-
-
+    const formattedTime = Time ? formatIsoToAmPm(Time) : "Time not specified";
 
     return (
       <div className="flex flex-col w-full h-[1280px]">
@@ -139,14 +210,17 @@ export default function Page({ params }) {
                                 alt={EventName} 
                                 className="max-w-full h-full object-contain border rounded-xl"
                                 onError={(e) => {
-                                  console.log("Image failed to load:", image_url);
+                                  console.warn("Event image failed to load:", image_url);
                                   e.target.onerror = null;
                                   e.target.style.display = "none";
+                                  // Optionally show a placeholder
+                                  const placeholder = e.target.parentElement.querySelector('.placeholder-text');
+                                  if (placeholder) placeholder.style.display = 'block';
                                 }}
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                                <span className="text-gray-500">No image available</span>
+                                <span className="text-gray-500 placeholder-text">No image available</span>
                             </div>
                         )}
                     </div>
@@ -165,7 +239,7 @@ export default function Page({ params }) {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
 
-                    <p className={`text-2xl text-[#214933] ${prozaLibre.className}`}>{formatIsoToAmPm(Time)}</p>
+                    <p className={`text-2xl text-[#214933] ${prozaLibre.className}`}>{formattedTime}</p>
                 </div>
                 <div className="flex flex-row gap-4 justify-center items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#214933" class="size-14">
