@@ -13,11 +13,13 @@ class Auth0Controller < ApplicationController
     password = params[:password]
     name = params[:name]
     phone_number = params[:phone_number]
-
+    terms_accepted = params[:terms_accepted]
 
     Rails.logger.info("Sign-up request received with email: #{email}, name: #{name}, phone_number: #{phone_number}")
    
-
+    if !terms_accepted
+      return render json: { error: 'Terms and conditions must be accepted' }, status: :unprocessable_entity
+    end
     
     response = HTTP.post("https://#{ENV['NEXT_PUBLIC_AUTH0_DOMAIN']}/dbconnections/signup", json: {
       client_id: ENV['AUTH0_CLIENT_ID'],
@@ -26,7 +28,9 @@ class Auth0Controller < ApplicationController
       connection: 'Username-Password-Authentication',
       user_metadata: {
         name: name,
-        phone_number: phone_number
+        phone_number: phone_number,
+        terms_accepted: terms_accepted.to_s,
+        terms_accepted_at: Time.current.to_s
       }
     })
 
