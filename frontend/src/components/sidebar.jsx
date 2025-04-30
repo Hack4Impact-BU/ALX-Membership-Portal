@@ -4,6 +4,7 @@ import { useState, useContext } from 'react';
 import Link from 'next/link';
 import { Inter, Proza_Libre } from 'next/font/google'; // Import the Proza Libre font
 import { AuthContext } from '../components/AuthProvider.jsx'; 
+import { useAdmin } from '@/middleware/useAdmin';
 
 // Import simple white icons from Heroicons
 import { CalendarIcon, GiftIcon, ClipboardIcon, UserGroupIcon, BookmarkIcon, UserIcon, LockClosedIcon, FolderIcon, QuestionMarkCircleIcon } from '@heroicons/react/outline';
@@ -12,10 +13,12 @@ import { CalendarIcon, GiftIcon, ClipboardIcon, UserGroupIcon, BookmarkIcon, Use
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
+
 export default function Sidebar() {
   const [activeSection, setActiveSection] = useState("/"); // State to track the active section
   const { authToken, logout } = useContext(AuthContext);
-
+  const { isAdmin } = useAdmin();
+  
   // Function to handle click and set the active section
   const handleLinkClick = (path) => {
     setActiveSection(path);
@@ -107,6 +110,16 @@ export default function Sidebar() {
                 </div>
               </Link>
             </li>
+            {isAdmin && (
+              <li onClick={() => handleLinkClick("/user/Table")}>
+                <Link href="/user/Table">
+                  <div className={linkClasses("/user/Table")}>
+                    <UserGroupIcon className="h-6 w-6 text-white" />
+                    <p>Admin</p>
+                  </div>
+                </Link>
+              </li>
+            )}
             <li onClick={logout}>
               <Link href="/user/signup">
                 <div className={linkClasses("/user/signup")}>
