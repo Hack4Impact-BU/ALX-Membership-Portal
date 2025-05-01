@@ -7,8 +7,8 @@ import { useState, useEffect } from 'react';
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
-// Accept all necessary data as props, including initial isSaved state
-export default function Card({ id, offerTitle, place, pic_url, startDate, isSaved: initialIsSaved }) {
+// Accept all necessary data as props, including initial isSaved state and the callback
+export default function Card({ id, offerTitle, place, pic_url, startDate, isSaved: initialIsSaved, onSaveChange }) {
     // Remove internal offerData state
     // const [offerData, setOfferData] = useState(null);
     
@@ -16,12 +16,10 @@ export default function Card({ id, offerTitle, place, pic_url, startDate, isSave
     const [isSaved, setIsSaved] = useState(initialIsSaved || false);
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     
-    // Remove useEffect that fetches individual offer data
-    /*
+    // Add a useEffect to sync local state with the prop
     useEffect(() => {
-        // ... fetchOfferData logic removed ...
-    }, [id, apiBaseUrl]);
-    */
+        setIsSaved(initialIsSaved || false);
+    }, [initialIsSaved]); // Re-run this effect if the initialIsSaved prop changes
     
     // Update handleSaveToggle to use POST/DELETE and Authorization header
     const handleSaveToggle = async () => {
@@ -61,6 +59,10 @@ export default function Card({ id, offerTitle, place, pic_url, startDate, isSave
             
             const result = await response.json(); 
             console.log(`Offer ${action} successful:`, result); 
+            // Call the callback prop on success
+            if (onSaveChange) {
+                onSaveChange(id, newSavedStatus);
+            }
 
         } catch (error) {
             console.error(`Error ${action} offer:`, error);

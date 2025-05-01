@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react"
 import Card from "../card/card"
 import AdminCard from "../adminCard/adminCard"
-import { Montserrat } from "next/font/google"
-const montserrat = Montserrat({
-    subsets: ['latin'],
-    weight: ['400', '500', '700'], // Define weights if needed
-  })
+
+import { Inter, Proza_Libre } from 'next/font/google';
+
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
+
+
+const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
+
 
 
 export default function CardList( { isAdmin } ) {
@@ -77,6 +80,17 @@ export default function CardList( { isAdmin } ) {
     const [selectedBusinessType, setSelectedBusinessType] = useState("");
     const [selectedCity, setSelectedCity] = useState(""); // State for selected city
 
+    // Handler function to update offer save status in the main state
+    const handleSaveStatusChange = (offerId, newStatus) => {
+        setCard(prevCards => 
+          prevCards.map(offer => 
+            offer.id === offerId ? { ...offer, isSaved: newStatus } : offer
+          )
+        );
+        // Optional: Log the update for debugging
+        console.log(`Updated offer ${offerId} saved status to ${newStatus} in CardList.`);
+      };
+
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0); // Set to midnight to compare dates only
 
@@ -133,7 +147,7 @@ export default function CardList( { isAdmin } ) {
                         (renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).map((offer, index) => (
                             isAdmin ? (
                                 <AdminCard
-                                    key={index}
+                                    key={offer.id}
                                     offerTitle={offer.offerTitle}
                                     businessType={offer.businessType}
                                     offerDesc={offer.offerDesc}
@@ -144,35 +158,36 @@ export default function CardList( { isAdmin } ) {
                                     isSaved={offer.isSaved}
                                     index={index}
                                     id={offer.id}
-
+                                    onSaveChange={handleSaveStatusChange}
                                 />
                             ) : (
                                 <Card   
-                                    key={index}
-                                offerTitle={offer.offerTitle}
-                                businessType={offer.businessType}
-                                offerDesc={offer.offerDesc}
-                                place={offer.place}
-                                pic_url={offer.pic_url}
-                                startDate={offer.startDate}
-                                endDate={offer.endDate}
-                                isSaved={offer.isSaved}
-                                index={index}
-                                id={offer.id}
-                            />
+                                    key={offer.id}
+                                    offerTitle={offer.offerTitle}
+                                    businessType={offer.businessType}
+                                    offerDesc={offer.offerDesc}
+                                    place={offer.place}
+                                    pic_url={offer.pic_url}
+                                    startDate={offer.startDate}
+                                    endDate={offer.endDate}
+                                    isSaved={offer.isSaved}
+                                    index={index}
+                                    id={offer.id}
+                                    onSaveChange={handleSaveStatusChange}
+                                />
                             )
                         ))
                     )}
                 </div>
 
                 {/* Filters Section */}
-                <div className="flex flex-col gap-6 p-6">
+                <div className={`flex flex-col gap-6 p-6 ${prozaLibre.className}`}>
                     {/* Business Type Filter */}
                     <div>
-                        <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>Business Type</p>
+                        <p className={`text-[#F6F2E9] text-base ${prozaLibre.className}`}>Business Type</p>
                         <div className="w-72">
                             <select 
-                                className={`w-full h-14 rounded-md bg-[#335843] px-3 py-2 text-white shadow-md ${montserrat.className}`}
+                                className={`w-full h-14 rounded-md bg-[#335843] px-3 py-2 text-white shadow-md ${prozaLibre.className}`}
                                 value={selectedBusinessType}
                                 onChange={handleBusinessTypeChange}
                             >
@@ -186,10 +201,10 @@ export default function CardList( { isAdmin } ) {
 
                     {/* City Filter */}
                     <div>
-                        <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>City</p>
+                        <p className={`text-[#F6F2E9] text-base ${prozaLibre.className}`}>City</p>
                         <div className="w-72">
                             <select
-                                className={`w-full h-14 rounded-md bg-[#335843] px-3 py-2 text-white shadow-md ${montserrat.className}`}
+                                className={`w-full h-14 rounded-md bg-[#335843] px-3 py-2 text-white shadow-md ${prozaLibre.className}`}
                                 value={selectedCity}
                                 onChange={handleCityChange} // Use city handler
                             >
@@ -202,12 +217,17 @@ export default function CardList( { isAdmin } ) {
                     </div>
 
                     {/* Saved Button */}
-                    <div className="flex flex-row w-[130px] h-[60px] mt-4 rounded-md gap-4 bg-[#F6F2E9] hover:cursor-pointer justify-center items-center" onClick={handleSaved}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill={renderSaved ? '#214933' : 'none'} viewBox="0 0 24 24" stroke-width="2" stroke="#214933" className="size-8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
-                        </svg>
-                        <p className={`text-[#214933] text-base ${montserrat.className}`}>Saved</p>
-                    </div>
+                    <button 
+                        onClick={handleSaved}
+                        className={`py-3 px-6 rounded-lg flex items-center w-[14rem] gap-2 shadow-lg transition-all ${
+                        renderSaved 
+                            ? 'bg-white text-[#214933]' 
+                            : 'bg-[#214933] text-white border border-white'
+                        }`}
+                    >
+                        <BookmarksIcon />
+                        {renderSaved ? 'Showing Saved' : 'Show Saved'}
+                    </button>
                 </div>
             </div>
         </div>

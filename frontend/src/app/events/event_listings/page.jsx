@@ -5,6 +5,7 @@ import ReusableHeader from "@/components/ReusableHeader/ReusableHeader";
 import Eventing from "./components/EventListings/EventListings";
 import { Inter, Proza_Libre } from 'next/font/google';
 import Hyperlinks from '@/components/Hyperlinks';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import { useAdmin } from "@/middleware/useAdmin";
 
 
@@ -90,6 +91,17 @@ export default function EventListings() {
     fetchEvents();
   }, []); // Empty dependency array means this runs once on mount
 
+  // Handler function to update event save status in the main state
+  const handleSaveStatusChange = (eventId, newStatus) => {
+    setEvents(prevEvents => 
+      prevEvents.map(event => 
+        event.id === eventId ? { ...event, isSaved: newStatus } : event
+      )
+    );
+    // Optional: Log the update for debugging
+    console.log(`Updated event ${eventId} saved status to ${newStatus} in parent component.`);
+  };
+
   return (
     <div className="w-11/12 text-white mt-20 h-screen">
         <ReusableHeader header={"Upcoming Events"} translation={"*    Próximos eventos"} isAdmin={isAdmin} directTo={"/events/event_listings/create"}/>
@@ -151,15 +163,18 @@ export default function EventListings() {
               </div>
           </div>
 
-          <button
-                  className={`p-3 text-green-900 h-1/2 w-3/12 rounded-md ${
-                    showSavedOnly ? "bg-green-500" : "bg-white"
-                  }`}
-                  onClick={toggleShowSavedOnly}>
-            {showSavedOnly ? "Show All" : "Show Saved"}
+          <button 
+            onClick={toggleShowSavedOnly}
+            className={`py-3 px-6 rounded-lg flex items-center w-[14rem] gap-2 shadow-lg transition-all ${
+              showSavedOnly 
+                ? 'bg-white text-[#214933]' 
+                : 'bg-[#214933] text-white border border-white'
+            }`}
+          >
+            <BookmarksIcon />
+            {showSavedOnly ? 'Showing Saved' : 'Show Saved'}
           </button>
           
-
         </div>
 
         {/* Event Cards */}
@@ -173,6 +188,7 @@ export default function EventListings() {
           events={events}
           selectedLocation={selectedLocation}
           selectedDateRange={date}
+          onSaveChange={handleSaveStatusChange}
         />
         <Hyperlinks />
                   
