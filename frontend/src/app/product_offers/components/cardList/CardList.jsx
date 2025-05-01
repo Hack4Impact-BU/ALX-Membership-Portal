@@ -147,7 +147,7 @@ export default function CardList( { isAdmin } ) {
                         (renderSaved ? filteredCards.filter(offer => offer.isSaved) : filteredCards).map((offer, index) => (
                             isAdmin ? (
                                 <AdminCard
-                                    key={index}
+                                    key={offer.id}
                                     offerTitle={offer.offerTitle}
                                     businessType={offer.businessType}
                                     offerDesc={offer.offerDesc}
@@ -162,7 +162,7 @@ export default function CardList( { isAdmin } ) {
                                 />
                             ) : (
                                 <Card   
-                                    key={index}
+                                    key={offer.id}
                                     offerTitle={offer.offerTitle}
                                     businessType={offer.businessType}
                                     offerDesc={offer.offerDesc}
