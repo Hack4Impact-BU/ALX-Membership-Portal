@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Proza_Libre } from 'next/font/google';
 import { useAdmin } from '@/middleware/useAdmin';
+
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 const UsersTable = () => {
@@ -50,13 +51,13 @@ const UsersTable = () => {
   }, [authToken]);
 
   if (isLoading) {
-    return <div className="text-white text-center p-6">Loading...</div>;
+    return <div className={`text-white text-center p-6 ${prozaLibre.className}`}>Loading...</div>;
   }
 
   if (!isAdmin) {
     return (
       console.log("User is not admin"),
-      <div className="text-center p-8">
+      <div className={`text-center p-8 ${prozaLibre.className}`}>
         <h2 className="text-2xl font-bold text-red-600">Access Denied</h2>
         <p className="text-white mt-2">You need administrator privileges to view this page.</p>
       </div>
@@ -66,24 +67,23 @@ const UsersTable = () => {
     console.log("Admin is logged in");
   }
 
-
   return (
-    <div className='container mx-auto p-6 ${prozaLibre.className}'>
-      <h2 className='text-5xl font-bold text-white mb-4'>Registered Users</h2>
+    <div className={`container mx-auto p-6 ${prozaLibre.className}`}>
+      <h2 className={`text-5xl font-bold text-white mb-4 ${prozaLibre.className}`}>Registered Users</h2>
       <div className="overflow-x-auto shadow-lg rounded-lg">
-        <table className="min-w-full bg-white border border-gray-200">
+        <table className={`min-w-full bg-white border border-gray-200 ${prozaLibre.className}`}>
           <thead>
-            <tr className="bg-gray-100 text-gray-700 uppercase text-sm leading-normal">
+            <tr className={`bg-gray-100 text-gray-700 uppercase text-sm leading-normal ${prozaLibre.className}`}>
               <th className="py-3 px-6 text-left border-b">Email</th>
               <th className="py-3 px-6 text-left border-b">Username</th>
               <th className="py-3 px-6 text-left border-b">Phone Number</th>
               <th className="py-3 px-6 text-left border-b">Date Signed Up</th>
             </tr>
           </thead>
-          <tbody className="text-gray-600 text-sm">
+          <tbody className={`text-gray-600 text-sm ${prozaLibre.className}`}>
             {users.length > 0 ? (
               users.map((user, index) => (
-                <tr key={index} className="border-b hover:bg-gray-50 transition">
+                <tr key={index} className={`border-b hover:bg-gray-50 transition ${prozaLibre.className}`}>
                   <td className="py-3 px-6">{user.email}</td>
                   <td className="py-3 px-6">{user.username || "N/A"}</td>
                   <td className="py-3 px-6">{user.phone_number || "N/A"}</td>
@@ -92,7 +92,7 @@ const UsersTable = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="text-center py-4 text-gray-500">
+                <td colSpan="4" className={`text-center py-4 text-gray-500 ${prozaLibre.className}`}>
                   No users found
                 </td>
               </tr>
