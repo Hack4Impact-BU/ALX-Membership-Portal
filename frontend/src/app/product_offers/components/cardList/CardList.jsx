@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react"
 import Card from "../card/card"
 import AdminCard from "../adminCard/adminCard"
-import { Montserrat } from "next/font/google"
+
+import { Inter, Proza_Libre } from 'next/font/google';
+
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 
-const montserrat = Montserrat({
-    subsets: ['latin'],
-    weight: ['400', '500', '700'], // Define weights if needed
-  })
+
+const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
+
 
 
 export default function CardList( { isAdmin } ) {
@@ -180,13 +181,13 @@ export default function CardList( { isAdmin } ) {
                 </div>
 
                 {/* Filters Section */}
-                <div className="flex flex-col gap-6 p-6">
+                <div className={`flex flex-col gap-6 p-6 ${prozaLibre.className}`}>
                     {/* Business Type Filter */}
                     <div>
-                        <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>Business Type</p>
+                        <p className={`text-[#F6F2E9] text-base ${prozaLibre.className}`}>Business Type</p>
                         <div className="w-72">
                             <select 
-                                className={`w-full h-14 rounded-md bg-[#335843] px-3 py-2 text-white shadow-md ${montserrat.className}`}
+                                className={`w-full h-14 rounded-md bg-[#335843] px-3 py-2 text-white shadow-md ${prozaLibre.className}`}
                                 value={selectedBusinessType}
                                 onChange={handleBusinessTypeChange}
                             >
@@ -200,10 +201,10 @@ export default function CardList( { isAdmin } ) {
 
                     {/* City Filter */}
                     <div>
-                        <p className={`text-[#F6F2E9] text-base ${montserrat.className}`}>City</p>
+                        <p className={`text-[#F6F2E9] text-base ${prozaLibre.className}`}>City</p>
                         <div className="w-72">
                             <select
-                                className={`w-full h-14 rounded-md bg-[#335843] px-3 py-2 text-white shadow-md ${montserrat.className}`}
+                                className={`w-full h-14 rounded-md bg-[#335843] px-3 py-2 text-white shadow-md ${prozaLibre.className}`}
                                 value={selectedCity}
                                 onChange={handleCityChange} // Use city handler
                             >
@@ -218,7 +219,7 @@ export default function CardList( { isAdmin } ) {
                     {/* Saved Button */}
                     <button 
                         onClick={handleSaved}
-                        className={`py-3 px-6 rounded-lg flex items-center justify-center w-[14rem] gap-2 shadow-lg transition-all ${
+                        className={`py-3 px-6 rounded-lg flex items-center w-[14rem] gap-2 shadow-lg transition-all ${
                         renderSaved 
                             ? 'bg-white text-[#214933]' 
                             : 'bg-[#214933] text-white border border-white'

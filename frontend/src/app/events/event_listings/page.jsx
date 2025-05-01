@@ -165,7 +165,7 @@ export default function EventListings() {
 
           <button 
             onClick={toggleShowSavedOnly}
-            className={`py-3 px-6 rounded-lg flex items-center justify-center w-[14rem] gap-2 shadow-lg transition-all ${
+            className={`py-3 px-6 rounded-lg flex items-center w-[14rem] gap-2 shadow-lg transition-all ${
               showSavedOnly 
                 ? 'bg-white text-[#214933]' 
                 : 'bg-[#214933] text-white border border-white'
