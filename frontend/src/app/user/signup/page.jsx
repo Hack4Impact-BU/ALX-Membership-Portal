@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import TermsAndConditions from '../../terms/page';
 
 export default function Signup() {
   const router = useRouter();
@@ -11,15 +12,35 @@ export default function Signup() {
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
+  const [isAdminEmail, setIsAdminEmail] = useState(false);
+
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    setIsAdminEmail(newEmail.toLowerCase().endsWith('@amplifylatinx.com'));
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    
+    if (!acceptTerms) {
+      setErrorMessage('You must accept the Terms and Conditions to create an account');
+      return;
+    }
+
+    if (isAdminEmail) {
+      console.log('Creating admin account with email:', email);
+    }
+
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth0/sign_up`, {
         email,
         password,
         name,
         phone_number: phoneNumber,
+        terms_accepted: acceptTerms
       });
       router.push('/user/login');
       console.log('Backend response:', response.data);
@@ -30,6 +51,14 @@ export default function Signup() {
         setErrorMessage('An unknown error occurred.');
       }
     }
+  };
+
+  const handleTermsAccept = () => {
+    setAcceptTerms(true);
+  };
+
+  const handleTermsClick = () => {
+    setShowTerms(true);
   };
 
   return (
@@ -56,7 +85,7 @@ export default function Signup() {
         <h1 className="text-white text-[50px] font-custom mb-6">Sign-Up</h1>
 
         {/* Form */}
-        <div className="w-full max-w-md p-6 bg-white shadow-lg rounded-lg">
+        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
           <form onSubmit={handleSignup}>
             {/* Name Input */}
             <div className="mb-4">
@@ -73,21 +102,6 @@ export default function Signup() {
               />
             </div>
 
-            {/* Phone Number Input */}
-            <div className="mb-4">
-              <label htmlFor="phoneNumber" className="block text-green-900 text-sm font-medium mb-2">
-                Phone Number
-              </label>
-              <input
-                type="text"
-                id="phoneNumber"
-                className="w-full px-3 py-2 border border-gray-300 rounded"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                required
-              />
-            </div>
-
             {/* Email Input */}
             <div className="mb-4">
               <label htmlFor="email" className="block text-green-900 text-sm font-medium mb-2">
@@ -96,9 +110,29 @@ export default function Signup() {
               <input
                 type="email"
                 id="email"
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                className={`w-full px-3 py-2 border ${isAdminEmail ? 'border-green-500 bg-green-50' : 'border-gray-300'} rounded`}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
+                required
+              />
+              {isAdminEmail && (
+                <p className="text-green-600 text-sm mt-1">
+                  This email will be registered with administrator privileges
+                </p>
+              )}
+            </div>
+
+            {/* Phone Number Input */}
+            <div className="mb-4">
+              <label htmlFor="phoneNumber" className="block text-green-900 text-sm font-medium mb-2">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                id="phoneNumber"
+                className="w-full px-3 py-2 border border-gray-300 rounded"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 required
               />
             </div>
@@ -116,6 +150,25 @@ export default function Signup() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+            </div>
+
+            {/* Terms and Conditions Checkbox */}
+            <div className="mb-4">
+              <div className="flex items-center cursor-pointer" onClick={handleTermsClick}>
+                <input
+                  type="checkbox"
+                  className="mr-2"
+                  checked={acceptTerms}
+                  readOnly
+                  required
+                />
+                <span className="text-sm text-green-900">
+                  I accept the{' '}
+                  <span className="text-blue-600 hover:underline">
+                    Terms and Conditions
+                  </span>
+                </span>
+              </div>
             </div>
 
             {/* Submit Button */}
@@ -142,6 +195,14 @@ export default function Signup() {
           )}
         </div>
       </div>
+
+      {/* Terms and Conditions Popup */}
+      {showTerms && (
+        <TermsAndConditions
+          onAccept={handleTermsAccept}
+          onClose={() => setShowTerms(false)}
+        />
+      )}
     </div>
   );
 }

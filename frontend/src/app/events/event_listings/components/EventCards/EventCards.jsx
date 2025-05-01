@@ -7,7 +7,7 @@ import Link from 'next/link';
 const inter = Inter({ subsets: ["latin"] });
 const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
-export default function EventCard({Location, WebsiteLink, pic, Date, index, description, saved, Time, distance, EventName, EventOrganizer, id, image_url}) {
+export default function EventCard({Location, WebsiteLink, pic, Date, index, description, saved, Time, distance, EventName, EventOrganizer, id, image_url, onSaveChange}) {
 
     const [isSaved, setIsSaved] = useState(saved);
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -61,6 +61,10 @@ export default function EventCard({Location, WebsiteLink, pic, Date, index, desc
             
             const result = await response.json(); 
             console.log(`Event ${action} successful:`, result); 
+            // Call the callback prop on success
+            if (onSaveChange) {
+                onSaveChange(id, newSavedStatus);
+            }
 
         } catch (error) {
             console.error(`Error ${action} event:`, error);

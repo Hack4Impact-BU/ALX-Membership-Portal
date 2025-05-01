@@ -30,7 +30,7 @@ services:
     environment:
       - PORT=3001
       - RAILS_ENV=development
-      - DATABASE_URL=postgresql://postgres:my_secure_password@db:5432/membership_portal_dev
+      - DATABASE_URL=postgresql://postgres:password@db:5432/membership_portal_dev
       - AWS_DEFAULT_REGION=us-east-2
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}        

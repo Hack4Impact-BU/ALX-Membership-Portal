@@ -8,78 +8,113 @@ const prozaLibre = Proza_Libre({ subsets: ["latin"], weight: ["400", "500", "600
 
 export default function Page() {
     const { id } = useParams();
-    const [offerData, setOfferData] = useState({
-      offerTitle: '',
-      place: '',
-      link: '',
-      pic_url: '',
-      startDate: '',
-      offerDesc: '',
-      instruct: '',
-      isSaved: false // Add default value for isSaved
-    });
-    const [isLoading, setIsLoading] = useState(true);
+    const [offerData, setOfferData] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isSaved, setIsSaved] = useState(false); // Add state for save status
+    const [isSaved, setIsSaved] = useState(false); // Initial state, updated by fetch
     
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     useEffect(() => {
-      const fetchOfferData = async () => {
-        try {
-          setIsLoading(true);
-          const response = await fetch(`${apiBaseUrl}/product_offers/${id}`);
-          
-          if (!response.ok) {
-            throw new Error('Failed to fetch offer data');
-          }
-          
-          const data = await response.json();
-          setOfferData(data);
-          setIsSaved(data.isSaved); // Set initial save status from API
-        } catch (err) {
-          console.error('Error fetching offer data:', err);
-          setError(err.message);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      
-      if (id) {
-        fetchOfferData();
-      }
-    }, [id, apiBaseUrl]);
+        const fetchOfferData = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                // Include auth token in initial fetch to get correct isSaved status
+                const token = localStorage.getItem('authToken') || localStorage.getItem('idToken') || localStorage.getItem('auth0Token') || localStorage.getItem('token');
+                const headers = {};
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
 
-    // Add handler function for saving/unsaving
+                const response = await fetch(`${apiBaseUrl}/product_offers/${id}`, {
+                    headers: headers,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to load offer details (Status: ${response.status})`);
+                }
+
+                const data = await response.json();
+                setOfferData(data);
+                // Set saved status from fetched data
+                setIsSaved(!!data.isSaved);
+                console.log("Fetched offer data:", data);
+
+            } catch (err) {
+                console.error('Error fetching offer:', err);
+                setError(err.message);
+                setOfferData(null); // Clear potentially stale data
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchOfferData();
+        } else {
+            setError("Offer ID is missing.");
+            setLoading(false);
+        }
+    }, [id, apiBaseUrl]); // Add apiBaseUrl dependency
+
+    // Unified function to handle saving/unsaving, mirroring card logic
     const handleSaveToggle = async () => {
         const newSavedStatus = !isSaved;
-        
+        const action = newSavedStatus ? 'saving' : 'unsaving';
+
+        // Optimistic UI update
+        setIsSaved(newSavedStatus);
+
         try {
-            // Make API request to update saved status
-            const response = await fetch(`${apiBaseUrl}/product_offers/${id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ isSaved: newSavedStatus }),
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to update saved status');
+            // Retrieve auth token
+            const token = localStorage.getItem('authToken') ||
+                          localStorage.getItem('idToken') ||
+                          localStorage.getItem('auth0Token') ||
+                          localStorage.getItem('token');
+
+            if (!token) {
+                console.error('Authentication token not found.');
+                alert('Please log in to save offers.');
+                // Revert optimistic update if token is missing
+                setIsSaved(!newSavedStatus);
+                return;
             }
-            
-            // Update state only after successful API response
-            setIsSaved(newSavedStatus);
-            console.log(`Offer ${newSavedStatus ? 'saved' : 'unsaved'} successfully`);
+
+            const headers = { 'Authorization': `Bearer ${token}` };
+            const method = newSavedStatus ? 'POST' : 'DELETE';
+
+            // API call to the /save endpoint
+            const response = await fetch(`${apiBaseUrl}/product_offers/${id}/save`, {
+                method: method,
+                headers: headers,
+            });
+
+            if (!response.ok) {
+                let errorData = { message: `Request failed with status ${response.status}` };
+                try {
+                    const potentialJson = await response.json();
+                    errorData = potentialJson;
+                } catch (e) {
+                    errorData.message = response.statusText || errorData.message;
+                    console.warn("Response was not JSON or text() failed:", e);
+                }
+                throw new Error(errorData.message || `Failed to ${action} offer`);
+            }
+
+            console.log(`Offer ${action} successful.`);
+            // UI state already updated optimistically
+
         } catch (error) {
-            console.error('Error updating saved status:', error);
-            // Optionally revert the UI state if the API call fails
-            // setIsSaved(isSaved); 
+            console.error(`Error ${action} offer:`, error);
+            // Revert optimistic update on error
+            setIsSaved(!newSavedStatus);
+            alert(`Could not ${action} the offer. ${error.message}. Please try again.`);
         }
     };
 
-    if (isLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
-    if (error) return <div className="flex justify-center items-center h-screen text-red-500">Error: {error}</div>;
+    if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    if (error || !offerData) return <div className="flex justify-center items-center h-screen text-red-500">{error || "Offer data could not be loaded."}</div>;
   
     const { offerTitle, place, link, pic_url, startDate, offerDesc, instruct } = offerData;
   
@@ -99,7 +134,9 @@ export default function Page() {
                     }}
                   />
                 ) : (
-                  <h1>IMAGE GOES HERE</h1>
+                  <div className="w-full h-full flex items-center justify-center">
+                                <span className="text-gray-500">No image available</span>
+                  </div>
                 )}
             </div>
             <div className="flex flex-col justify-around items-start basis-1/2 h-full bg-[#F6F2E9] rounded-xl p-12">
