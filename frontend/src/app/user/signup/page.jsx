@@ -14,6 +14,13 @@ export default function Signup() {
   const [errorMessage, setErrorMessage] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
+  const [isAdminEmail, setIsAdminEmail] = useState(false);
+
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    setIsAdminEmail(newEmail.toLowerCase().endsWith('@amplifylatinx.com'));
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -21,6 +28,10 @@ export default function Signup() {
     if (!acceptTerms) {
       setErrorMessage('You must accept the Terms and Conditions to create an account');
       return;
+    }
+
+    if (isAdminEmail) {
+      console.log('Creating admin account with email:', email);
     }
 
     try {
@@ -99,11 +110,16 @@ export default function Signup() {
               <input
                 type="email"
                 id="email"
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                className={`w-full px-3 py-2 border ${isAdminEmail ? 'border-green-500 bg-green-50' : 'border-gray-300'} rounded`}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
                 required
               />
+              {isAdminEmail && (
+                <p className="text-green-600 text-sm mt-1">
+                  This email will be registered with administrator privileges
+                </p>
+              )}
             </div>
 
             {/* Phone Number Input */}
